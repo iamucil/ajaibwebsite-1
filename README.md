@@ -21,7 +21,7 @@ Read and edit `config/app.php` and setup the 'Connection' on `config/database.ph
 configuration relevant for your application. And don't forget to update your .env file on root directory
 
 
-# SET PERMISSION USING ACL
+### SET PERMISSION USING ACL
 
 Perform action bellow to grant http user to folders
 
