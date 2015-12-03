@@ -1,8 +1,27 @@
-# ajaibwebsite
+AJAIBWEBSITE
+============
 Repository for Ajaib website and admin panel
 
-SET PERMISSION USING ACL
-========================
+## Installation
+
+1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
+2. Run `php composer.phar create-project --prefer-dist laravel/laravel [app_name]`.
+
+If Composer is installed globally, run
+```bash
+composer create-project --prefer-dist laravel/laravel [app_name]
+```
+
+You should now be able to visit the path to where you installed the app and see
+the setup traffic lights.
+
+## Configuration
+
+Read and edit `config/app.php` and setup the 'Connection' on `config/database.php` and any other
+configuration relevant for your application. And don't forget to update your .env file on root directory
+
+
+### SET PERMISSION USING ACL
 
 Perform action bellow to grant http user to folders
 
@@ -15,12 +34,7 @@ sudo setfacl -R -m u:${HTTPDUSER}:rwx bootstrap/cache
 sudo setfacl -R -d -m u:${HTTPDUSER}:rwx bootstrap/cache
 ```
 
-CONNECTION
-==========
-Set connection on config/database.php and update your .env file on root directory
-
-HOW TO COMMIT - IAMUCIL
-=======================
+## HOW TO COMMIT - IAMUCIL
 
 1. Fork the project
 2. Once it done, clone your forked project
