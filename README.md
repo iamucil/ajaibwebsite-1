@@ -18,10 +18,10 @@ the setup traffic lights.
 ## Configuration
 
 Read and edit `config/app.php` and setup the 'Connection' on `config/database.php` and any other
-configuration relevant for your application.
+configuration relevant for your application. And don't forget to update your .env file on root directory
 
 
-## SET PERMISSION USING ACL
+# SET PERMISSION USING ACL
 
 Perform action bellow to grant http user to folders
 
@@ -33,10 +33,6 @@ sudo setfacl -R -d -m u:${HTTPDUSER}:rwx storage
 sudo setfacl -R -m u:${HTTPDUSER}:rwx bootstrap/cache
 sudo setfacl -R -d -m u:${HTTPDUSER}:rwx bootstrap/cache
 ```
-
-## CONNECTION
-
-Set connection on config/database.php and update your .env file on root directory
 
 ## HOW TO COMMIT - IAMUCIL
 
