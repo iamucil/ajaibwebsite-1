@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace ajaib\Providers;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -13,8 +13,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\SomeEvent' => [
-            'App\Listeners\EventListener',
+        'ajaib\Events\SomeEvent' => [
+            'ajaib\Listeners\EventListener',
         ],
     ];
 

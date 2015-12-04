@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace ajaib\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
