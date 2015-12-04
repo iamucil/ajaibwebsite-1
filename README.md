@@ -36,13 +36,15 @@ sudo setfacl -R -d -m u:${HTTPDUSER}:rwx bootstrap/cache
 
 ## HOW TO COMMIT - IAMUCIL
 
+Phase 1
+
 1. Fork the project
 2. Once it done, clone your forked project
-3. `mkdir project_name`
-4. `cd project_name`
-5. `git init`
-3. Do `git remote add <alias> <URL-git-project>`
-4. You've done the initial step (phase 1).
+   1. `mkdir project_name`
+   2. `cd project_name`
+   3. `git init`
+   4. Do `git remote add <alias> <URL-git-project>`
+3. You've done the initial step (phase 1).
 
 To do phase 2, do the following steps, right before you commit the changes
 
@@ -53,3 +55,16 @@ To do phase 2, do the following steps, right before you commit the changes
 5. Do `git push`
 
 Then do phase 3. Do pull request thru' web interface.
+
+## HOW TO INSTALL AFTER CLONING IN LOCAL
+
+After finishing cloning from github repo into local machine (phase 1, step 3 - 7)
+
+1. Do ``git fetch <alias> <branch_name>``. The branch name default is usually `master`.
+2. Do ``git pull <alias> <branch_name>``
+3. Do ``composer install``
+4. rename ``.env.example`` to ``.env`` on root directory. [More detail](http://laravel.com/docs/5.1/installation#environment-configuration) read the documentation [here](http://laravel.com/docs/5.1/installation#environment-configuration)
+5. Set connection database in ``config/database.php``
+6. Make sure ``resources`` and ``bootstrap/cache`` are writeable
+7. Do ``php artisan key:generate`` to generate key automatically
+8. Run your app in your machine
