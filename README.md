@@ -58,7 +58,7 @@ Then do phase 3. Do pull request thru' web interface.
 
 ## HOW TO INSTALL AFTER CLONING IN LOCAL
 
-After finishing cloning from github repo into local machine (phase 1, step 3 - 7)
+After finishing cloning from github repo into local machine (phase 1, step 2)
 
 1. Do ``git fetch <alias> <branch_name>``. The branch name default is usually `master`.
 2. Do ``git pull <alias> <branch_name>``
