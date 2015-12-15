@@ -73,6 +73,7 @@ After finishing cloning from github repo into local machine (phase 1, step 2)
 
 1. ``composer require zizaco/entrust``
 2. ``composer require artem-schander/l5-modular``
+
    a. ``composer update``
    b. load package l5-modular into service providers on ``APP/config/app.php`` add ``ArtemSchander\L5Modular\ModuleServiceProvider::class,`` in ``providers`` section
    c. The built in Artisan command ``php artisan make:module name [--no-migration] [--no-translation]`` generates a ready to use module in the ``app/Modules`` folder and a migration if necessary.
