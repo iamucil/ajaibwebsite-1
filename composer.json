@@ -6,7 +6,9 @@
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.1.*"
+        "laravel/framework": "5.1.*",
+        "zizaco/entrust": "^1.5",
+        "artem-schander/l5-modular": "^1.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
