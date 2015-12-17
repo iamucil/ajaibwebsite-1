@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "315bd40fdced1f98a1cc627e02d05933",
-    "content-hash": "65427a64c14872bb7b6077c8799712df",
+    "hash": "d8a4fbd9280fd9d8beabf88f2be82a44",
+    "content-hash": "54d56fce9ce6cb5b29509e079e3ad245",
     "packages": [
         {
             "name": "artem-schander/l5-modular",
@@ -2143,23 +2143,22 @@
         },
         {
             "name": "zizaco/entrust",
-            "version": "1.5.0",
+            "version": "dev-laravel-5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Zizaco/entrust.git",
-                "reference": "3b41a8ec0cdba8400eab344f919291bcc59c0115"
+                "reference": "be28aa634c44551ae5187894c903094a8ce8baee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Zizaco/entrust/zipball/3b41a8ec0cdba8400eab344f919291bcc59c0115",
-                "reference": "3b41a8ec0cdba8400eab344f919291bcc59c0115",
+                "url": "https://api.github.com/repos/Zizaco/entrust/zipball/be28aa634c44551ae5187894c903094a8ce8baee",
+                "reference": "be28aa634c44551ae5187894c903094a8ce8baee",
                 "shasum": ""
             },
             "require": {
-                "illuminate/cache": "~5.0",
                 "illuminate/console": "~5.0",
                 "illuminate/support": "~5.0",
-                "php": ">=5.5.0"
+                "php": ">=5.4.0"
             },
             "require-dev": {
                 "illuminate/database": "~5.0",
@@ -2207,7 +2206,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2015-11-20 19:05:07"
+            "time": "2015-11-12 17:38:37"
         }
     ],
     "packages-dev": [
@@ -3439,7 +3438,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "zizaco/entrust": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

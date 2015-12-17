@@ -144,6 +144,15 @@ return [
         ajaib\Providers\AuthServiceProvider::class,
         ajaib\Providers\EventServiceProvider::class,
         ajaib\Providers\RouteServiceProvider::class,
+        /**
+         * Modular Service Providers ...
+         */
+        ArtemSchander\L5Modular\ModuleServiceProvider::class,
+
+        /**
+         *
+         */
+        'Zizaco\Entrust\EntrustServiceProvider',
 
     ],
 
@@ -193,6 +202,7 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
+        'Entrust'   => 'Zizaco\Entrust\EntrustFacade',
 
     ],
 
