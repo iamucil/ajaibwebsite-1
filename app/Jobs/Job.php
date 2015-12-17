@@ -1,6 +1,6 @@
 <?php
 
-namespace ajaib\Jobs;
+namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
 

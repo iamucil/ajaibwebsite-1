@@ -1,6 +1,6 @@
 <?php
 
-namespace ajaib\Http\Middleware;
+namespace App\Http\Middleware;
 
 use Illuminate\Cookie\Middleware\EncryptCookies as BaseEncrypter;
 
