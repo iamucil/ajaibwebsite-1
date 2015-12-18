@@ -8,10 +8,9 @@
         <div class="content">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6">
-                    </div>
+
                     <!-- right description -->
-                    <div class="col-md-6">
+                    <div class="col-md-6 col-md-offset-6">
                         <div class="topright-desc">
                             <h3><strong>Ajaib</strong> adalah asisten pribadi anda<br>Keperluan apapun yang anda butuhkan kami akan membantu anda.</h3>
                             <hr style="opacity:0.25">
@@ -19,11 +18,12 @@
                                 <br> sebagai asisten anda.</p>
                             <!--  Subscribe form -->
                             <form class="form-inline">
-                                <input type="text" class="form-control" id="exampleInputName2" placeholder="Alamat email anda">
-                                <div class="input-group">
-                                    <div class="input-group-addon">+62</div>
-                                    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="">
-                                </div>&nbsp;&nbsp;
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="exampleInputName2" placeholder="Alamat email anda">
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="+62">
+                                </div>
                                 <button type="submit" class="btn btn-default btn-ajaib">Submit</button>
                             </form>
                             <!--  end of Subscribe form -->
