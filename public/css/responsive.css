@@ -1,0 +1,108 @@
+/*Mobile style*/
+
+@media (max-width: 768px) {
+    .content {
+        padding: 40% 0 0;
+    }
+    #tf-home {
+        min-height: 800px!important;
+    }
+    .pic-ajaib-phone {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 50%;
+        opacity: 1;
+        z-index: 0;
+        display: none;
+    }
+    .form-inline input {
+        margin: 0 0 20px 0;
+        padding: 20px 10px;
+    }
+    .btn-ajaib {
+        padding: 10px 0;
+        width: 100%;
+    }
+    .topright-desc ul {
+        width: 100%;
+    }
+    .topright-desc ul li {
+        display: inline-block;
+        width: 49%;
+        margin: 0;
+    }
+    .topright-desc ul li img {
+        width: 100%;
+        text-align: center;
+        margin: 0 auto 10px auto;
+        float: left;
+    }
+    ul.client-item li {
+        list-style: none;
+        display: block;
+        text-align: center;
+        width: 60%;
+        margin: 8% auto;
+    }
+    #tf-services h4 {
+        font-size: 1em;
+        font-weight: 400;
+        letter-spacing: 1px;
+        line-height: 1.6em;
+        color: #888!important;
+        padding: 0 10% 5% 10%;
+    }
+    .how-to-work p {
+        margin: 0 0 28% 0;
+        padding: 0 10%;
+    }
+    .how-to-work h3 {
+        font-weight: 500;
+        line-height: 1.3em;
+        font-size: 1.3em;
+        margin: 0 0 3%;
+    }
+    .testi-chat span {
+        margin: 20% 0 0;
+    }
+    #tf-menu a.navbar-brand img {
+        width: 60%;
+        margin: -5px 0 0 0;
+    }
+    .devider:before {
+        display: none;
+    }
+}
+
+@media (max-width: 603px) {
+    #tf-menu.navbar-default {
+        background-color: #ff6a00;
+        padding: 0;
+        transition: all 0.8s;
+    }
+    #tf-works li.pull-right,
+    #tf-works li.pull-left {
+        margin-top: 10px;
+        float: none !important;
+        text-align: center;
+        display: block;
+    }
+    label {
+        float: none !important
+    }
+    .pull-left.fnav,
+    .pull-right.fnav {
+        float: none !important;
+        text-align: center;
+    }
+    .hover-bg .hover-text {
+        padding: 12% 10%;
+    }
+}
+
+@media (max-width: 360px) {
+    .hover-bg .hover-text {
+        padding: 22% 10%;
+    }
+}
