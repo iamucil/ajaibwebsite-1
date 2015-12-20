@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    'driver' => env('MAIL_DRIVER', 'mailgun'),
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'port' => env('MAIL_PORT', 587),
+    'port' => env('MAIL_PORT', 465),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => 'noreply@getajaib.com', 'name' => 'no-reply'],
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME'),
+    'username' => env('ajaib@sandbox9daad78f17254f6e9165269598c0b745.mailgun.org'),
 
     /*
     |--------------------------------------------------------------------------
@@ -93,7 +93,8 @@ return [
     |
     */
 
-    'password' => env('MAIL_PASSWORD'),
+    'password' => env('@ja!b'),
+    // 'password' => env('Asv6B5+cDdDBjCLrlu8b5MJXcV16K025tCxrktyyCNAK'),
 
     /*
     |--------------------------------------------------------------------------

@@ -26,6 +26,7 @@
     ================================================== -->
     <link rel="stylesheet" type="text/css" href="{{ asset('/css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('/css/responsive.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/animate.css') }}">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700,900,500,400italic' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="{{ asset('/js/modernizr.custom.js') }}"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
