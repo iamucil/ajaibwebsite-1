@@ -18,3 +18,6 @@ Route::get('/', function () {
 Route::get('/admin', function () {
     return view('admin');
 });
+
+Route::get('auth/register', 'Auth\AuthController@getRegister');
+Route::post('auth/register', 'Auth\AuthController@doRegister');

@@ -7,6 +7,8 @@ use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -42,9 +44,8 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|confirmed|min:6',
+            'phone_number' => 'required|max:255|min:6|unique:users,phone_number|regex:/^\+?[^a-zA-Z]{5,}$/',
         ]);
     }
 
@@ -57,9 +58,26 @@ class AuthController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
+            'name' => $data['phone_number'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+            'password' => bcrypt($data['phone_number']),
+            'phone_number' => $data['phone_number']
         ]);
+    }
+
+    public function doRegister(Request $request)
+    {
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return redirect('/auth/register')
+                ->withErrors($validator, 'register')
+                ->withInput()
+                ->with('errors', $validator->errors());
+        }
+
+        $this->create($request->all());
+
+        return redirect('/auth/success');
     }
 }

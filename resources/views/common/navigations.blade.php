@@ -9,7 +9,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html"><img src="img/ajaib-logo.png"></a>
+                <a class="navbar-brand" href="index.html">
+                    <img src="{{ asset('/img/ajaib-logo.png') }}">
+                </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

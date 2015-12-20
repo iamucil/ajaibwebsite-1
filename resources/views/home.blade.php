@@ -17,14 +17,15 @@
                             <p>Masukan email dan no hp untuk menjadikan Ajaib
                                 <br> sebagai asisten anda.</p>
                             <!--  Subscribe form -->
-                            <form class="form-inline">
+                            <form class="form-inline" method="POST" action="/auth/register" novalidate>
+                                {{ csrf_field() }}
                                 <div class="form-group">
-                                    <input type="text" class="form-control" id="exampleInputName2" placeholder="Alamat email anda">
+                                    <input type="email" class="form-control" id="exampleInputName2" placeholder="Alamat email anda" name="email">
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="+62">
+                                    <input type="text" class="form-control" id="exampleInputEmail2" placeholder="+62" name="phone_number">
                                 </div>
-                                <button type="submit" class="btn btn-default btn-ajaib">Submit</button>
+                                <button type="submit" class="btn btn-default btn-ajaib">Sign Up</button>
                             </form>
                             <!--  end of Subscribe form -->
                             <ul>
