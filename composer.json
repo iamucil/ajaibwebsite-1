@@ -10,7 +10,8 @@
         "zizaco/entrust": "dev-laravel-5",
         "artem-schander/l5-modular": "^1.2",
         "guzzlehttp/guzzle": "~5.3|~6.0",
-        "aws/aws-sdk-php": "~3.0"
+        "aws/aws-sdk-php": "~3.0",
+        "lucadegasperi/oauth2-server-laravel": "^5.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

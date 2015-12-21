@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/dashboard.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('css/style.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('css/dashboard.style.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('css/dripicon.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('css/typicons.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('css/font-awesome.css')}}" />
