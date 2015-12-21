@@ -36,7 +36,6 @@ class UserRepository
         Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
             $mail->from('noreply@getajaib.com', 'Ajaib');
             $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
-            $mail->to('ecko.ucil@gmail.com', 'Eko Susilo')->subject('Registration For [' . $user->email . ']');
         });
 
         return compact('user', 'exists');
