@@ -13,12 +13,12 @@
                                 <p class="lead">
                                     <h3>
                                         <strong class="text-capitalize">
-                                            Terimakasih telah mendaftar di Ajaib. Kami akan Melakukan Proses Verifikasi terhadap profil Anda terlebih Dahulu
+                                            You're almost done! We sent an activation mail to your email. Please follow the instructions in the email to activate your account.
                                         </strong>
                                     </h3>
                                 </p>
                                 <p>
-                                    Setelah proses verifikasi berhasil, Ajaib akan mengirimkan E-mail ke nomor Anda.
+                                    If it doesn't arrive, check your spam folder, or try to log in again to send another activation mail.
                                 </p>
                             </div>
                             <hr style="opacity:0.25">

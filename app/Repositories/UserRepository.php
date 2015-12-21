@@ -18,6 +18,7 @@ class UserRepository
         if($query->exists()){
             $user       = $query->first();
             $exists     = true;
+            $user       = $query->update(key, value);
         }else{
             $exists     = false;
             $user       = User::firstOrCreate([
