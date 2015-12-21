@@ -3,10 +3,18 @@
 use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Repositories\UserRepository;
 
+use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
 
 class UserController extends Controller {
+	protected $User;
+
+	function __construct(UserRepository $user)
+	{
+		$this->User 	= $user;
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -40,23 +48,25 @@ class UserController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-        $user=User::create([
-            'name' => $request->phone,
-            'phone_number' => $request->phone,
-            'email' => $request->email,
-            'password' => bcrypt($request->phone)
-        ]);
-        if($user){
-            return response()->json(array(
-                'status'=>201,
-                'message'=>'success saving'
-			));
-        }else{
-            return response()->json(array(
-                'status'=>500,
-                'message'=>'error saving'
-			));
-        }
+		$user= $this->User->createOrUpdateUser($request->all());
+		return $user;
+//        $user=User::create([
+//            'name' => $request->phone,
+//            'phone_number' => $request->phone,
+//            'email' => $request->email,
+//            'password' => bcrypt($request->phone)
+//        ]);
+//        if($user){
+//            return response()->json(array(
+//                'status'=>201,
+//                'message'=>'success saving'
+//			));
+//        }else{
+//            return response()->json(array(
+//                'status'=>500,
+//                'message'=>'error saving'
+//			));
+//        }
 	}
 
 	/**
