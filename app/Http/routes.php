@@ -18,6 +18,17 @@ Route::get('/', function () {
 Route::get('/admin', function () {
     return view('admin');
 });
+
+Route::group([
+    'prefix' => 'admin',
+    'module' => 'User',
+    'as' => 'admin::',
+    'middleware' => ['auth']
+], function () {
+    Route::get('/dashboard', ['as' => 'dashboard', function () {
+        return view('admin');
+    }]);
+});
 Route::get('auth/login', [
    'as' => 'login',
    'uses' => 'Auth\AuthController@getLogin'

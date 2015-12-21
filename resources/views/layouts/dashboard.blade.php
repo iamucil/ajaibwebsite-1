@@ -46,8 +46,8 @@
                 <div id="tree-wrap">
                     <!-- Profile -->
                     <div class="profile">
-                        <img alt="" class="" src="./img/logo.png">
-                        <h3>EDUMIX <small>1.2</small></h3>
+                        <img alt="" class="" src="{{ asset('/img/logo.png') }}">
+                        <h3>Ajaib <small>beta</small></h3>
 
                     </div>
                     <!-- End of Profile -->
