@@ -28,17 +28,17 @@ $app = new Illuminate\Foundation\Application(
 
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
-    ajaib\Http\Kernel::class
+    App\Http\Kernel::class
 );
 
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
-    ajaib\Console\Kernel::class
+    App\Console\Kernel::class
 );
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    ajaib\Exceptions\Handler::class
+    App\Exceptions\Handler::class
 );
 
 /*
@@ -51,5 +51,23 @@ $app->singleton(
 | from the actual running of the application and sending responses.
 |
 */
+
+/**
+ * Oauth2
+ */
+// $app->register(\LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class);
+// $app->register(\LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class);
+
+// $app->middleware([
+//     \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class
+// ]);
+
+// $app->routeMiddleware([
+//     'check-authorization-params' => \LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
+//     'csrf' => \Laravel\Lumen\Http\Middleware\VerifyCsrfToken::class,
+//     'oauth' => \LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware::class,
+//     'oauth-client' => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
+//     'oauth-user' => \LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
+// ]);
 
 return $app;

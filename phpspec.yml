@@ -1,5 +1,5 @@
 suites:
     main:
-        namespace: ajaib
-        psr4_prefix: ajaib
+        namespace: App
+        psr4_prefix: App
         src_path: app

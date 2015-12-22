@@ -140,10 +140,24 @@ return [
         /*
          * Application Service Providers...
          */
-        ajaib\Providers\AppServiceProvider::class,
-        ajaib\Providers\AuthServiceProvider::class,
-        ajaib\Providers\EventServiceProvider::class,
-        ajaib\Providers\RouteServiceProvider::class,
+        App\Providers\AppServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
+        /**
+         * Modular Service Providers ...
+         */
+        ArtemSchander\L5Modular\ModuleServiceProvider::class,
+
+        /**
+         * User Management
+         */
+        'Zizaco\Entrust\EntrustServiceProvider',
+        /**
+         * Oauth
+         */
+        LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
+        LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
 
     ],
 
@@ -193,7 +207,8 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
-
+        'Entrust'   => 'Zizaco\Entrust\EntrustFacade',
+        'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
     ],
 
 ];

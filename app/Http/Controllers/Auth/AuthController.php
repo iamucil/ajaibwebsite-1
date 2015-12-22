@@ -1,13 +1,15 @@
 <?php
 
-namespace ajaib\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth;
 
-use ajaib\User;
+use App\User;
 use Validator;
-use ajaib\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Repositories\UserRepository;
 class AuthController extends Controller
 {
     /*
@@ -22,15 +24,18 @@ class AuthController extends Controller
     */
 
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
+    protected $user;
+    protected $redirectPath     = '/admin/dashboard/';
 
     /**
      * Create a new authentication controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserRepository $user)
     {
         $this->middleware('guest', ['except' => 'getLogout']);
+        $this->user         = $user;
     }
 
     /**
@@ -41,10 +46,14 @@ class AuthController extends Controller
      */
     protected function validator(array $data)
     {
+        /**
+         * Set Validation field is not unique
+         * If Found data user with current credential,
+         * Send Fresh Token
+         */
         return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|confirmed|min:6',
+            'email' => 'required|email|max:255',
+            'phone_number' => 'required|max:255|min:6|regex:/^\+?[^a-zA-Z]{5,}$/',
         ]);
     }
 
@@ -56,10 +65,29 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
+        return User::firstOrCreate([
+            'name' => $data['phone_number'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+            'password' => bcrypt($data['phone_number']),
+            'phone_number' => $data['phone_number'],
+            'channel' => 1
         ]);
+    }
+
+    public function doRegister(Request $request)
+    {
+        $validator      = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return redirect('/auth/register')
+                ->withErrors($validator, 'register')
+                ->withInput()
+                ->with('errors', $validator->errors());
+        }
+
+        $user           = $this->user->createOrUpdateUser($request->all());
+        return redirect()->route('auth.success.get')
+            ->with('user', $user['user'])
+            ->with('status', (bool)$user['exists']);
     }
 }

@@ -1,45 +1,262 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Ajaib - Land Page</title>
+@extends('layouts.default')
 
-    <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+@section('title', 'Landing Page')
 
-    <style>
-        html, body {
-            height: 100%;
-        }
+@section('content')
 
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            display: table;
-            font-weight: 100;
-            font-family: 'Lato';
-        }
+    <div id="tf-home" class="text-center">
+        <div class="content">
+            <div class="container">
+                <div class="row">
 
-        .container {
-            text-align: center;
-            display: table-cell;
-            vertical-align: middle;
-        }
-
-        .content {
-            text-align: center;
-            display: inline-block;
-        }
-
-        .title {
-            font-size: 96px;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="content">
-        <div class="title">Ajaib Land Page</div>
+                    <!-- right description -->
+                    <div class="col-md-6 col-md-offset-6">
+                        <div class="topright-desc">
+                            <h3><strong>Ajaib</strong> adalah asisten pribadi anda<br>Keperluan apapun yang anda butuhkan kami akan membantu anda.</h3>
+                            <hr style="opacity:0.25">
+                            <p>Masukan email dan no hp untuk menjadikan Ajaib
+                                <br> sebagai asisten anda.</p>
+                            <!--  Subscribe form -->
+                            <form class="form-inline" method="POST" action="/auth/register" novalidate>
+                                {{ csrf_field() }}
+                                <div class="form-group">
+                                    <input type="email" class="form-control" id="exampleInputName2" placeholder="Alamat email anda" name="email">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="exampleInputEmail2" placeholder="+62" name="phone_number">
+                                </div>
+                                <button type="submit" class="btn btn-default btn-ajaib">Sign Up</button>
+                            </form>
+                            <!--  end of Subscribe form -->
+                            <ul>
+                                <li><img src="img/playstore.png"></li>
+                                <li><img src="img/appstore.png"></li>
+                            </ul>
+                            <div style="clear: both;"></div>
+                        </div>
+                    </div>
+                    <!-- end of right description -->
+                </div>
+            </div>
+        </div> <img class="pic-ajaib-phone" src="img/ajaib-iphone.png">
     </div>
-</div>
-</body>
-</html>
+    <!-- About Us Page
+    ==========================================-->
+    <div id="tf-about">
+        <!--     <div class="triangle-top"></div> -->
+        <div class="overlay">
+            <div class="container">
+                <div class="section-title text-center">
+                    <h2>Diliput<strong>oleh</strong></h2>
+                    <div class="text-center line">
+                        <hr>
+                    </div>
+                </div>
+                <ul class="client-item">
+                    <li><img src="img/client/client_01.png"></li>
+                    <li><img src="img/client/client_02.png"></li>
+                    <li><img src="img/client/client_03.png"></li>
+                    <li><img src="img/client/client_04.png"></li>
+                    <li><img src="img/client/client_05.png"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Services Section
+    ==========================================-->
+    <div id="tf-services" class="text-center">
+        <div class="container">
+            <div class="section-title text-center">
+                <h2>Apa <strong>kebutuhan</strong> anda ?</h2>
+                <div class="text-center line">
+                    <hr>
+                </div>
+                <p>Pesan makanan, booking tiket pesawat atau keperluan lainnya?
+                    <br>pakai <strong>Ajaib</strong> saja!</p>
+            </div>
+            <div class="space"></div>
+            <div class="row">
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-aeroplane10"></i>
+                    <h4>Tiket Pesawat</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-cinema61"></i>
+                    <h4>Tiket ticket</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-fastfood47"></i>
+                    <h4>Pesan makanan & minuman</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-money412"></i>
+                    <h4>Beli pulsa voucher & bayar tagihan</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-gymnast38"></i>
+                    <h4>Elektronik, fashion dan yang lainnya</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-automobile5"></i>
+                    <h4>Sewa mobil atau kendaraan</h4>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-hotels1"></i>
+                    <h4>Paket Hotel dan traveling</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-drummer1"></i>
+                    <h4>Tiket konser, event, musikal</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-sweet111"></i>
+                    <h4>Pesan Bunga dan Hadiah Ulang Tahun</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-condiments"></i>
+                    <h4>Kebutuhan sehari-hari</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-coffeeshop37"></i>
+                    <h4>Reservasi restaurant, spa dll</h4>
+                </div>
+                <div class="col-md-2 col-sm-6 service">
+                    <i class="fa flaticon-magicwand2"></i>
+                    <h4>Dan yang lainnya</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Cara Kerja Page
+    ==========================================-->
+    <div id="tf-team" class="text-center">
+        <div class="overlay">
+            <div class="container">
+                <div class="section-title text-center">
+                    <h2>Cara <strong>Kerja</strong></h2>
+                    <div class="text-center line">
+                        <hr>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="how-to-work text-center">
+                            <span>Describe Your Needs</span>
+                            <br>
+                            <i class="flaticon-telephone117"></i>
+                            <h3>Purchase tickets, food delivery, hotel reservations, all in just a text message!</h3>
+                            <p>Personalised service that is fast and easy We do the research to give you the best recommendations</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="how-to-work text-center">
+                            <span>Process Your Request</span>
+                            <br>
+                            <i class="flaticon-profession12"></i>
+                            <i class="flaticon-profession7"></i>
+                            <h3>We will serve you in a matter of minutes!</h3>
+                            <p>Personalised service that is fast and easyWe do the research to give you the best recommendations</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="how-to-work text-center">
+                            <span>Mission Accomplished!</span>
+                            <br>
+                            <i class="flaticon-restaurant9"></i>
+                            <i class="flaticon-package27"></i>
+                            <h3>We work behind the scenes to ensure your request is placed and delivere</h3>
+                            <p>Time saving! Goods received fast and in the best condition</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Testmoni Section
+    ==========================================-->
+    <div id="tf-works">
+        <div class="container">
+            <!-- Container -->
+            <div class="section-title text-center">
+                <h2><strong>Testimonal</strong></h2>
+                <div class="text-center line">
+                    <hr>
+                </div>
+            </div>
+            <div class="space"></div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="testi-chat">
+                        <span>Startup is really a great template to get strarted with. With its awesome features and easy customization with unbounce. This template made my day. Very recommended.</span>
+                        <br>
+                        <img src="img/isyana.jpg">
+                        <h4>Isyana Sarasvati</h4>
+                        <p>Founder and CEO of Square Inc</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testi-chat">
+                        <span>Startup is really a great template to get strarted with. With its awesome features and easy customization with unbounce. This template made my day. Very recommended.</span>
+                        <br>
+                        <img src="img/raisa.jpg">
+                        <h4>Raisa Andriana</h4>
+                        <p>Artist and musician</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testi-chat">
+                        <span>Startup is really a great template to get strarted with. With its awesome features and easy customization with unbounce. This template made my day. Very recommended.</span>
+                        <br>
+                        <img src="img/al-ghazali.jpg">
+                        <h4>Al Ghazali</h4>
+                        <p>Founder and CEO of Square Inc</p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+    </div>
+    <!-- Faq Section
+    ==========================================-->
+    <div id="tf-contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="section-title center text-center">
+                        <h3>Frequently Asked Questions</h3>
+                        <p>Got questions? We have answers.</p>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="faq-nest">
+                                <h4>How does the free trial work?</h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                <h4>Can I switch plans later?</h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="faq-nest">
+                                <h4>Do I need to choose plan now?</h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                <h4>What payment types do you accept?</h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@endsection
