@@ -7,9 +7,9 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
 });
 
 // API Service Route
-Route::group(['prefix'=>'api/v1', 'namespace' => 'App\Modules\Chat\Controllers', 'middleware' => 'oauth'], function(){
+Route::group(['prefix'=>'api', 'namespace' => 'App\Modules\Chat\Controllers', 'middleware' => 'oauth'], function(){
 
-    Route::resource('chat','ChatController',array('except'=>array('create','edit')));
+    Route::resource('chat','ChatController',['only'=>['index','store']]);
 
 });
 
