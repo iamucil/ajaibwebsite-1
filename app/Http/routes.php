@@ -78,6 +78,7 @@ Route::post('oauth/authorize', ['as' => 'oauth.authorize.post', 'middleware' => 
 }]);
 
 Route::post('oauth/access_token', function() {
-    $return         = Authorizer::issueAccessToken();
-    return Response::json($return);
+    $result         = Authorizer::issueAccessToken();
+
+    return Response::json($result);
 });

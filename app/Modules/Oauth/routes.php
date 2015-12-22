@@ -8,5 +8,5 @@ Route::group([
    'module' => 'Oauth',
    'as' => 'oauth::',
    'namespace' => 'App\Modules\Oauth\Controllers'], function () {
-    Route::get('/client', ['as' => 'client', 'uses' => 'OauthController@client']);
+    Route::get('/grant_access', ['as' => 'grant_access', 'uses' => 'OauthController@grantAccess']);
 });
