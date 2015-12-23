@@ -1095,8 +1095,8 @@ ALERT
 
 .chat-active {
     position: relative;
-    background-color: #ff6600;
-    border-top: 1px solid #ff6600;
+    background-color: #0084ff;
+    border-top: 1px solid #0084ff;
     color: #fff;
     border-right: 1px solid rgba(255, 255, 255, 0.3);
     /*   top: -1px;

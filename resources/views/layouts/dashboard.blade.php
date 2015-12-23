@@ -48,7 +48,7 @@
                     <!-- Profile -->
                     <div class="profile">
                         <img alt="" class="" src="./img/logo.png">
-                        <h3>EDUMIX <small>1.2</small></h3>
+                        <h3>AJAIB <small>Beta</small></h3>
 
                     </div>
                     <!-- End of Profile -->
