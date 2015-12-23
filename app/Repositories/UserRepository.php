@@ -18,7 +18,10 @@ class UserRepository
         $verificationCode = $this->generateVerificationCode();
 
         if ($query->exists()) {
-            $query->update(['verification_code' => $verificationCode]);
+            $query->update([
+                'verification_code' => $verificationCode,
+                'status' => false
+            ]);
             $user   = $query->first();
             $exists = true;
         } else {

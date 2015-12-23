@@ -1,8 +1,10 @@
 <?php namespace App\Modules\Oauth\Controllers;
 
+use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Modules\Oauth\Models\OauthClient;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -12,6 +14,12 @@ use GuzzleHttp\Exception\RequestException;
 
 class OauthController extends Controller {
 
+    protected $User;
+
+    public function __construct(User $user)
+    {
+        $this->User         = $user;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -86,53 +94,56 @@ class OauthController extends Controller {
         //
     }
 
-    public function client()
+    public function grantAccess(Request $request)
     {
-        printf("uniqid('php_'): %s\r\n", uniqid('php_'));
+        // setting oauth client
         $client = new Client([
             'base_uri' => 'http://getajaib.local'
         ]);
-        $res = $client->request('POST', '/oauth/access_token', [
-            'form_params' => [
-                'grant_type' => 'password',
-                'client_id' => 'f3d259ddd3ed8ff3843839b',
-                'client_secret' => '4c7f6f8fa93d59c45502c0ae8c4a95b',
-                'username' => 'ecko.ucil@gmail.com',
-                'password' => '+6285640427774'
-            ]
-        ]);
-
-        echo '<pre>';
-        print_r(json_decode($res->getBody()->getContents(), true));
-        echo self::_getPseudoString(6);
-        echo '</pre>';
-        // {"type":"User"...'
-
-        // // Send an asynchronous request.
-        // $request = new \GuzzleHttp\Psr7\Request('GET', 'http://httpbin.org');
-        // $promise = $client->sendAsync($request)->then(function ($response) {
-        //     echo 'I completed! ';
-        //     print_r($response->getBody());
-        // });
-        // echo '</pre>';
-        // $promise->wait();
-    }
-
-    private function _getPseudoString($range = 8)
-    {
-        $range_start      = 48;
-        $range_end        = 122;
-        $random_string          = "";
-        $random_string_length   = $range;
-
-        for ($i = 0; $i < $random_string_length; $i++) {
-            // generates a number within the range
-            $ascii_no = round( mt_rand( $range_start , $range_end ) );
-            // finds the character represented by $ascii_no and adds it to the random string
-            // study **chr** function for a better understanding
-            $random_string .= chr( $ascii_no );
+        $grant_type         = 'password';
+        $client_id          = $request->get('id');
+        $client_secret      = $request->get('secret');
+        $verification_code  = $request->get('code');
+        $email              = '';
+        $phone_number       = '';
+        $password           = '';
+        $query              = User::where('verification_code', $verification_code);
+        $user               = [];
+        $return             = [];
+        if($query->exists()){
+            // Update data users
+            $query->update([
+                'status' => true
+            ]);
+            $user           = $query->first();
+            $email          = $user->email;
+            $phone_number   = $user->phone_number;
+            $password       = $user->phone_number;
+            $username       = $user->email;
         }
 
-        return $random_string;
-   }
+        $oauth              = OauthClient::where('id', $client_id)
+            ->where('secret', $client_secret);
+
+        if($oauth->exists()){
+            $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
+            $response           = $client->request('POST', '/oauth/access_token', [
+                'form_params' => $params,
+                'header' => [
+                    'Content-Type' => 'application/json'
+                ], 'Accept'     => 'application/json',
+            ]);
+
+            $code               = $response->getStatusCode(); // 200
+            $reason             = $response->getReasonPhrase(); // OK
+            $body               = $response->getBody();
+            $result             = $body->getContents();
+            $result             = json_decode($result);
+            $return['access_token'] = $result->access_token;
+            $return['email']        = $email;
+            $return['phone_number'] = $phone_number;
+        }
+
+        return response()->json($return);
+    }
 }

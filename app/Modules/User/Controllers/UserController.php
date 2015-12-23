@@ -4,6 +4,7 @@ use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
+use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
@@ -23,12 +24,21 @@ class UserController extends Controller {
 	 */
 	public function index()
 	{
-		$user=User::all();
-        return response()->json(array(
-                'status'=>200,
-                'message'=>'success retrieve',
-                'data'=>$user
-        ));
+		$ownerId =  Authorizer::getResourceOwnerId();
+		$user=User::find($ownerId);
+
+		if(is_null($user))
+		{
+			return response()->json(array(
+					'status'=>404,
+					'message'=>'not found'
+			));
+		}
+		return response()->json(array(
+				'status'=>200,
+				'message'=>'success retrieve',
+				'data'=>$user
+		));
 	}
 
 	/**
@@ -49,24 +59,17 @@ class UserController extends Controller {
 	public function store(Request $request)
 	{
 		$user= $this->User->createOrUpdateUser($request->all());
-		return $user;
-//        $user=User::create([
-//            'name' => $request->phone,
-//            'phone_number' => $request->phone,
-//            'email' => $request->email,
-//            'password' => bcrypt($request->phone)
-//        ]);
-//        if($user){
-//            return response()->json(array(
-//                'status'=>201,
-//                'message'=>'success saving'
-//			));
-//        }else{
-//            return response()->json(array(
-//                'status'=>500,
-//                'message'=>'error saving'
-//			));
-//        }
+        if($user){
+            return response()->json(array(
+                'status'=>201,
+                'message'=>'success saving'
+			));
+        }else{
+            return response()->json(array(
+                'status'=>500,
+                'message'=>'error saving'
+			));
+        }
 	}
 
 	/**
@@ -77,19 +80,7 @@ class UserController extends Controller {
 	 */
 	public function show($id)
 	{
-		$user=User::find($id);
-		if(is_null($user))
-		{
-			return response()->json(array(
-					'status'=>404,
-					'message'=>'not found'
-			));
-		}
-		return response()->json(array(
-				'status'=>200,
-				'message'=>'success retrieve',
-				'data'=>$user
-		));
+		//
 	}
 
 	/**
@@ -109,9 +100,11 @@ class UserController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-    public function update($id, Request $request)
+    public function update(Request $request)
 	{
-		$user=User::find($id);
+		$ownerId =  Authorizer::getResourceOwnerId();
+		$user=User::find($ownerId);
+
         if(is_null($user))
         {
             return response()->json(array(
@@ -171,28 +164,7 @@ class UserController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		$user=User::find($id);
-		if(is_null($user))
-		{
-			return response()->json(array(
-					'status'=>404,
-					'message'=>'not found'
-			));
-		}
-
-		$success=$user->delete();
-		if(!$success)
-		{
-			return response()->json(array(
-					'status'=>500,
-					'message'=>'error deleting'
-			));
-		}
-
-		return response()->json(array(
-				'status'=>200,
-				'message'=>'success deleting'
-		));
+		//
 	}
 
 }
