@@ -1,8 +1,8 @@
 @if (count($errors) > 0)
 <div class="container">
-    <div class="row"> </div>
     <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
             <div class="alert alert-info alert-labeled">
                 <button type="button" class="close" data-dismiss="alert">
                     <span aria-hidden="true">×</span><span class="sr-only">Close</span>
@@ -20,6 +20,7 @@
 
 
         </div>
+         <div class="col-lg-4"></div>
     </div>
 </div>
 @endif
