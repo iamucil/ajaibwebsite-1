@@ -33,7 +33,6 @@ p.form-title {
     font-size: 20px;
     font-weight: 600;
     text-align: center;
-    color: #FFFFFF;
     margin-top: 5%;
     text-transform: uppercase;
     font-weight: 300;
@@ -58,10 +57,9 @@ form.login input[type="email"] {
     font-size: 14px;
     letter-spacing: 1px;
     margin-bottom: 5px;
-    color: #FFFFFF;
+    color: #666;
     outline: 0;
-    font-weight: 300;
-    float: left;
+    float: left
 }
 
 form.login input[type="submit"] {
@@ -183,10 +181,11 @@ form.login a:hover {
 }
 
 .alert-labeled {
-    padding: 0px;
+     padding: 0px;
     margin: 20% 0 0 0;
     position: absolute;
     width: 93%;
+    z-index: 999;
 }
 
 .alert-labeled-row {

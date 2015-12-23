@@ -7,6 +7,7 @@
     <title>Ajaib - @yield('title')</title>
 
     <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/jquery.webui-popover.css')}}" />
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/dashboard.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('css/dashboard.style.css')}}" />
@@ -46,8 +47,8 @@
                 <div id="tree-wrap">
                     <!-- Profile -->
                     <div class="profile">
-                        <img alt="" class="" src="{{ asset('/img/logo.png') }}">
-                        <h3>Ajaib <small>beta</small></h3>
+                        <img alt="" class="" src="./img/logo.png">
+                        <h3>EDUMIX <small>1.2</small></h3>
 
                     </div>
                     <!-- End of Profile -->
@@ -447,10 +448,74 @@
             @section('chatbar')
             <!-- Chat bottom -->
             <div class="chat-bottom">
-                <div class="chat-list chat-active">Bejo</div>
+                <div class="chat-list chat-active">
+                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Olivia Zalianti Putri</a>
+                        <div class="webui-popover-content">
+                            <div class="chat-conversation">
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            </div>
+                            <div class="textarea-nest">
+                                <div class="form-group">
+                                    <span class="fontello-attach"></span>
+                                    <span class="fontello-camera"></span>
+                                </div>  
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="3"></textarea>
+                                </div>
+                                  <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
+                            </div>
+                            <!-- /input-group -->
+                        </div>
+                </div>
                 <div class="chat-list">Agus</div>
                 <div class="chat-list">Widi</div>
-                <div class="chat-list chat-active">Ucils</div>
+                <div class="chat-list chat-active">
+                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Olivia Zalianti Putri</a>
+                        <div class="webui-popover-content">
+                            <div class="chat-conversation">
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            </div>
+                            <div class="textarea-nest">
+                                <div class="form-group">
+                                    <span class="fontello-attach"></span>
+                                    <span class="fontello-camera"></span>
+                                </div>  
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="3"></textarea>
+                                </div>
+                                  <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
+                            </div>
+                            <!-- /input-group -->
+                        </div>
+                </div>
                 <div class="chat-list chat-active">Anger</div>
                 <div class="chat-list">Themes</div>
                 <div class="chat-list">Themes</div>
@@ -462,7 +527,39 @@
 
                 <div class="chat-list">Themes</div>
                 <div class="chat-list">Themes</div>
-                <div class="chat-list chat-active">Themes</div>
+                <div class="chat-list chat-active">
+                                  <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Oliva</a>
+                        <div class="webui-popover-content">
+                            <div class="chat-conversation">
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            <p>popover contenbnbnbnbt</p>
+                            </div>
+                            <div class="textarea-nest">
+                                <div class="form-group">
+                                    <span class="fontello-attach"></span>
+                                    <span class="fontello-camera"></span>
+                                </div>  
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="3"></textarea>
+                                </div>
+                                  <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
+                            </div>
+                            <!-- /input-group -->
+                        </div>
+                </div>
 
             </div>
             <!-- Chat bottom -->
@@ -552,6 +649,7 @@
 <script type='text/javascript' src="{{asset('js/preloader-script.js')}}"></script>
 <!-- bootstrap javascript -->
 <script type='text/javascript' src="{{asset('js/bootstrap.js')}}"></script>
+<script type='text/javascript' src="{{asset('js/jquery.webui-popover.js')}}"></script>
 
 <!-- main edumix javascript -->
 <script type='text/javascript' src="{{asset('js/slimscroll/jquery.slimscroll.js')}}"></script>
@@ -564,6 +662,22 @@
 <script src="{{asset('js/offcanvas/sidetogglemenu.js')}}"></script>
 
 <script>
+   jQuery(function() {
+        //$('.chat-pop-over').popover();
+        $('.chat-pop-over').webuiPopover({
+            placement:'auto',
+             padding:false,
+            width:'300',//can be set with  number
+            //height:'300',//can be set with  number
+            height:'400',//can be set with  number
+            animation:'',
+             offsetTop:-18,  // offset the top of the popover
+            multi:true,//allow other popovers in page at same time
+             dismissible:false, // if popover can be dismissed by  outside click or escape key
+             closeable:true//display close button or not
+        });
+    })
+
     jQuery(function() { // on DOM load
         menu2 = new sidetogglemenu({ // initialize second menu example
             id: 'togglemenu1',

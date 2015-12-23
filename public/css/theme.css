@@ -609,7 +609,7 @@ Foundation Coustom
 .profile {
     /* #5c9df5 */
     
-    background: #111111;
+    background: #ff6600;
     width: 100%;
     position: relative;
     top: -13px;
@@ -1128,7 +1128,7 @@ Sidebar Menu
     /* #05212C */
 }
 #skin-select #toggle {
-    background: #111;
+    background: #ff6600;
     color: rgba(255, 255, 255, 1);
     cursor: pointer;
     display: block;

@@ -9,7 +9,7 @@
             <div class="col-md-4">
                 <div class="wrap">
                     <p class="form-title">
-                        Sign In
+                        Wellome to ajaib
                     </p>
                     <form action="/auth/login" method="POST" class="login" novalidate>
                         {{ csrf_field() }}
