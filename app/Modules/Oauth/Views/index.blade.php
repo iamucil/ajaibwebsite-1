@@ -1,3 +1,1 @@
-<?php
-
-echo trans('Oauth::example.welcome');
+@extends('layouts.dashboard')
