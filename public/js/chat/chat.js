@@ -1,5 +1,7 @@
 /**
  * Created by yudha on 26/12/15.
+ * below still hardcoded, and still dummy, notification has shown, minus: notification time and onclick remove/
+ * change style to disable on notification icon
  */
 <!-- Include the PubNub Library -->
 
