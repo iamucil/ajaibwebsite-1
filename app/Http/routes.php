@@ -82,3 +82,11 @@ Route::post('oauth/access_token', function() {
 
     return Response::json($result);
 });
+
+/**
+ * chat client example
+ * this is dummy and parameters still hardcoded
+ */
+Route::get('/chat-client', function () {
+    return view('chat-client');
+});
