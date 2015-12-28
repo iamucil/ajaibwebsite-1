@@ -341,18 +341,18 @@
                             </li>
                             <!-- message end -->
                             <!--  notification nest -->
-                            <li class="dropdown">
+                            <li class="dropdown" id="notifications">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="text-blue fa fa-bell" ></i> <span class="label edumix-noft">45</span><span class="caret"></span></a>
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
                                     </li>
-                                    <li class="edumix-sticky-title">
+                                    {{--<li class="edumix-sticky-title">--}}
 
-                                        <a href="#">
-                                            <h3 class="text-black "> <i class="icon-warning"></i> Sticky Very Important<span class="text-red fontello-record" ></span></h3>
-                                            <p class="text-black">1 minute ago</p>
-                                        </a>
-                                    </li>
+                                        {{--<a href="#">--}}
+                                            {{--<h3 class="text-black "> <i class="icon-warning"></i> Sticky Very Important<span class="text-red fontello-record" ></span></h3>--}}
+                                            {{--<p class="text-black">1 minute ago</p>--}}
+                                        {{--</a>--}}
+                                    {{--</li>--}}
                                     <li>
                                         <div class="slim-scroll">
                                             <div>
@@ -448,118 +448,7 @@
             @section('chatbar')
             <!-- Chat bottom -->
             <div class="chat-bottom">
-                <div class="chat-list chat-active">
-                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Olivia Zalianti Putri</a>
-                        <div class="webui-popover-content">
-                            <div class="chat-conversation">
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            </div>
-                            <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>  
-                                <div class="form-group">
-                                    <textarea class="form-control" rows="3"></textarea>
-                                </div>
-                                  <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
-                            </div>
-                            <!-- /input-group -->
-                        </div>
-                </div>
-                <div class="chat-list">Agus</div>
-                <div class="chat-list">Widi</div>
-                <div class="chat-list chat-active">
-                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Olivia Zalianti Putri</a>
-                        <div class="webui-popover-content">
-                            <div class="chat-conversation">
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            </div>
-                            <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>  
-                                <div class="form-group">
-                                    <textarea class="form-control" rows="3"></textarea>
-                                </div>
-                                  <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
-                            </div>
-                            <!-- /input-group -->
-                        </div>
-                </div>
-                <div class="chat-list chat-active">Anger</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list chat-active">
-                                  <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Oliva</a>
-                        <div class="webui-popover-content">
-                            <div class="chat-conversation">
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            </div>
-                            <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>  
-                                <div class="form-group">
-                                    <textarea class="form-control" rows="3"></textarea>
-                                </div>
-                                  <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
-                            </div>
-                            <!-- /input-group -->
-                        </div>
-                </div>
+                <div style="display: none;" class="chat-list">Agus</div>
 
             </div>
             <!-- Chat bottom -->
@@ -660,6 +549,10 @@
 
 <!-- FLOT CHARTS -->
 <script src="{{asset('js/offcanvas/sidetogglemenu.js')}}"></script>
+
+<!-- Include the PubNub Library -->
+<script src="https://cdn.pubnub.com/pubnub-dev.js"></script>
+<script src="{{asset('js/chat/chat.js')}}"></script>
 
 <script>
    jQuery(function() {
