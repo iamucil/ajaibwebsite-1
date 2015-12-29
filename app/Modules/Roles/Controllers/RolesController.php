@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 use App\Modules\Roles\Models\Role;
 use App\Modules\Roles\Models\Permission;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
+use Laracasts\Flash\Flash;
 
 class RolesController extends Controller {
 
@@ -13,9 +15,11 @@ class RolesController extends Controller {
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view("Oauth::index");
+
+        $roles      = Role::orderBy('name', 'asc')->get();
+        return view("Roles::index", compact('roles'));
     }
 
     /**
@@ -25,7 +29,7 @@ class RolesController extends Controller {
      */
     public function create()
     {
-        die('create');
+        return view('Roles::create');
     }
 
     /**
@@ -33,9 +37,16 @@ class RolesController extends Controller {
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        //
+        $role       = new Role();
+        $role->name     = $request->name;
+        $role->display_name     = $request->display_name;
+        $role->description      = $request->description;
+        $role->save();
+//        flash('Your data has been created');
+        flash()->success('Your data has been saved');
+        return redirect('/roles');
     }
 
     /**

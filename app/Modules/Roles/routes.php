@@ -12,5 +12,5 @@ Route::group([
     'module' => 'Role',
     'as' => 'roles::',
     'namespace' => 'App\Modules\Roles\Controllers'], function () {
-        Route::get('/start', 'RolesController@generateRoles');
+        Route::get('/start', 'RolesController@generateRoles')->name('start');
 });

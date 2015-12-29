@@ -47,7 +47,7 @@
                 <div id="tree-wrap">
                     <!-- Profile -->
                     <div class="profile">
-                        <img alt="" class="" src="./img/logo.png">
+                        <img alt="" class="" src="{{ asset('/img/logo.png') }}">
                         <h3>AJAIB <small>Beta</small></h3>
 
                     </div>
@@ -57,7 +57,7 @@
                     <div class="side-bar">
                         <ul id="menu-showhide" class="topnav slicknav">
                             <li>
-                                <a id="menu-select" class="tooltip-tip" href="../index.html" title="Dashboard">
+                                <a id="menu-select" class="tooltip-tip" href="{{ route('admin::dashboard') }}" title="Dashboard">
                                     <i class="icon-monitor"></i>
                                     <span>Dashboard</span>
 
@@ -435,6 +435,7 @@
 
             <!-- notification -->
             @yield('notification')
+            @include('flash::message')
             <!-- end of notification -->
 
             <!-- Content Begin -->
