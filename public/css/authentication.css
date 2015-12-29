@@ -71,8 +71,8 @@ form.login input[type="submit"] {
     outline: 0;
     cursor: pointer;
     letter-spacing: 1px;
-    background: #FF8000;
-    border: 1px solid #FF8000;
+    background: #F95809;
+    border: 1px solid #F95809;
 }
 
 form.login input[type="submit"]:hover {

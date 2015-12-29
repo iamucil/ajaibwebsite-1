@@ -501,7 +501,7 @@ Foundation Coustom
 }
 
 .top-bar-nest {
-    min-height: 75px;
+      min-height: 75px;
     background: #fff;
     display: block;
     padding: 10px 30px 0 30px;
@@ -509,6 +509,7 @@ Foundation Coustom
     border: none;
     border-radius: 0;
     border-bottom: 1px solid #ededed;
+    z-index: 1;
 }
 
 .top-bar {
@@ -738,36 +739,42 @@ Foundation Coustom
 }
 
 .edumix-msg-noft {
-    background: #FFF;
-    border: 2px solid #92cd10;
-    color: #666!important;
-    height: 30px;
-    width: 30px;
-    line-height: 21px;
+background: #0E8AD2;
+    color: #fff!important;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
     font-weight: bold!important;
     text-align: center!important;
     border-radius: 50%;
     display: inline-block;
-    font-size: 11px;
+    font-size: 10px;
+    position: relative!important;
+    padding: 0;
+    top: -10px;
+    left: -5px;
 }
 
 .edumix-noft {
-    background: #FFF;
-    border: 2px solid #5C9DF5;
-    color: #666!important;
-    height: 30px;
-    width: 30px;
-    line-height: 21px;
+    background: #EC0505;
+    color: #fff!important;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
     font-weight: bold!important;
     text-align: center!important;
     border-radius: 50%;
     display: inline-block;
-    font-size: 11px;
+    font-size: 10px;
+    position: relative!important;
+    padding: 0;
+    top: -10px;
+    left: -5px;
 }
 
 .profile {
     /* #5c9df5 */
-    background: #0084ff;
+    background: #ff6600;
     width: 100%;
     position: relative;
     top: -13px;
@@ -1181,7 +1188,11 @@ Header Navigation
     left: -25px;
     font-size: 16px;
 }
-
+.sideviewtoggle.btn.btn-default.btn-xs.icon-view-list{
+        border-radius: 50%;
+    border-width: 2px;
+    margin: 0 0 0 40px;
+}
 
 /*
 Search Style
@@ -1420,7 +1431,7 @@ Sidebar Menu
 }
 
 #skin-select #toggle {
-    background: #0084ff;
+    background: #ff6600;
     color: rgba(255, 255, 255, 1);
     cursor: pointer;
     display: block;
@@ -1441,11 +1452,11 @@ Sidebar Menu
 
 #skin-select #toggle:hover,
 #skin-select #toggle.active:hover {
-    background: #0084ff;
+    background: #ff6600;
 }
 
 #skin-select #toggle.active {
-    background: #0084ff;
+    background: #ff6600;
     color: rgba(255, 255, 255, 1);
     cursor: pointer;
     display: block;
@@ -1951,7 +1962,7 @@ ul.topnav li a:hover {
 
 ul.topnav li a:hover:before {
     content: "";
-    background: #92cd18;
+    background: #ff6600;
     width: 3px;
     position: absolute;
     left: 0;
@@ -2768,4 +2779,16 @@ FOOTER
     float: left;
     height: 50px;
     width: 4px;
+}
+.backgroundBlink {
+    background: #fff;
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    color: #888; 
+    
+   
+}
+.backgroundBlink a{
+   color: #888; 
+   font-weight: normal!important;
 }

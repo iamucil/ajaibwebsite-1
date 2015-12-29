@@ -1070,7 +1070,7 @@ ALERT
     position: fixed;
     bottom: 0;
     left: 0;
-    z-index: 0;
+    z-index: 2;
     display: table;
     /*padding: 0 0 0 260px;*/
     background-color: #2F323A;
@@ -1095,8 +1095,8 @@ ALERT
 
 .chat-active {
     position: relative;
-    background-color: #0084ff;
-    border-top: 1px solid #0084ff;
+    background-color: #ff6600;
+    border-top: 1px solid #ff6600;
     color: #fff;
     border-right: 1px solid rgba(255, 255, 255, 0.3);
     /*   top: -1px;
@@ -1145,6 +1145,6 @@ ALERT
 }
 
 .chat-active a {
-    font-weight: bold!important;
+   
     color: #fff;
 }

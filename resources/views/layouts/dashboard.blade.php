@@ -17,11 +17,11 @@
     <link rel="stylesheet" type="text/css" href="{{asset('css/theme.css')}}" />
 
     <!-- pace loader -->
-    <script src="{{asset('js/pace/pace.js')}}"></script>
-    <link rel="stylesheet" href="{{asset('js/pace/themes/orange/pace-theme-flash.css')}}"/>
+
     <link rel="stylesheet" href="{{asset('js/slicknav/slicknav.css')}}" />
     <!-- Slidebars CSS -->
     <link rel="stylesheet" href="{{asset('js/offcanvas/sidetogglemenu.css')}}" />
+
 
 <body>
 <!-- preloader -->
@@ -273,10 +273,7 @@
                                 </ul>
                             </li>
 
-                            <li>
-                                <button style="margin-top:9px;border" onClick="menu2.toggle()" class="sideviewtoggle btn btn-default btn-xs"><span style="font-size:13px" class="icon-view-list"></span>
-                                </button>
-                            </li>
+                      
                         </ul>
                         <form class="navbar-form navbar-left" style="position:relative" role="search">
                             <!-- Search | has-form wrapper -->
@@ -287,7 +284,7 @@
                         <ul class="nav navbar-nav navbar-right">
                             <!--  message end -->
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="text-green fa fa-envelope"></i>&nbsp;<span class="label edumix-msg-noft">84</span><span class="text-green caret"></span></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-bell"></i>&nbsp;&nbsp;<span class="label edumix-msg-noft">999</span><span class="caret"></span></a>
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-green">MESSAGE</span>
                                     </li>
@@ -342,7 +339,7 @@
                             <!-- message end -->
                             <!--  notification nest -->
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="text-blue fa fa-bell" ></i> <span class="label edumix-noft">45</span><span class="caret"></span></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat-alt"></i>&nbsp;&nbsp;<span class="label edumix-noft">45</span><span class="caret"></span></a>
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
                                     </li>
@@ -405,6 +402,10 @@
                                 </ul>
                             </li>
                             <!-- notification nest end -->
+                            <li>
+                                <button style="margin-top:9px;border" onClick="menu2.toggle()" class="sideviewtoggle btn btn-default btn-xs icon-view-list">
+                                </button>
+                            </li>
                         </ul>
                     </div>
                     <!-- /.navbar-collapse -->
@@ -577,7 +578,12 @@
 
         <!-- End of Container Begin -->
 
-        <div id="togglemenu1" class="sidetogglemenu">
+    
+    </div>
+    <!-- end paper bg -->
+
+</div>
+    <div id="right_chat_menu" class="sidetogglemenu">
             <!-- Your right Slidebar content. -->
             <!-- Right Menu -->
             <aside class="right-off-canvas-menu">
@@ -636,10 +642,6 @@
                 </ul>
             </aside>
         </div>
-    </div>
-    <!-- end paper bg -->
-
-</div>
 <!-- end of off-canvas-wrap -->
 
 <!-- end of inner-wrap -->
@@ -660,6 +662,7 @@
 
 <!-- FLOT CHARTS -->
 <script src="{{asset('js/offcanvas/sidetogglemenu.js')}}"></script>
+<!-- <script src="{{asset('js/offcanvas/jPushMenu.js')}}"></script> -->
 
 <script>
    jQuery(function() {
@@ -676,16 +679,22 @@
              dismissible:false, // if popover can be dismissed by  outside click or escape key
              closeable:true//display close button or not
         });
-    })
 
-    jQuery(function() { // on DOM load
-        menu2 = new sidetogglemenu({ // initialize second menu example
-            id: 'togglemenu1',
+            menu2 = new sidetogglemenu({ // initialize second menu example
+            id: 'right_chat_menu',
             position: 'right',
+            pushcontent: false,
             //source: 'togglemenu.txt',
             revealamt: -5
         })
+
+    setInterval(function(){
+        $(".chat-active").toggleClass("backgroundBlink");
+     },1500)
+
     })
+
+
 </script>
 
 </body>
