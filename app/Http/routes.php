@@ -19,6 +19,11 @@ Route::get('/admin', function () {
     return view('admin');
 });
 
+Route::get('/backend', function () {
+    return view('dashboard');
+});
+
+
 Route::group([
     'prefix' => 'admin',
     'module' => 'User',
