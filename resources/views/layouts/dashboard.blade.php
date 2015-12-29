@@ -1,6 +1,5 @@
 <!doctype html>
 <html class="no-js" lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,14 +14,10 @@
     <link rel="stylesheet" type="text/css" href="{{asset('css/typicons.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('css/font-awesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('css/theme.css')}}" />
-
     <!-- pace loader -->
-
     <link rel="stylesheet" href="{{asset('js/slicknav/slicknav.css')}}" />
     <!-- Slidebars CSS -->
     <link rel="stylesheet" href="{{asset('js/offcanvas/sidetogglemenu.css')}}" />
-
-
 <body>
 <!-- preloader -->
 <div id="preloader">
@@ -273,7 +268,7 @@
                                 </ul>
                             </li>
 
-                      
+
                         </ul>
                         <form class="navbar-form navbar-left" style="position:relative" role="search">
                             <!-- Search | has-form wrapper -->
@@ -473,7 +468,7 @@
                                 <div class="form-group">
                                     <span class="fontello-attach"></span>
                                     <span class="fontello-camera"></span>
-                                </div>  
+                                </div>
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
@@ -508,7 +503,7 @@
                                 <div class="form-group">
                                     <span class="fontello-attach"></span>
                                     <span class="fontello-camera"></span>
-                                </div>  
+                                </div>
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
@@ -552,7 +547,7 @@
                                 <div class="form-group">
                                     <span class="fontello-attach"></span>
                                     <span class="fontello-camera"></span>
-                                </div>  
+                                </div>
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
@@ -578,7 +573,7 @@
 
         <!-- End of Container Begin -->
 
-    
+
     </div>
     <!-- end paper bg -->
 
