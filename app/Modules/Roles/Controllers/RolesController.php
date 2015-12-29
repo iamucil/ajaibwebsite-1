@@ -7,6 +7,8 @@ use App\Modules\Roles\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Laracasts\Flash\Flash;
+use App\User;
+use Validator;
 
 class RolesController extends Controller {
 
@@ -39,14 +41,23 @@ class RolesController extends Controller {
      */
     public function store(Request $request)
     {
-        $role       = new Role();
-        $role->name     = $request->name;
-        $role->display_name     = $request->display_name;
-        $role->description      = $request->description;
-        $role->save();
+        $validator      = Validator::make($request->all(), [
+            'name' => 'required|unique:roles|max:50'
+        ]);
 
-        flash()->success('Your data has been saved');
-        return redirect('/roles');
+        if($validator->fails()){
+            flash()->error($validator->errors()->first());
+            return redirect()->route('roles.create')->withInput()->withErrors($validator);
+        }else{
+            $role                   = new Role();
+            $role->name             = $request->name;
+            $role->display_name     = $request->display_name;
+            $role->description      = $request->description;
+            $role->save();
+
+            flash()->success('Your data has been saved');
+            return redirect()->route('roles.index');
+        }
     }
 
     /**
@@ -55,9 +66,20 @@ class RolesController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
-        //
+        $role       = Role::find($id);
+        $role_users = $role->users;
+        $users      = User::paginate(200);
+
+        if($request->ajax()) {
+            return response()->json(['data' => 'json']);
+        }else{
+            // $u  = User::where('name', '=', '+6285640427774')->first();
+            // $u->attachRole($role);
+            $title      = 'Detail Roles';
+            return view('Roles::show')->with(compact('users', 'role_users', 'role', 'title'));
+        }
     }
 
     /**
@@ -68,7 +90,9 @@ class RolesController extends Controller {
      */
     public function edit($id)
     {
-        return $id;
+        $role       = Role::find($id);
+        $title      = 'Edit Role';
+        return view('Roles::edit')->with(compact('role', 'title'))->withInput($role);
     }
 
     /**
@@ -77,9 +101,21 @@ class RolesController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update($id, Request $request)
     {
-        //
+        $role       = Role::find($id);
+        $role->name             = $role->name;
+        $role->display_name     = $request->display_name;
+        $role->description      = $request->description;
+
+        if(!$role->save()){
+            flash()->error('Error Occured when saving your data');
+            return redirect()->route('roles.edit', ['id' => $id])->withInput();
+        }else{
+            flash()->success('Your data has been saved');
+            return redirect()->route('roles.index');
+        }
+
     }
 
     /**
@@ -122,4 +158,11 @@ class RolesController extends Controller {
         return 'Woohoooo!!';
     }
 
+    public function attachRole(Request $request)
+    {
+        $role       = Role::find($request->role_id);
+        $user       = User::find($request->user_id);
+        $user->attachRole($role);
+        return response()->json(['data' => $request->all()]);
+    }
 }

@@ -66,6 +66,9 @@
                                 <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-default">
                                     <i class="glyphicon glyphicon-pencil"></i> Edit
                                 </a>
+                                <a href="{{ route('roles.show', $role->id) }}" class="btn btn-default">
+                                    <i class="glyphicon glyphicon-share"></i> Assign Role
+                                </a>
                             </td>
                         </tr>
                     @endforeach

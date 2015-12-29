@@ -18,6 +18,9 @@
         </div>
     </div>
     <div class="box-body">
+        @if (count($errors))
+            error
+        @endif
         <form class="form-horizontal" method="POST" name="frm-roles" id="frm-roles" enc-type="multipart/form-data" action="{{ route('roles.store') }}">
             {{ csrf_field() }}
             <div class="form-group">

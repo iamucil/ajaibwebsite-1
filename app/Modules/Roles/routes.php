@@ -10,7 +10,8 @@ Route::group(array('module' => 'Roles', 'namespace' => 'App\Modules\Roles\Contro
 Route::group([
     'prefix' => 'roles',
     'module' => 'Role',
-    'as' => 'roles::',
+    'as' => 'roles.',
     'namespace' => 'App\Modules\Roles\Controllers'], function () {
         Route::get('/start', 'RolesController@generateRoles')->name('start');
+        Route::post('/attach-role/{id}', 'RolesController@attachRole')->name('attach');
 });
