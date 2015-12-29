@@ -1,4 +1,5 @@
 <!-- Right sidemenu -->
+
 <div id="skin-select">
     <!--      Toggle sidemenu icon button -->
     <a id="toggle">
@@ -194,7 +195,15 @@
                 </li>
                 <li>About Edumix <span class="icon-music"></span>
                 </li>
-
+                <li>
+                    @if (Auth::user()->hasRole('root'))
+                        Login Sebagai Super User
+                    @elseif (Auth::user()->hasRole('admin'))
+                        Login Sebagai Administrator
+                    @elseif (Auth::user()->hasRole('operator'))
+                        Login Sebagai Operator
+                    @endif
+                </li>
             </ul>
         </div>
     </div>
