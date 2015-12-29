@@ -74,7 +74,13 @@ After finishing cloning from github repo into local machine (phase 1, step 2)
 1. ``composer require zizaco/entrust``
 2. ``composer require artem-schander/l5-modular``
 
-   a. ``composer update``
-   b. load package l5-modular into service providers on ``APP/config/app.php`` add ``ArtemSchander\L5Modular\ModuleServiceProvider::class,`` in ``providers`` section
-   c. The built in Artisan command ``php artisan make:module name [--no-migration] [--no-translation]`` generates a ready to use module in the ``app/Modules`` folder and a migration if necessary.
-   d. name is camel cased word
+   1. ``composer update``
+   2. load package l5-modular into service providers on ``APP/config/app.php`` add ``ArtemSchander\L5Modular\ModuleServiceProvider::class,`` in ``providers`` section
+   3. The built in Artisan command ``php artisan make:module name [--no-migration] [--no-translation]`` generates a ready to use module in the ``app/Modules`` folder and a migration if necessary.
+   4. name is camel cased word
+
+## USING SSL
+
+1. Install OpenSSL or other ssl service on the web server
+2. Set APP_ENV in .env file into APP_ENV=local or APP_ENV=release or other name for using SSL
+3. Set APP_ENV in .env file into APP_ENV=devel for developing mode (no SSL)
