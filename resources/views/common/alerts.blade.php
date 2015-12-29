@@ -1,4 +1,4 @@
-@if (count($success) > 0)
+@if (count($errors) > 0)
 <!-- notification -->
 <div class="row">
     <div class="col-md-12">
