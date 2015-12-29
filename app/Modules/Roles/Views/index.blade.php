@@ -38,6 +38,9 @@
                     <th>
                         Description
                     </th>
+                    <th>
+                        Action
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -58,6 +61,11 @@
                             </td>
                             <td>
                                 {{ $role->description }}
+                            </td>
+                            <td>
+                                <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-default">
+                                    <i class="glyphicon glyphicon-pencil"></i> Edit
+                                </a>
                             </td>
                         </tr>
                     @endforeach
