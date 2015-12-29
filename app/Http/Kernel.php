@@ -19,6 +19,7 @@ class Kernel extends HttpKernel
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class,
         // \App\Http\Middleware\VerifyCsrfToken::class,
+        \App\Http\Middleware\ForceSSL::class,
     ];
 
     /**
@@ -44,5 +45,9 @@ class Kernel extends HttpKernel
         'oauth-client'  => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
         'check-authorization-params' => \LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
         'csrf'          => \App\Http\Middleware\VerifyCsrfToken::class,
+        /**
+         * Force SSL
+         */
+        'force.ssl' => \App\Http\Middleware\ForceSSL::class,
     ];
 }
