@@ -44,7 +44,7 @@ class RolesController extends Controller {
         $role->display_name     = $request->display_name;
         $role->description      = $request->description;
         $role->save();
-//        flash('Your data has been created');
+        
         flash()->success('Your data has been saved');
         return redirect('/roles');
     }

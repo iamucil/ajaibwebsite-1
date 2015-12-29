@@ -57,6 +57,7 @@
             <!-- notification -->
             @yield('notification')
             <!-- end of notification -->
+            @include('flash::message')
 
             <!-- Content Begin -->
             <div class="row">
