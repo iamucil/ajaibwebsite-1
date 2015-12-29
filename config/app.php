@@ -159,6 +159,8 @@ return [
         LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
         LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
 
+        Laracasts\Flash\FlashServiceProvider::class,
+
     ],
 
     /*
@@ -209,6 +211,7 @@ return [
         'View'      => Illuminate\Support\Facades\View::class,
         'Entrust'   => 'Zizaco\Entrust\EntrustFacade',
         'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
+        'Flash'     => Laracasts\Flash\Flash::class,
     ],
 
 ];

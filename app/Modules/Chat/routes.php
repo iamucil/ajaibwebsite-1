@@ -7,10 +7,11 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
 });
 
 // API Service Route
-Route::group(['prefix'=>'api', 'namespace' => 'App\Modules\Chat\Controllers', 'middleware' => 'oauth'], function(){
+Route::group(['prefix'=>'api/v1', 'namespace' => 'App\Modules\Chat\Controllers'], function(){
 
-    Route::resource('chat','ChatController',['only'=>['index','store']]);
+    // api for get data chat
+    Route::get('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.index', 'uses' => 'ChatController@index']);
+    // api for insert data chat
+    Route::post('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.store', 'uses' => 'ChatController@store']);
 
 });
-
-// Chat with oauth

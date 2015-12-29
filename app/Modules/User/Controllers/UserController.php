@@ -22,7 +22,7 @@ class UserController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
 		$ownerId =  Authorizer::getResourceOwnerId();
 		$user=User::find($ownerId);
