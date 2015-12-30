@@ -32,7 +32,7 @@
                                     {{ $user->email }}
                                 </td>
                                 <td>
-                                    @unless ($user->hasRole($role->name))
+                                    @unless ($user->roles->count())
                                         <form action="{{ route('roles.attach', $role->id) }}" method="POST" class="frm-role">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="user_id" value="{{ $user->id }}" />

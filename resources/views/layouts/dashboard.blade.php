@@ -32,9 +32,9 @@
 <div class="off-canvas-wrap" data-offcanvas>
     <!-- right sidebar wrapper -->
     <div class="inner-wrap">
-
-        @include('common.dashboard.leftnav')
-
+        @if (Auth::check())
+            @include('common.dashboard.leftnav')
+        @endif
         <div class="wrap-fluid" id="paper-bg">
             @include('common.dashboard.topbar')
 
