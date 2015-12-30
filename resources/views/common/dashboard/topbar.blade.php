@@ -19,11 +19,14 @@
                     <a href="#" class="dropdown-toggle text-gray" data-toggle="dropdown" role="button" aria-expanded="false"><img alt="" class="admin-pic img-circle" src="http://api.randomuser.me/portraits/thumb/men/28.jpg"> Hi, Dave Mattew <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-nest profile-dropdown" role="menu">
-                        <li><a href="#"><i class="icon-user"></i> Profile<span class="text-aqua fontello-record" ></span></a>
+                        <li>
+                            <a href="#"><i class="icon-user"></i> Profile<span class="text-aqua fontello-record" ></span>
+                        </a>
                         </li>
-                        <li><a href="#">Another action</a>
-                        </li>
-                        <li><a href="#">Something else here</a>
+                        <li>
+                            <a href="{{ route('logout') }}">
+                                <i class="icon-upload"></i> Log Out <span class="text-aqua fontello-cd"></span>
+                            </a>
                         </li>
 
                     </ul>
@@ -94,60 +97,14 @@
                 </li>
                 <!-- message end -->
                 <!--  notification nest -->
-                <li class="dropdown">
+                <li class="dropdown" id="chat-notification">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat-alt"></i>&nbsp;&nbsp;<span class="label edumix-noft">45</span><span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-nest" role="menu">
                         <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
                         </li>
-                        <li class="edumix-sticky-title">
-
-                            <a href="#">
-                                <h3 class="text-black "> <i class="icon-warning"></i> Sticky Very Important<span class="text-red fontello-record" ></span></h3>
-                                <p class="text-black">1 minute ago</p>
-                            </a>
-                        </li>
                         <li>
                             <div class="slim-scroll">
-                                <div>
-                                    <i class="fontello-megaphone"></i>
-                                    <a href="#">
-                                        <h3>Announcements <span class="text-green fontello-record" ></span>
-                                        </h3>
-                                        <p>Just Now !</p>
-                                    </a>
-                                </div>
-                                <div>
-                                    <i class="  fontello-attach-1"></i>
-                                    <a href="#">
-                                        <h3>Complete your profile<span class="text-yellow fontello-record" ></span>
-                                        </h3>
-                                        <p>2 Minute Ago</p>
-                                    </a>
-                                </div>
-                                <div>
-                                    <i class="  fontello-calendar-1"></i>
-                                    <a href="#">
-                                        <h3>New Schedule Realease<span class="text-yellow fontello-record" ></span>
-                                        </h3>
-                                        <p>30 Minute ago</p>
-                                    </a>
-                                </div>
-                                <div>
-                                    <i class="fontello-database-1"></i>
-                                    <a href="#">
-                                        <h3>New Student Data<span class="text-orange fontello-record" ></span>
-                                        </h3>
-                                        <p>1 Hour ago</p>
-                                    </a>
-                                </div>
-                                <div>
-                                    <i class="fontello-graduation-cap"></i>
-                                    <a href="#">
-                                        <h3>Graduate Student List<span class="fontello-record" ></span>
-                                        </h3>
-                                        <p>2 Days ago</p>
-                                    </a>
-                                </div>
+
                             </div>
                         </li>
                         <li class="bg-white pull-right">

@@ -134,25 +134,25 @@ class RolesController extends Controller {
         $root       = new Role();
         $root->name                 = 'root';
         $root->display_name         = 'Super User'; // optional
-        $root->description          = 'User is Super User Applikasi'; // optional
+        $root->description          = 'User is allowed to do everything'; // optional
         $root->save();
 
         $admin      = new Role();
         $admin->name                = 'admin';
         $admin->display_name        = 'User Administrator'; // optional
-        $admin->description         = 'User is allowed to manage and edit other users'; // optional
+        $admin->description         = 'user is allowed to manage and edit other users data'; // optional
         $admin->save();
 
         $operator   = new Role();
         $operator->name             = 'operator';
-        $operator->display_name     = 'User Operator'; // optional
-        $operator->description      = 'User only allowed to manage their data'; // optional
+        $operator->display_name     = 'Operator'; // optional
+        $operator->description      = 'User Is Only Allowed To Manage And Edit Their Data'; // optional
         $operator->save();
 
         $users      = new Role();
         $users->name             = 'users';
-        $users->display_name     = 'End Users'; // optional
-        $users->description      = 'User only allowed to manage their data'; // optional
+        $users->display_name     = 'End User'; // optional
+        $users->description      = 'User is only allowed to manage and edit their data'; // optional
         $users->save();
 
         return 'Woohoooo!!';

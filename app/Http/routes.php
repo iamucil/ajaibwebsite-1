@@ -15,34 +15,38 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/admin', function () {
-    return view('admin');
-});
-
 Route::get('/backend', function () {
     return view('dashboard');
 });
 
+// Route::get('/admin', function () {
+//     return view('admin');
+// });
+
+
 
 Route::group([
-    'prefix' => 'admin',
+    'prefix' => 'dashboard',
     'module' => 'User',
     'as' => 'admin::',
     'middleware' => ['auth']
 ], function () {
-    Route::get('/dashboard', ['as' => 'dashboard', function () {
+    Route::get('/', ['as' => 'dashboard', function () {
         return view('admin');
     }]);
 });
+
+Entrust::routeNeedsRole('/dashboard/*', ['root', 'admin', 'operator']);
+
 Route::get('auth/login', [
    'as' => 'login',
    'uses' => 'Auth\AuthController@getLogin'
 ]);
-Route::post('auth/login', 'Auth\AuthController@postLogin');
-Route::get('auth/logout', 'Auth\AuthController@getLogout');
+Route::post('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
+Route::get('auth/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
-Route::get('auth/register', 'Auth\AuthController@getRegister');
-Route::post('auth/register', 'Auth\AuthController@doRegister');
+Route::get('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@getRegister']);
+Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
 
 /**
  * Success Register
@@ -93,36 +97,4 @@ Route::post('api/v1/oauth/access_token', function() {
  */
 Route::get('/chat-client', function () {
     return view('chat-client');
-});
-
-Route::get('/start', function () {
-$subscriber = new Role();
-    $subscriber->name = 'Subscriber';
-    $subscriber->save();
-
-    $author = new Role();
-    $author->name = 'Author';
-    $author->save();
-
-    $read = new Permission();
-    $read->name = 'can_read';
-    $read->display_name = 'Can Read Posts';
-    $read->save();
-
-    $edit = new Permission();
-    $edit->name = 'can_edit';
-    $edit->display_name = 'Can Edit Posts';
-    $edit->save();
-
-    $subscriber->attachPermission($read);
-    $author->attachPermission($read);
-    $author->attachPermission($edit);
-
-    // $user1 = User::find(1);
-    // $user2 = User::find(2);
-
-    // $user1->attachRole($subscriber);
-    // $user2->attachRole($author);
-
-    return 'Woohoo!';
 });

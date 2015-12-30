@@ -13,11 +13,23 @@
             </h3>
         </div>
         <div class="box-body">
+            <div class="row">
+                <div class="col-md-4 col-md-offset-8">
+                    <div class="pull-right">
+                        <a href="{{ URL::route('roles.create') }}" class="btn btn-success">
+                            <i class="fa fa-list"></i> Daftar Roles
+                        </a>
+                    </div>
+                </div>
+            </div>
             <table class="table table-grid">
                 <thead>
                     <tr>
                         <th>
                             Email
+                        </th>
+                        <th>
+                            Phone Number
                         </th>
                         <th style="width: 60px;">
                             Action
@@ -30,6 +42,9 @@
                             <tr>
                                 <td>
                                     {{ $user->email }}
+                                </td>
+                                <td>
+                                    {{ $user->phone_number }}
                                 </td>
                                 <td>
                                     @unless ($user->roles->count())
