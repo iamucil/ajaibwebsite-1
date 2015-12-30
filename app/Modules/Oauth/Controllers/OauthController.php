@@ -127,7 +127,7 @@ class OauthController extends Controller {
 
         if($oauth->exists()){
             $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
-            $response           = $client->request('POST', '/oauth/access_token', [
+            $response           = $client->request('POST', 'api/v1/oauth/access_token', [
                 'form_params' => $params,
                 'header' => [
                     'Content-Type' => 'application/json'
