@@ -11,7 +11,6 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::post('/user', ['as' => 'api.user.store', 'uses' => 'UserController@store']);
         // api for update data user
         Route::post('/user/update', ['middleware' => 'oauth', 'as' => 'api.user.update', 'uses' => 'UserController@update']);
-
     });
 
     Route::resource('User', 'UserController');
