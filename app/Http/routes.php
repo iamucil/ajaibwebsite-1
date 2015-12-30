@@ -15,25 +15,29 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/admin', function () {
-    return view('admin');
-});
-
 Route::get('/backend', function () {
     return view('dashboard');
 });
 
+// Route::get('/admin', function () {
+//     return view('admin');
+// });
+
+
 
 Route::group([
-    'prefix' => 'admin',
+    'prefix' => 'dashboard',
     'module' => 'User',
     'as' => 'admin::',
     'middleware' => ['auth']
 ], function () {
-    Route::get('/dashboard', ['as' => 'dashboard', function () {
+    Route::get('/', ['as' => 'dashboard', function () {
         return view('admin');
     }]);
 });
+
+Entrust::routeNeedsRole('/dashboard/*', ['root', 'admin', 'operator']);
+
 Route::get('auth/login', [
    'as' => 'login',
    'uses' => 'Auth\AuthController@getLogin'
