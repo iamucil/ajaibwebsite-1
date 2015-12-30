@@ -19,9 +19,14 @@
                     <a href="#" class="dropdown-toggle text-gray" data-toggle="dropdown" role="button" aria-expanded="false"><img alt="" class="admin-pic img-circle" src="http://api.randomuser.me/portraits/thumb/men/28.jpg"> Hi, Dave Mattew <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-nest profile-dropdown" role="menu">
-                        <li><a href="#"><i class="icon-user"></i> Profile<span class="text-aqua fontello-record" ></span></a>
+                        <li>
+                            <a href="#"><i class="icon-user"></i> Profile<span class="text-aqua fontello-record" ></span>
+                        </a>
                         </li>
-                        <li><a href="#">Log Out</a>
+                        <li>
+                            <a href="{{ route('logout') }}">
+                                <i class="icon-upload"></i> Log Out <span class="text-aqua fontello-cd"></span>
+                            </a>
                         </li>
 
                     </ul>
