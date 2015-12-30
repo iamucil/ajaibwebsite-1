@@ -3,7 +3,7 @@
 Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controllers'), function() {
 
     Route::resource('User', 'UserController');
-    
+
 });
 
 // API Service Route
