@@ -82,7 +82,7 @@ Route::post('oauth/authorize', ['as' => 'oauth.authorize.post', 'middleware' => 
     return Redirect::to($redirectUri);
 }]);
 
-Route::post('oauth/access_token', function() {
+Route::post('api/v1/oauth/access_token', function() {
     $result         = Authorizer::issueAccessToken();
 
     return Response::json($result);
