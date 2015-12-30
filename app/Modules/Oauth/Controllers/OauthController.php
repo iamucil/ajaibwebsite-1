@@ -101,9 +101,9 @@ class OauthController extends Controller {
             'base_uri' => 'http://getajaib.local'
         ]);
         $grant_type         = 'password';
-        $client_id          = $request->get('id');
-        $client_secret      = $request->get('secret');
-        $verification_code  = $request->get('code');
+        $client_id          = $request->id;
+        $client_secret      = $request->secret;
+        $verification_code  = $request->code;
         $email              = '';
         $phone_number       = '';
         $password           = '';
@@ -127,7 +127,7 @@ class OauthController extends Controller {
 
         if($oauth->exists()){
             $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
-            $response           = $client->request('POST', '/oauth/access_token', [
+            $response           = $client->request('POST', 'api/v1/oauth/access_token', [
                 'form_params' => $params,
                 'header' => [
                     'Content-Type' => 'application/json'

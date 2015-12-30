@@ -51,8 +51,20 @@
 <div class="container">
     <div class="content">
         <div class="title">Client Chat Feature</div>
-        <input type="text" id="chat_tf" value=""/>
-        <button id="send_bt" name="send">SEND</button>
+        <label>GET TOKEN HERE</label>
+        <div>
+            <input type="text" id="vercode" placeholder="verification code" size="40" value=""/>
+            <button id="get_token" name="get_token">TOKEN</button>
+        </div>
+        <div>
+            <input type="text" id="access_token" placeholder="access token" size="49" value="" readonly/>
+        </div>
+        <br/>
+        <label>LETS CHAT HERE</label>
+        <div>
+            <input type="text" id="chat_tf" placeholder="message" size="40" value=""/>
+            <button id="send_bt" name="send" >SEND &nbsp;</button>
+        </div>
         {{--<button id="req_bt" name="request">REQUEST CHAT</button>--}}
     </div>
 </div>
@@ -66,7 +78,7 @@
 <script src="https://cdn.pubnub.com/pubnub-dev.js"></script>
 
 <!-- Get Client Ip Address -->
-<script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
+<script type="text/javascript" src="https://l2.io/ip.js?var=myip"></script>
 
 <!-- Instantiate PubNub -->
 <script type="text/javascript">
@@ -80,9 +92,36 @@
         return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
     }
 
+    // Get token
+    $('#get_token').click(function () {
+        var vercode = $('#vercode').val();
+        // get access token
+        $.ajax({
+            type: "POST",
+            url: "https://getajaib.local/api/v1/oauth/grant_access",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                id:"f3d259ddd3ed8ff3843839b",
+                secret:"4c7f6f8fa93d59c45502c0ae8c4a95b",
+                code:vercode
+            }),
+            success: function (data, status, jqXHR) {
+                // success handler
+                $("#access_token").val(data['access_token']);
+            },
+            error: function (jqXHR, status) {
+                // error handler
+                console.log(jqXHR);
+                alert('fail' + status.code);
+            }
+        });
+    });
+
     var PUBNUB_demo = PUBNUB.init({
         publish_key: 'pub-c-20764d9e-b436-4776-b03a-adcae96c2a6b',
         subscribe_key: 'sub-c-6bad3874-9efa-11e5-baf7-02ee2ddab7fe',
+        ssl : (('https:' == document.location.protocol) ? true : false),
         uuid: 'user-yudha'
     });
 
@@ -95,6 +134,7 @@
 
     $('#send_bt').click(function () {
         var text = $('#chat_tf').val();
+        var access_token = $('#access_token').val();
         var datetime = "LastSync: " + new Date().today() + " @ " + new Date().timeNow();
         PUBNUB_demo.publish({
             channel: 'OPERATOR',
@@ -106,6 +146,32 @@
                 "sender_id":'085227052004',
                 "receiver_id":'',
                 "time":datetime
+            }
+        });
+
+        // Send to API chat
+        $.ajax({
+            type: "POST",
+            url: "https://getajaib.local/api/v1/chat",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                message:text,
+                ipaddress:myip
+            }),
+            beforeSend: function(xhr) {
+                // Set the OAuth header from the session ID
+                xhr.setRequestHeader("Authorization", 'Bearer ' + access_token);
+            },
+            success: function (data, status, jqXHR) {
+                // success handler
+                console.log(data);
+                alert("success");
+            },
+            error: function (jqXHR, status) {
+                // error handler
+                console.log(jqXHR);
+                alert('fail' + status.code);
             }
         });
     });
