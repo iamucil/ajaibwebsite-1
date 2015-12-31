@@ -113,14 +113,6 @@ class UserController extends Controller {
             ));
         }
 
-		if(!is_null($request->name))
-		{
-			$user->name=$request->name;
-		}
-		if(!is_null($request->email))
-		{
-            $user->email=$request->email;
-		}
 		if(!is_null($request->firstname))
 		{
             $user->firstname=$request->firstname;
@@ -129,17 +121,17 @@ class UserController extends Controller {
 		{
             $user->lastname=$request->lastname;
 		}
-		if(!is_null($request->phone))
-		{
-            $user->phone_number=$request->phone;
-		}
 		if(!is_null($request->address))
 		{
             $user->address=$request->address;
 		}
+		if(!is_null($request->photo))
+		{
+            $user->gender=$request->photo;
+		}
 		if(!is_null($request->gender))
 		{
-            $user->gender=$request->gender;
+			$user->gender=$request->gender;
 		}
 
 		$success=$user->save();
