@@ -155,7 +155,8 @@ class RolesController extends Controller {
         $users->description      = 'User is only allowed to manage and edit their data'; // optional
         $users->save();
 
-        return 'Woohoooo!!';
+        flash()->success('Success generated roles!!');
+        return redirect()->route('roles.index');
     }
 
     public function attachRole(Request $request)

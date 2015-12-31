@@ -36,7 +36,7 @@
                             </a>
                             <ul>
                                 <li>
-                                    <a href="#" title="Inbox">Inbox
+                                    <a href="{{ route('user.list') }}" title="Inbox">Users
                                         <div class="noft-blue bg-red" style="display: inline-block; float: none;">Users</div>
                                     </a>
                                 </li>

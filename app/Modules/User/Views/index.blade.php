@@ -1,3 +1,9 @@
-<?php
+@extends('layouts.dashboard')
 
-echo trans('User::example.welcome');
+@section('title')
+   List Users
+@stop
+
+@section('content')
+   {!! $user !!}
+@stop
