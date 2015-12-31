@@ -3,10 +3,17 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Modules\Chat\Models\Chat;
+use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 use Illuminate\Http\Request;
 
 class ChatController extends Controller {
+
+	public function __construct()
+	{
+		$this->middleware("oauth");
+		$this->middleware("oauth-user");
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -15,7 +22,10 @@ class ChatController extends Controller {
 	 */
 	public function index()
 	{
-		$chat=Chat::all();
+		$ownerId =  Authorizer::getResourceOwnerId();
+		$chat= Chat::where('sender_id',$ownerId)
+				->orwhere('receiver_id',$ownerId)
+				->get();
 		return response()->json(array(
 				'status'=>200,
 				'message'=>'success retrieve',
@@ -41,7 +51,7 @@ class ChatController extends Controller {
 	public function store(Request $request)
 	{
 		$chat=Chat::create([
-				'sender_id' => $request->senderid,
+				'sender_id' => Authorizer::getResourceOwnerId(),
 				'message' => $request->message,
 				'ip_address' => $request->ipaddress
 		]);
@@ -66,19 +76,7 @@ class ChatController extends Controller {
 	 */
 	public function show($id)
 	{
-		$chat=Chat::find($id);
-		if(is_null($chat))
-		{
-			return response()->json(array(
-					'status'=>404,
-					'message'=>'not found'
-			));
-		}
-		return response()->json(array(
-				'status'=>200,
-				'message'=>'success retrieve',
-				'data'=>$chat
-		));
+		//
 	}
 
 	/**
@@ -100,35 +98,7 @@ class ChatController extends Controller {
 	 */
 	public function update($id, Request $request)
 	{
-		$chat=Chat::find($id);
-		if(is_null($chat))
-		{
-			return response()->json(array(
-					'status'=>404,
-					'message'=>'not found'
-			));
-		}
-
-		if(!is_null($request->read))
-		{
-			$chat->read=$request->read;
-		}
-		if(!is_null($request->receiverid))
-		{
-			$chat->receiver_id=$request->receiverid;
-		}
-		$success=$chat->save();
-		if(!$success)
-		{
-			return response()->json(array(
-					'status'=>500,
-					'message'=>'error updating'
-			));
-		}
-		return response()->json(array(
-				'status'=>201,
-				'message'=>'success updating'
-		));
+		//
 	}
 
 	/**
@@ -139,28 +109,7 @@ class ChatController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		$chat=Chat::find($id);
-		if(is_null($chat))
-		{
-			return response()->json(array(
-					'status'=>404,
-					'message'=>'not found'
-			));
-		}
-
-		$success=$chat->delete();
-		if(!$success)
-		{
-			return response()->json(array(
-					'status'=>500,
-					'message'=>'error deleting'
-			));
-		}
-
-		return response()->json(array(
-				'status'=>200,
-				'message'=>'success deleting'
-		));
+		//
 	}
 
 }

@@ -15,29 +15,38 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/admin', function () {
-    return view('admin');
+Route::get('/backend', function () {
+    return view('dashboard');
 });
 
+// Route::get('/admin', function () {
+//     return view('admin');
+// });
+
+
+
 Route::group([
-    'prefix' => 'admin',
+    'prefix' => 'dashboard',
     'module' => 'User',
     'as' => 'admin::',
     'middleware' => ['auth']
 ], function () {
-    Route::get('/dashboard', ['as' => 'dashboard', function () {
+    Route::get('/', ['as' => 'dashboard', function () {
         return view('admin');
     }]);
 });
+
+Entrust::routeNeedsRole('/dashboard/*', ['root', 'admin', 'operator']);
+
 Route::get('auth/login', [
    'as' => 'login',
    'uses' => 'Auth\AuthController@getLogin'
 ]);
-Route::post('auth/login', 'Auth\AuthController@postLogin');
-Route::get('auth/logout', 'Auth\AuthController@getLogout');
+Route::post('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
+Route::get('auth/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
-Route::get('auth/register', 'Auth\AuthController@getRegister');
-Route::post('auth/register', 'Auth\AuthController@doRegister');
+Route::get('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@getRegister']);
+Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
 
 /**
  * Success Register
@@ -77,8 +86,15 @@ Route::post('oauth/authorize', ['as' => 'oauth.authorize.post', 'middleware' => 
     return Redirect::to($redirectUri);
 }]);
 
-Route::post('oauth/access_token', function() {
+Route::post('api/v1/oauth/access_token', function() {
     $result         = Authorizer::issueAccessToken();
-
     return Response::json($result);
+});
+
+/**
+ * chat client example
+ * this is dummy and parameters still hardcoded
+ */
+Route::get('/chat-client', function () {
+    return view('chat-client');
 });

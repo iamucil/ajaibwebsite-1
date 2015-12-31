@@ -8,7 +8,7 @@
 (function(w, $){
 
 	var mediabreakpoint = 'screen and (max-width: 480px)' // CSS media query. Should match that find in CSS above
-	var $smallscreentoggler = $('<div id="smallscreentoggler" data-state="closed">&equiv;</div>') // HTML for small screen menus toggler
+	var $smallscreentoggler = $('<div id="smallscreentoggler" class="coba" data-state="closed">&equiv;</div>') // HTML for small screen menus toggler
 
 	var defaults = {
 		position: 'left',

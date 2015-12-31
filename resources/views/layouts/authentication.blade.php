@@ -14,7 +14,9 @@
     ================================================== -->
     <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}" type="image/x-icon">
     <!-- Bootstrap -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{asset('css/dripicon.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('css/typicons.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('/fonts/font-awesome/css/font-awesome.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('/css/authentication.css') }}">
 </head>

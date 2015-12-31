@@ -10,7 +10,7 @@ body {
     
     width: 260px;
     /* default menu width */
-    
+        z-index: 1!important;
     height: 100%;
     position: fixed;
     top: -100%;

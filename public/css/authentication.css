@@ -1,63 +1,69 @@
-body
-{
-    /*background: url('../img/ajaib-texting-phone.png') fixed;*/
-    background: url('http://farm3.staticflickr.com/2832/12303719364_c25cecdc28_b.jpg') fixed;
-    background-size: cover;
-    padding: 0;
-    margin: 0;
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,500);
+body {
+    /*    padding: 0;
+    margin: 0;*/
+    background: url(../img/pattern_ajaib_01.png);
+    background-attachment: fixed;
+    background-repeat: repeat;
+    color: #cfcfcf;
+    font-family: 'Roboto', sans-serif;
 }
 
-.wrap
-{
+.wrap {
     width: 100%;
-    height: 100%;
-    min-height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* height: 100%; */
+    /* min-height: 100%; */
     z-index: 99;
+    background: rgb(255, 255, 255);
+    padding: 40px;
+    margin: 50% auto;
+    border-radius: 5px;
+    border: 1px solid #eee;
 }
 
-p.form-title
-{
-    font-family: 'Open Sans' , sans-serif;
+.wrap span {
+    display: inline;
+    float: left;
+    width: 15%;
+    padding: 6px 0 0;
+}
+
+p.form-title {
+    font-family: 'Roboto', sans-serif;
     font-size: 20px;
     font-weight: 600;
     text-align: center;
-    color: #FFFFFF;
     margin-top: 5%;
     text-transform: uppercase;
-    letter-spacing: 4px;
+    font-weight: 300;
 }
 
-form
-{
-    width: 250px;
+form {
+    width: 100%;
     margin: 0 auto;
 }
 
-form.login input[type="text"], form.login input[type="password"], form.login input[type="email"]
-{
-    width: 100%;
+form.login input[type="text"],
+form.login input[type="password"],
+form.login input[type="email"] {
+    width: 85%;
     margin: 0;
     padding: 5px 10px;
     background: 0;
     border: 0;
-    border-bottom: 1px solid #FFFFFF;
+    border-bottom: 1px solid #eee;
     outline: 0;
-    font-style: italic;
-    font-size: 12px;
-    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
     letter-spacing: 1px;
     margin-bottom: 5px;
-    color: #FFFFFF;
+    color: #666;
     outline: 0;
+    float: left
 }
 
-
-form.login input[type="submit"]
-{
-    width: 100%;
+form.login input[type="submit"] {
+    width: 30%;
     font-size: 14px;
     text-transform: uppercase;
     font-weight: 500;
@@ -65,44 +71,42 @@ form.login input[type="submit"]
     outline: 0;
     cursor: pointer;
     letter-spacing: 1px;
+    background: #F95809;
+    border: 1px solid #F95809;
 }
 
-form.login input[type="submit"]:hover
-{
+form.login input[type="submit"]:hover {
     transition: background-color 0.5s ease;
 }
 
-form.login .remember-forgot
-{
+form.login .remember-forgot {
     float: left;
     width: 100%;
     margin: 10px 0 0 0;
 }
-form.login .forgot-pass-content
-{
+
+form.login .forgot-pass-content {
     min-height: 20px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
-form.login label, form.login a
-{
+
+form.login label,
+form.login a {
     font-size: 12px;
     font-weight: 400;
     color: #FFFFFF;
 }
 
-form.login a
-{
+form.login a {
     transition: color 0.5s ease;
 }
 
-form.login a:hover
-{
+form.login a:hover {
     color: #2ecc71;
 }
 
-.pr-wrap
-{
+.pr-wrap {
     width: 100%;
     height: 100%;
     min-height: 100%;
@@ -113,13 +117,11 @@ form.login a:hover
     display: none;
 }
 
-.show-pass-reset
-{
+.show-pass-reset {
     display: block !important;
 }
 
-.pass-reset
-{
+.pass-reset {
     margin: 0 auto;
     width: 250px;
     position: relative;
@@ -129,15 +131,13 @@ form.login a:hover
     padding: 20px 15px;
 }
 
-.pass-reset label
-{
+.pass-reset label {
     font-size: 12px;
     font-weight: 400;
     margin-bottom: 15px;
 }
 
-.pass-reset input[type="email"]
-{
+.pass-reset input[type="email"] {
     width: 100%;
     margin: 5px 0 0 0;
     padding: 5px 10px;
@@ -154,8 +154,7 @@ form.login a:hover
     outline: 0;
 }
 
-.pass-reset input[type="submit"]
-{
+.pass-reset input[type="submit"] {
     width: 100%;
     border: 0;
     font-size: 14px;
@@ -167,12 +166,11 @@ form.login a:hover
     letter-spacing: 1px;
 }
 
-.pass-reset input[type="submit"]:hover
-{
+.pass-reset input[type="submit"]:hover {
     transition: background-color 0.5s ease;
 }
-.posted-by
-{
+
+.posted-by {
     position: absolute;
     bottom: 26px;
     margin: 0 auto;
@@ -182,32 +180,36 @@ form.login a:hover
     left: 45%;
 }
 
-.alert-labeled{
-  padding: 0px;
+.alert-labeled {
+     padding: 0px;
+    margin: 20% 0 0 0;
+    position: absolute;
+    width: 93%;
+    z-index: 999;
 }
 
-.alert-labeled-row{
+.alert-labeled-row {
     display: table-row;
     padding: 0px;
 }
 
-.alert-labelled-cell{
+.alert-labelled-cell {
     padding: 10px;
     display: table-cell;
     vertical-align: middle;
 }
 
-.alert-labeled .close > *{
-    padding:10px;
+.alert-labeled .close > * {
+    padding: 10px;
     display: table-cell;
     vertical-align: middle;
 }
 
-.alert-label{
+.alert-label {
     vertical-align: middle;
     background: #BCE8F1;
     width: auto;
     padding: 10px 15px;
     height: 100%;
-    font-size:1.1em;
+    font-size: 1.1em;
 }
