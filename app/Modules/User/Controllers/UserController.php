@@ -15,7 +15,7 @@ class UserController extends Controller {
     function __construct(UserRepository $user)
     {
         $this->User     = $user;
-        $this->middleWare('auth', ['execp' => ['index', 'store', 'update']]);
+        $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
     }
 
     /**
