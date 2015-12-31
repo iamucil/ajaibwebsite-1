@@ -1,63 +1,83 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head>    
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajaib - @yield('title')</title>
+
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/chat-style.css')}}" />
+
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <title>Laravel</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
-    <style>
-        html, body {
-            height: 100%;
-        }
 
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            display: table;
-            font-weight: 100;
-            font-family: 'Lato';
-        }
-
-        .container {
-            text-align: center;
-            display: table-cell;
-            vertical-align: top;
-        }
-
-        .content {
-            text-align: center;
-            display: inline-block;
-        }
-
-        .title {
-            font-size: 96px;
-        }
-
-        .chat-logs {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            font-weight: 100;
-            font-family: 'Lato';
-            text-align: left;
-            color: #880000;
-        }
-    </style>
 </head>
 <body>
-<div class="container">
-    <div class="content">
-        <div class="title">Client Chat Feature</div>
-        <input type="text" id="chat_tf" value=""/>
-        <button id="send_bt" name="send">SEND</button>
+
+
+    <div class="chat-title">
+        <h3>Client Chat Feature</h3>
     </div>
     <div class="chat-content">
 
+        <section class="module">
+          
+          <ol class="discussion">
+            <li class="other">
+              <div class="avatar">
+               
+              </div>
+              <div class="messages">
+                <p>yeah, they do early flights cause they connect with big airports.  they wanna get u to your connection</p>
+                <time datetime="2009-11-13T20:00">Timothy • 51 min</time>
+              </div>
+            </li>
+            <li class="self">
+              <div class="avatar">
+              
+              </div>
+              <div class="messages">
+                <p>That makes sense.</p>
+                <p>It's a pretty small airport.</p>
+                <time datetime="2009-11-13T20:14">37 mins</time>
+              </div>
+            </li>
+            <li class="other">
+              <div class="avatar">
+         
+              </div>
+              <div class="messages">
+                <p>that mongodb thing looks good, huh?</p>
+                <p>
+                  tiny master db, and huge document store</p>
+              </div>
+            </li>
+          </ol>
+          
+        </section>
+
     </div>
-</div>
+    <div class="chat-input">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="input-group">
+                      <input type="text" id="chat_tf" class="form-control" placeholder="Apa yang bisa kami bantu ?">
+                      <span class="input-group-btn">
+                        <button id="send_bt" name="send" class="btn btn-default" type="button">SEND</button>
+                      </span>
+                    </div><!-- /input-group -->
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    
+
 <br/>
 
 <div class="chat-logs">
