@@ -106,3 +106,36 @@ After finishing cloning from github repo into local machine (phase 1, step 2)
       // in view include flash_message template
       @include('flash::message')
       ```
+
+## OAUTH2.0
+
+1. Grant Access ``https://getajaib.co/api/v1/oauth/grant_access``
+   * set header ``Content-Type : application/json``
+   * set method to ``POST``
+   * set body to raw json format if using 3rd party like postman chrome extension, with bellow parameter
+   ```
+   {
+      "id":"YOUR_CLIENT_ID",
+      "secret":"YOUR_CLIENT_SECRET",
+      "code":"VERIFICATION_CODE_FROM_REGISTRATION FORM"
+   }
+   ```
+   * result
+   ```
+   {
+      "access_token": "ACCESS_TOKEN",
+      "refresh_token": "REFRESH_TOKEN",
+      "email": "USER_EMAIL",
+      "phone_number": "USER_PHONE_NUMBER",
+      "expires": 36288000
+   }
+   ```
+2. Refresh Token ``https://getajaib.co/api/v1/oauth/access_token`` this API used to get new access token
+   * uri : ``https://getajaib.co/api/v1/oauth/access_token``
+   * set body using x-www-from-urlencoded if using 3rd party like postman chrome extension, with bellow parameter
+   ```
+   grant_type     : refresh_token
+   client_id      : YOUR_CLIENT_ID
+   client_secret  : YOUR_CLIENT_SECRET
+   refresh_token  : REFRESH_TOKEN from previous action
+   ```

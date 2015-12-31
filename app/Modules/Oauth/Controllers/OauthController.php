@@ -141,9 +141,11 @@ class OauthController extends Controller {
             $body               = $response->getBody();
             $result             = $body->getContents();
             $result             = json_decode($result);
-            $return['access_token'] = $result->access_token;
-            $return['email']        = $email;
-            $return['phone_number'] = $phone_number;
+            $return['access_token']     = $result->access_token;
+            $return['refresh_token']    = $result->refresh_token;
+            $return['email']            = $email;
+            $return['phone_number']     = $phone_number;
+            $return['expires']          = $result->expires_in;
         }
 
         return response()->json($return);
