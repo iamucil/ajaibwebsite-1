@@ -449,8 +449,8 @@
             @section('chatbar')
             <!-- Chat bottom -->
             <div class="chat-bottom">
-                <div class="chat-list chat-active">
-                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Olivia Zalianti Putri</a>
+                <div class="chat-list chat-active chat-blink">
+                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Blink</a>
                         <div class="webui-popover-content">
                             <div class="chat-conversation">
                             <p>popover contenbnbnbnbt</p>
@@ -482,10 +482,9 @@
                             <!-- /input-group -->
                         </div>
                 </div>
-                <div class="chat-list">Agus</div>
-                <div class="chat-list">Widi</div>
-                <div class="chat-list chat-active">
-                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Olivia Zalianti Putri</a>
+         
+               <div class="chat-list chat-active">
+                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Aktif</a>
                         <div class="webui-popover-content">
                             <div class="chat-conversation">
                             <p>popover contenbnbnbnbt</p>
@@ -514,22 +513,12 @@
                                 </div>
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
-                            <!-- /input-group -->
+                           
                         </div>
                 </div>
-                <div class="chat-list chat-active">Anger</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
 
-                <div class="chat-list">Themes</div>
-                <div class="chat-list">Themes</div>
-                <div class="chat-list chat-active">
-                                  <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Oliva</a>
+                <div class="chat-list chat-idle">
+                                  <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Idle</a>
                         <div class="webui-popover-content">
                             <div class="chat-conversation">
                             <p>popover contenbnbnbnbt</p>
@@ -558,9 +547,9 @@
                                 </div>
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
-                            <!-- /input-group -->
+                      
                         </div>
-                </div>
+                </div> 
 
             </div>
             <!-- Chat bottom -->
@@ -674,9 +663,9 @@
             //height:'300',//can be set with  number
             height:'400',//can be set with  number
             animation:'',
-             offsetTop:-18,  // offset the top of the popover
+             offsetTop:-5,  // offset the top of the popover
             multi:true,//allow other popovers in page at same time
-             dismissible:false, // if popover can be dismissed by  outside click or escape key
+             dismissible:true, // if popover can be dismissed by  outside click or escape key
              closeable:true//display close button or not
         });
 
@@ -686,11 +675,11 @@
             pushcontent: false,
             //source: 'togglemenu.txt',
             revealamt: -5
-        })
+        });
 
-    setInterval(function(){
-        $(".chat-active").toggleClass("backgroundBlink");
-     },1500)
+ setInterval(function(){
+        $(".chat-blink").toggleClass("backgroundBlink");
+     },1500);
 
     })
 
