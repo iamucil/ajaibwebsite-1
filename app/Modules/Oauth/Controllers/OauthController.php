@@ -98,7 +98,8 @@ class OauthController extends Controller {
     {
         // setting oauth client
         $client = new Client([
-            'base_uri' => 'http://getajaib.local'
+            'base_uri' => 'https://getajaib.local',
+            'verify' => false
         ]);
         $grant_type         = 'password';
         $client_id          = $request->id;
