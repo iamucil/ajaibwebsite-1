@@ -53,48 +53,14 @@ Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController
  */
 Route::get('auth/success', ['as' => 'auth.success.get', 'uses' => 'UserController@confirmation']);
 
-Route::get('oauth/authorize', ['as' => 'oauth.authorize.get', 'middleware' => ['check-authorization-params', 'auth'], function() {
-    $authParams                 = Authorizer::getAuthCodeRequestParams();
-
-    $formParams                 = array_except($authParams,'client');
-
-    $formParams['client_id']    = $authParams['client']->getId();
-
-    $formParams['scope']        = implode(config('oauth2.scope_delimiter'), array_map(function ($scope) {
-       return $scope->getId();
-    }, $authParams['scopes']));
-
-    return View::make('oauth.authorization-form', ['params' => $formParams, 'client' => $authParams['client']]);
-}]);
-
-Route::post('oauth/authorize', ['as' => 'oauth.authorize.post', 'middleware' => ['csrf', 'check-authorization-params', 'auth'], function() {
-
-    $params             = Authorizer::getAuthCodeRequestParams();
-    $params['user_id']  = Auth::user()->id;
-    $redirectUri = '/';
-
-    // If the user has allowed the client to access its data, redirect back to the client with an auth code.
-    if (Request::has('approve')) {
-        $redirectUri = Authorizer::issueAuthCode('user', $params['user_id'], $params);
-    }
-
-    // If the user has denied the client to access its data, redirect back to the client with an error message.
-    if (Request::has('deny')) {
-        $redirectUri = Authorizer::authCodeRequestDeniedRedirectUri();
-    }
-
-    return Redirect::to($redirectUri);
-}]);
-
-Route::post('api/v1/oauth/access_token', function() {
-    $result         = Authorizer::issueAccessToken();
-    return Response::json($result);
-});
-
 /**
  * chat client example
  * this is dummy and parameters still hardcoded
  */
 Route::get('/chat-client', function () {
     return view('chat-client');
+});
+
+Route::get('/chat-client-2', function () {
+    return view('chat-client-2');
 });
