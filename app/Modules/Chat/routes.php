@@ -11,8 +11,6 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
         Route::post('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.store', 'uses' => 'ChatController@store']);
 
     });
-
-    Route::resource('Chat', 'ChatController');
     
 });
 
