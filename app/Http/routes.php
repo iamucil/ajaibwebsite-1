@@ -60,3 +60,7 @@ Route::get('auth/success', ['as' => 'auth.success.get', 'uses' => 'UserControlle
 Route::get('/chat-client', function () {
     return view('chat-client');
 });
+
+Route::get('/chat-client-2', function () {
+    return view('chat-client-2');
+});
