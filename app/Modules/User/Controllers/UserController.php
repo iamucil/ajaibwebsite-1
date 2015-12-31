@@ -163,15 +163,19 @@ class UserController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, User $user)
     {
-        //
+        $this->authorize('destroy', $user);
+
+        $user->delete();
+        flash('Your data has been deleted');
+        return redirect()->route('user.list');
     }
 
     public function getListUsers(Request $request)
     {
-        $user       = User::all();
-        return view('User::index', compact('user'));
+        $users       = User::all();
+        return view('User::index', compact('users'));
     }
 
     public function showProfile($id)
@@ -179,5 +183,27 @@ class UserController extends Controller {
         $user       = User::findOrFail($id);
         $url        = secure_url('/');
         return view('User::profile', compact('user', 'url'));
+    }
+
+    public function setActive($id, Request $request, User $user)
+    {
+        $this->authorize('setStatus', $user);
+
+        $user       = $user->find($id);
+        $user->status   = true;
+
+        if($user->save()){
+            flash()->success('Activated user success');
+        }else{
+            flash()->error('Error occured');
+        }
+
+        // $user->update([
+        //     'status' => false
+        // ]);
+
+        // flash()->success('User activated');
+
+        return redirect()->route('user.list');
     }
 }

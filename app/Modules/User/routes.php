@@ -15,6 +15,9 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
 
     Route::group(['prefix' => 'dasboard', 'module' => 'User'], function() {
         Route::get('/users', ['as' => 'user.list', 'uses' => 'UserController@getListUsers']);
+        Route::post('/users/{user}/setactive', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
+        Route::delete('/users/{user}', ['as' => 'user.destroy', 'uses' => 'UserController@destroy']);
+        Route::put('/users/{user}', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
     });
 
     Route::get('/profile/{user}', [
@@ -23,6 +26,6 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         'uses' => 'UserController@showProfile'
     ]);
 
-    Route::resource('User', 'UserController');
+    // Route::resource('User', 'UserController');
 
 });

@@ -15,7 +15,7 @@ use GuzzleHttp\Exception\RequestException;
 class OauthController extends Controller {
 
     protected $User;
-
+    protected $server = null;
     public function __construct(User $user)
     {
         $this->User         = $user;
@@ -96,7 +96,6 @@ class OauthController extends Controller {
 
     public function grantAccess(Request $request)
     {
-        return $request->all();
         // setting oauth client
         $base_uri       = secure_url('/');
         $client = new Client([
