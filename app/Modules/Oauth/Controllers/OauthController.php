@@ -96,9 +96,11 @@ class OauthController extends Controller {
 
     public function grantAccess(Request $request)
     {
+        return $request->all();
         // setting oauth client
+        $base_uri       = secure_url('/');
         $client = new Client([
-            'base_uri' => 'https://getajaib.local',
+            'base_uri' => $base_uri,
             'verify' => false
         ]);
         $grant_type         = 'password';

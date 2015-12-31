@@ -177,7 +177,7 @@ class UserController extends Controller {
     public function showProfile($id)
     {
         $user       = User::findOrFail($id);
-
-        return view('User::profile', compact('user'));
+        $url        = secure_url('/');
+        return view('User::profile', compact('user', 'url'));
     }
 }

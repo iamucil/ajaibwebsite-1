@@ -21,6 +21,8 @@
     </div>
     <div class="box-body">
         {!! $user !!}
+
+        {{ $url }}
    </div>
 </div>
 @stop
