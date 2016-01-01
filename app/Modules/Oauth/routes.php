@@ -1,17 +1,17 @@
 <?php
 Route::group(['module' => 'Oauth', 'namespace' => 'App\Modules\Oauth\Controllers'], function() {
 
-    Route::group(['prefix' => 'api/v1/oauth', 'as' => 'oauth::'], function () {
+    Route::group(['prefix' => 'api/v1/oauth', 'as' => 'oauth.'], function () {
         Route::post('/grant_access', ['as' => 'grant_access', 'uses' => 'OauthController@grantAccess']);
 
-        Route::post('/access_token', function() {
+        Route::post('access_token', ['as' => 'access_token', function() {
             $result         = Authorizer::issueAccessToken();
             return Response::json($result);
-        });
+        }]);
     });
 
-    Route::group(['prefix' => 'oauth', 'as' => 'api.auth.'], function () {
-        Route::get('/authorize', ['as' => 'oauth.authorize.get', 'middleware' => ['check-authorization-params', 'auth'], function() {
+    Route::group(['prefix' => 'oauth', 'as' => 'oauth.'], function () {
+        Route::get('/authorize', ['as' => 'authorize.get', 'middleware' => ['check-authorization-params', 'auth'], function() {
             $authParams                 = Authorizer::getAuthCodeRequestParams();
 
             $formParams                 = array_except($authParams,'client');
@@ -25,7 +25,7 @@ Route::group(['module' => 'Oauth', 'namespace' => 'App\Modules\Oauth\Controllers
             return View::make('Oauth::authorization-form', ['params' => $formParams, 'client' => $authParams['client']]);
         }]);
 
-        Route::post('authorize', ['as' => 'oauth.authorize.post', 'middleware' => ['csrf', 'check-authorization-params', 'auth'], function() {
+        Route::post('authorize', ['as' => 'authorize.post', 'middleware' => ['csrf', 'check-authorization-params', 'auth'], function() {
 
             $params             = Authorizer::getAuthCodeRequestParams();
             $params['user_id']  = Auth::user()->id;
@@ -44,5 +44,9 @@ Route::group(['module' => 'Oauth', 'namespace' => 'App\Modules\Oauth\Controllers
             return Redirect::to($redirectUri);
         }]);
 
+        Route::post('/credentials', ['as' => 'credentials.post', 'middleware' => ['csrf', 'auth'], 'uses' => 'OauthController@generateCredentials']);
     });
+
+
+    Route::resource('oauth', 'OauthController');
 });

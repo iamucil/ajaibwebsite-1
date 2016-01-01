@@ -89,7 +89,8 @@
     </div>
 @stop
 
-@@section('script-bottom')
+@section('script-bottom')
+    @parent
     <script type="text/javascript">
         $('button#btn-delete').bind('click', function (event){
             // event.preventDefault();

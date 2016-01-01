@@ -1,10 +1,11 @@
 <?php namespace App\Modules\Oauth\Controllers;
-
+use Hash;
 use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Modules\Oauth\Models\OauthClient;
+use Validator;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -19,6 +20,7 @@ class OauthController extends Controller {
     public function __construct(User $user)
     {
         $this->User         = $user;
+        $this->middleware('auth', ['except' => ['grantAccess']]);
     }
     /**
      * Display a listing of the resource.
@@ -27,7 +29,8 @@ class OauthController extends Controller {
      */
     public function index()
     {
-        return view("Oauth::index");
+        $clients        = OauthClient::all();
+        return view("Oauth::index", compact('clients'));
     }
 
     /**
@@ -37,7 +40,7 @@ class OauthController extends Controller {
      */
     public function create()
     {
-        die('create');
+        return view("Oauth::create");
     }
 
     /**
@@ -45,9 +48,31 @@ class OauthController extends Controller {
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        //
+        $validator      = Validator::make($request->all(), [
+            'name' => 'required|unique:oauth_clients|max:50',
+            'id' => 'required|unique:oauth_clients',
+            'secret' => 'required|unique:oauth_clients'
+        ]);
+        if($validator->fails()){
+            flash()->error($validator->errors()->first());
+            return redirect()->route('oauth.create')->withInput($request->except(['id', 'secret']))->withErrors($validator);
+        }else{
+            $credentials    = new OauthClient();
+            $credentials->id    = $request->id;
+            $credentials->secret    = $request->secret;
+            $credentials->name      = $request->name;
+
+            if($credentials->save()) {
+                flash()->success('New credentials for oauth has been saved!!');
+                return redirect()->route('oauth.index');
+            }else{
+                flash()->error('Error occured when saving data');
+                return redirect()->route('oauth.create')->withInput($request->except(['id', 'secret']))->withErrors($validator);
+            }
+
+        }
     }
 
     /**
@@ -149,5 +174,49 @@ class OauthController extends Controller {
         }
 
         return response()->json($return);
+    }
+
+    public function generateCredentials(Request $request)
+    {
+        // return response()->json(['name' => $request->name, 'state' => 'CA']);
+        // $credentials    = $request->all();
+        // get input request, to handle redudance data in table oauth_clients
+        // param['name'] -> unique
+
+        $credentials['name']    = $request->name;
+        $chars          = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $buf            = [];
+        $keys           = [0];
+        $app_key        = env('APP_KEY');
+        while (count($buf) <= strlen($chars)) {
+            $key        = mt_rand(count($buf), strlen($chars));
+            if($key == '62'){
+                $key    = mt_rand(min($keys), strlen($chars)-1);
+            }
+            try {
+                $buf[]      = $chars[$key];
+            } catch (Exception $e) {
+                // do nothing
+            }
+            $keys[]     = $key;
+        }
+        $buffers        = preg_replace('/[^A-Za-z0-9\-]/', '', Hash::make(uniqid($credentials['name']).''.implode('', $buf)));
+        $key_buffer     = preg_replace('/[^A-Za-z0-9\-]/', '', Hash::make($app_key.uniqid($credentials['name']).''.implode('', $buf)));
+        // return response()->json(['name' => $request->name, 'state' => 'CA']);
+        $clients        = [];
+        $secrets        = [];
+        for ($i = 0; $i < 40; $i++) {
+            $char       = $buffers[rand(0, strlen($buffers) - 1)];
+            $kb         = $key_buffer[mt_rand(0, strlen($key_buffer) - 1)];
+            $clients[]  = $char;
+            $secrets[]  = $kb;
+        }
+        $client_id      = implode('', $clients);
+        $client_secret  = implode('', $secrets);
+        $exists         = OauthClient::where('id', $client_id)
+            ->orWhere('secret', $client_secret)
+            ->orWhere('name', $credentials['name'])
+            ->exists();
+        return response()->json(compact('client_id', 'client_secret', 'exists'));
     }
 }
