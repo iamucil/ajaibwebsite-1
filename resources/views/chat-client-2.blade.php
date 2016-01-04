@@ -68,7 +68,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 
 <!-- Get Client Ip Address -->
-<script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
+<script type="text/javascript" src="https://l2.io/ip.js?var=myip"></script>
 
 <!-- Instantiate PubNub -->
 <script type="text/javascript">
