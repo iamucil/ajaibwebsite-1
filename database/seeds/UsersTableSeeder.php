@@ -31,6 +31,19 @@ class UsersTableSeeder extends Seeder
             'status' => TRUE,
             'channel' => '6211111111111',
             'verification_code' => '111111',
+            /**
+        ], [
+            'name' => 'sample_user',
+            'email' => 'kartikayudhapratama@gmail.com',
+            'password' => bcrypt('sample'),
+            'created_at' => DB::raw('NOW()'),
+            'updated_at' => DB::raw('NOW()'),
+            'phone_number' => '+6285227155554',
+            'status' => TRUE,
+            'channel' => '6285227155554',
+            'verification_code' => '222222',
+             * sample user
+             */
         ]]);
     }
 }
