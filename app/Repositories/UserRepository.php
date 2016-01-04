@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 use Mail;
 use App\User;
+use App\Role;
 
 /**
  * FILENAME     : UserRepository.php
@@ -12,36 +13,58 @@ class UserRepository
 {
     public function createOrUpdateUser(array $data)
     {
-        $query = User::where('email', $data['email'])
-            ->orWhere('phone_number', $data['phone_number']);
+        $role           = Role::where('name', '=', 'users');
+        if($role->exists()){
+            $query = User::where('email', $data['email'])
+                ->orWhere('phone_number', $data['phone_number']);
 
+            $verificationCode = $this->generateVerificationCode();
+
+            if ($query->exists()) {
+                $query->update([
+                    'verification_code' => '******',
+                    'status' => false
+                ]);
+                $user   = $query->first();
+                $exists = true;
+            } else {
+                $exists = false;
+                $user = User::firstOrCreate([
+                    'name' => $data['phone_number'],
+                    'email' => $data['email'],
+                    'password' => bcrypt($data['phone_number']),
+                    'phone_number' => $data['phone_number'],
+                    'channel' => 1,
+                    'verification_code' => '******'
+                ]);
+            }
+
+            Mail::send('emails.greeting', ['user' => $user], function ($mail) use ($user) {
+                $mail->from('noreply@getajaib.com', 'Ajaib');
+                $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
+            });
+            return compact('user', 'exists');
+        }else{
+            return null;
+        }
+    }
+
+    public function setActive($id)
+    {
         $verificationCode = $this->generateVerificationCode();
-
-        if ($query->exists()) {
-            $query->update([
-                'verification_code' => $verificationCode,
-                'status' => false
-            ]);
-            $user   = $query->first();
-            $exists = true;
-        } else {
-            $exists = false;
-            $user = User::firstOrCreate([
-                'name' => $data['phone_number'],
-                'email' => $data['email'],
-                'password' => bcrypt($data['phone_number']),
-                'phone_number' => $data['phone_number'],
-                'channel' => 1,
-                'verification_code' => $verificationCode
-            ]);
+        $user       = User::find($id);
+        $user->verification_code    = $verificationCode;
+        $user->status               = true;
+        if($user->save()) {
+            Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
+                $mail->from('noreply@getajaib.com', 'Ajaib');
+                $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
+            });
+            return true;
+        }else{
+            return false;
         }
 
-        Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
-            $mail->from('noreply@getajaib.com', 'Ajaib');
-            $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
-        });
-
-        return compact('user', 'exists');
     }
 
     protected function generateVerificationCode()
