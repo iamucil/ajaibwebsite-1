@@ -29,8 +29,8 @@ class OauthController extends Controller {
      */
     public function index()
     {
-        $clients        = OauthClient::all();
-        return view("Oauth::index", compact('clients'));
+        $clients        = OauthClient::orderBy('name', 'DESC')->paginate(15);
+        return view("Oauth::index", ['clients' => $clients]);
     }
 
     /**

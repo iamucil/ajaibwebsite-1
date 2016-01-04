@@ -189,14 +189,19 @@ class UserController extends Controller {
     {
         $this->authorize('setStatus', $user);
 
-        $user       = $user->find($id);
-        $user->status   = true;
-
-        if($user->save()){
+        if($this->User->setActive($id)){
             flash()->success('Activated user success');
         }else{
             flash()->error('Error occured');
         }
+        // $user       = $user->find($id);
+        // $user->status   = true;
+
+        // if($user->save()){
+        //     flash()->success('Activated user success');
+        // }else{
+        //     flash()->error('Error occured');
+        // }
 
         // $user->update([
         //     'status' => false
