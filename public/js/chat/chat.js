@@ -25,6 +25,7 @@ function InitChat() {
     chatFeature = PUBNUB.init({
         publish_key: 'pub-c-20764d9e-b436-4776-b03a-adcae96c2a6b',
         subscribe_key: 'sub-c-6bad3874-9efa-11e5-baf7-02ee2ddab7fe',
+        ssl : (('https:' == document.location.protocol) ? true : false),
         uuid: 'op-yudha'
     });
 }
