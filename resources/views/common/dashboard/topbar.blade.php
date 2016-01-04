@@ -20,7 +20,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-nest profile-dropdown" role="menu">
                         <li>
-                            <a href="#"><i class="icon-user"></i> Profile<span class="text-aqua fontello-record" ></span>
+                            <a href="{{ route('user.profile', AUTH::user()->id) }}"><i class="icon-user"></i> Profile<span class="text-aqua fontello-record" ></span>
                         </a>
                         </li>
                         <li>

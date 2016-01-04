@@ -28,7 +28,7 @@ $(document).ready(function() {
 			$(".profile img").css({'width':'45px', 'height':'45px', 'top':'15px', 'left':'4px' });
 			$(".profile").css({'top':'-13px'});
 
-			$(".chat-bottom ").css({'padding-left':'260px'});
+			$(".chat-bottom ").css({'margin-left':'260px'});
 	
 
 			$('#menuwrapper').removeAttr('id').addClass();
@@ -61,7 +61,7 @@ $(document).ready(function() {
 			$(".profile img").css({'width':'30px', 'height':'30px', 'top':'24px', 'left':'-3px' });
 			$(".profile").css({'top':'-10px'});
 		
-			$(".chat-bottom ").css({'padding-left':'50px'});
+			$(".chat-bottom ").css({'margin-left':'50px'});
 
 
 		}

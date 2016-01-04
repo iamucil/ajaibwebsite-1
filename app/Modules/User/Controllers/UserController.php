@@ -10,100 +10,101 @@ use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
 
 class UserController extends Controller {
-	protected $User;
+    protected $User;
 
-	function __construct(UserRepository $user)
-	{
-		$this->User 	= $user;
-	}
+    function __construct(UserRepository $user)
+    {
+        $this->User     = $user;
+        $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
+    }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index(Request $request)
-	{
-		$ownerId =  Authorizer::getResourceOwnerId();
-		$user=User::find($ownerId);
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        $ownerId =  Authorizer::getResourceOwnerId();
+        $user=User::find($ownerId);
 
-		if(is_null($user))
-		{
-			return response()->json(array(
-					'status'=>404,
-					'message'=>'not found'
-			));
-		}
-		return response()->json(array(
-				'status'=>200,
-				'message'=>'success retrieve',
-				'data'=>$user
-		));
-	}
+        if(is_null($user))
+        {
+            return response()->json(array(
+                    'status'=>404,
+                    'message'=>'not found'
+            ));
+        }
+        return response()->json(array(
+                'status'=>200,
+                'message'=>'success retrieve',
+                'data'=>$user
+        ));
+    }
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        //
+    }
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store(Request $request)
-	{
-		$user= $this->User->createOrUpdateUser($request->all());
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $user= $this->User->createOrUpdateUser($request->all());
         if($user){
             return response()->json(array(
                 'status'=>201,
                 'message'=>'success saving'
-			));
+            ));
         }else{
             return response()->json(array(
                 'status'=>500,
                 'message'=>'error saving'
-			));
+            ));
         }
-	}
+    }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+    }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        //
+    }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
     public function update(Request $request)
-	{
-		$ownerId =  Authorizer::getResourceOwnerId();
-		$user=User::find($ownerId);
+    {
+        $ownerId =  Authorizer::getResourceOwnerId();
+        $user=User::find($ownerId);
 
         if(is_null($user))
         {
@@ -113,58 +114,96 @@ class UserController extends Controller {
             ));
         }
 
-		if(!is_null($request->name))
-		{
-			$user->name=$request->name;
-		}
-		if(!is_null($request->email))
-		{
+        if(!is_null($request->name))
+        {
+            $user->name=$request->name;
+        }
+        if(!is_null($request->email))
+        {
             $user->email=$request->email;
-		}
-		if(!is_null($request->firstname))
-		{
+        }
+        if(!is_null($request->firstname))
+        {
             $user->firstname=$request->firstname;
-		}
-		if(!is_null($request->lastname))
-		{
+        }
+        if(!is_null($request->lastname))
+        {
             $user->lastname=$request->lastname;
-		}
-		if(!is_null($request->phone))
-		{
+        }
+        if(!is_null($request->phone))
+        {
             $user->phone_number=$request->phone;
-		}
-		if(!is_null($request->address))
-		{
+        }
+        if(!is_null($request->address))
+        {
             $user->address=$request->address;
-		}
-		if(!is_null($request->gender))
-		{
+        }
+        if(!is_null($request->gender))
+        {
             $user->gender=$request->gender;
-		}
+        }
 
-		$success=$user->save();
-		if(!$success)
-		{
-			return response()->json(array(
-					'status'=>500,
-					'message'=>'error updating'
-			));
-		}
-		return response()->json(array(
-				'status'=>201,
-				'message'=>'success updating'
-		));
-	}
+        $success=$user->save();
+        if(!$success)
+        {
+            return response()->json(array(
+                    'status'=>500,
+                    'message'=>'error updating'
+            ));
+        }
+        return response()->json(array(
+                'status'=>201,
+                'message'=>'success updating'
+        ));
+    }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy(Request $request, User $user)
+    {
+        $this->authorize('destroy', $user);
 
+        $user->delete();
+        flash('Your data has been deleted');
+        return redirect()->route('user.list');
+    }
+
+    public function getListUsers(Request $request)
+    {
+        $users       = User::all();
+        return view('User::index', compact('users'));
+    }
+
+    public function showProfile($id)
+    {
+        $user       = User::findOrFail($id);
+        $url        = secure_url('/');
+        return view('User::profile', compact('user', 'url'));
+    }
+
+    public function setActive($id, Request $request, User $user)
+    {
+        $this->authorize('setStatus', $user);
+
+        $user       = $user->find($id);
+        $user->status   = true;
+
+        if($user->save()){
+            flash()->success('Activated user success');
+        }else{
+            flash()->error('Error occured');
+        }
+
+        // $user->update([
+        //     'status' => false
+        // ]);
+
+        // flash()->success('User activated');
+
+        return redirect()->route('user.list');
+    }
 }

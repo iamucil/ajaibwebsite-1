@@ -14,6 +14,7 @@ class AlterUsersTableEnum extends Migration
     {
         DB::transaction(function () {
             DB::statement('ALTER TABLE users DROP gender;');
+            DB::statement('DROP TYPE IF EXISTS sex;');
             DB::statement('CREATE TYPE sex AS ENUM (\'male\', \'female\', \'others\');');
             DB::statement("ALTER TABLE users ADD gender sex");
         });

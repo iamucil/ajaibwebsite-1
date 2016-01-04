@@ -13,6 +13,19 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::post('/user/update', ['middleware' => 'oauth', 'as' => 'api.user.update', 'uses' => 'UserController@update']);
     });
 
-    Route::resource('User', 'UserController');
+    Route::group(['prefix' => 'dasboard', 'module' => 'User'], function() {
+        Route::get('/users', ['as' => 'user.list', 'uses' => 'UserController@getListUsers']);
+        Route::post('/users/{user}/setactive', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
+        Route::delete('/users/{user}', ['as' => 'user.destroy', 'uses' => 'UserController@destroy']);
+        Route::put('/users/{user}', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
+    });
+
+    Route::get('/profile/{user}', [
+        'middleware' => 'auth',
+        'as' => 'user.profile',
+        'uses' => 'UserController@showProfile'
+    ]);
+
+    // Route::resource('User', 'UserController');
 
 });

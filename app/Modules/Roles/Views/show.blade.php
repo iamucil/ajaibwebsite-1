@@ -16,7 +16,7 @@
             <div class="row">
                 <div class="col-md-4 col-md-offset-8">
                     <div class="pull-right">
-                        <a href="{{ URL::route('roles.create') }}" class="btn btn-success">
+                        <a href="{{ URL::route('roles.index') }}" class="btn btn-success">
                             <i class="fa fa-list"></i> Daftar Roles
                         </a>
                     </div>
