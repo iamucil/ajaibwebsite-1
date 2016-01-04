@@ -1,20 +1,23 @@
 <!doctype html>
 <html class="no-js" lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('meta')
     <title>Ajaib - @yield('title')</title>
+
     <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/jquery.webui-popover.css')}}" />
     <!-- Custom styles for this template -->
-    <link rel="stylesheet" type="text/css" href="{{asset('css/dashboard.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('css/dashboard.style.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('css/dripicon.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('css/typicons.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('css/font-awesome.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('css/theme.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.style.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/dripicon.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
+
     <!-- pace loader -->
     @section('script')
         {{-- Main Script --}}
@@ -111,7 +114,7 @@
 @section('script-bottom')
     {{-- script bottom: additional script js --}}
     <script>
-       jQuery(function() {
+        jQuery(function() {
             //$('.chat-pop-over').popover();
             $('.chat-pop-over').webuiPopover({
                 placement:'auto',
@@ -132,14 +135,13 @@
                 pushcontent: false,
                 //source: 'togglemenu.txt',
                 revealamt: -5
-            })
+            });
 
-        setInterval(function(){
-            $(".chat-active").toggleClass("backgroundBlink");
-         },1500)
+            setInterval(function(){
+                $(".chat-blink").toggleClass("backgroundBlink");
+            },1500);
 
-        })
-
+        });
 
     </script>
 @show
