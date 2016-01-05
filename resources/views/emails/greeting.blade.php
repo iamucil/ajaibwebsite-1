@@ -630,7 +630,8 @@ Sizes: [
                                                                                 you to edit certain row. It makes it easy for you to quickly edit row sections.
                                                                                 http://kb.mailchimp.com/templates/code/create-editable-content-areas-with-mailchimps-template-language
                                                                             -->
-                                                                            <h3 mc:edit="header" style="color:#5F5F5F;line-height:125%;font-family:Helvetica,Arial,sans-serif;font-size:20px;font-weight:normal;margin-top:0;margin-bottom:3px;text-align:left;">Dear {{ $user->email }},</h3>
+                                                                            <h3 mc:edit="header" style="color:#5F5F5F;line-height:125%;font-family:Helvetica,Arial,sans-serif;font-size:20px;font-weight:normal;margin-top:0;margin-bottom:3px;text-align:left;">Dear User-Email,</h3>
+                                                                            {{--<h3 mc:edit="header" style="color:#5F5F5F;line-height:125%;font-family:Helvetica,Arial,sans-serif;font-size:20px;font-weight:normal;margin-top:0;margin-bottom:3px;text-align:left;">Dear {{ $user->email }},</h3>--}}
                                                                             <div mc:edit="body" style="text-align:left;font-family:Helvetica,Arial,sans-serif;font-size:15px;margin-bottom:0;color:#5F5F5F;line-height:135%;">You have registered to become a Ajaib
                                                                     member. <br/>
                                                                     To confirm that this is your email, please insert
