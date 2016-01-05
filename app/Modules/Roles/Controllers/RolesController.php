@@ -12,6 +12,10 @@ use Validator;
 
 class RolesController extends Controller {
 
+    public function __construct()
+    {
+        $this->middleWare('auth', ['except' => ['generateRoles']]);
+    }
     /**
      * Display a listing of the resource.
      *
