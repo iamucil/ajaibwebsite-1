@@ -174,7 +174,7 @@ class UserController extends Controller {
 
     public function getListUsers(Request $request)
     {
-        $users       = User::all();
+        $users       = User::orderBy('name', 'DESC')->paginate(15);
         return view('User::index', compact('users'));
     }
 

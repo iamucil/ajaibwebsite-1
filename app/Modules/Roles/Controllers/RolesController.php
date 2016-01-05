@@ -7,6 +7,7 @@ use App\Modules\Roles\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Laracasts\Flash\Flash;
+use Illuminate\Support\Facades\Auth;
 use App\User;
 use Validator;
 
@@ -15,6 +16,7 @@ class RolesController extends Controller {
     public function __construct()
     {
         $this->middleWare('auth', ['except' => ['generateRoles']]);
+        $this->middleWare('role:root', ['except' => ['generateRoles']]);
     }
     /**
      * Display a listing of the resource.
@@ -135,32 +137,57 @@ class RolesController extends Controller {
 
     public function generateRoles()
     {
+        // find admin users
+        $user       = User::where('name', '=', 'administrator')->first();
+
         $root       = new Role();
         $root->name                 = 'root';
         $root->display_name         = 'Super User'; // optional
         $root->description          = 'User is allowed to do everything'; // optional
-        $root->save();
+        if(!$root->exists()){
+            $root->save();
+        }
 
         $admin      = new Role();
         $admin->name                = 'admin';
         $admin->display_name        = 'User Administrator'; // optional
         $admin->description         = 'user is allowed to manage and edit other users data'; // optional
-        $admin->save();
+        if(!$admin->exists()){
+            $admin->save();
+        }
 
         $operator   = new Role();
         $operator->name             = 'operator';
         $operator->display_name     = 'Operator'; // optional
         $operator->description      = 'User Is Only Allowed To Manage And Edit Their Data'; // optional
-        $operator->save();
+        if(!$operator->exists()){
+            $operator->save();
+        }
 
         $users      = new Role();
         $users->name             = 'users';
         $users->display_name     = 'End User'; // optional
         $users->description      = 'User is only allowed to manage and edit their data'; // optional
-        $users->save();
+        if(!$users->exists()){
+            $users->save();
+        }
 
-        flash()->success('Success generated roles!!');
-        return redirect()->route('roles.index');
+        if($user->exists()){
+            $user->first()->attachRole($admin);
+        }
+
+        if(Auth::check()){
+            if(Auth::user()->hasRole('root')){
+                flash()->success('Success generated roles!!');
+                return redirect()->route('roles.index');
+            }else{
+                Auth::logout();
+                return redirect()->route('login');
+            }
+        }else{
+            return redirect()->route('login');
+            // return Auth::logout();
+        }
     }
 
     public function attachRole(Request $request)

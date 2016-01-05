@@ -16,15 +16,17 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="row">
-            <div class="col-md-4 col-md-offset-8">
-                <div class="pull-right">
-                    <a href="{{ URL::route('roles.create') }}" class="btn btn-success">
-                        <i class="fa fa-plus"></i> Tambah Data
-                    </a>
+        @if (Auth::user()->hasRole(['root']))
+            <div class="row">
+                <div class="col-md-4 col-md-offset-8">
+                    <div class="pull-right">
+                        <a href="{{ URL::route('roles.create') }}" class="btn btn-success">
+                            <i class="fa fa-plus"></i> Tambah Data
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
 
         <table class="table table-striped">
             <thead>
