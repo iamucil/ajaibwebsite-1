@@ -18,6 +18,10 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
 
+    @section('css')
+        {{-- expr --}}
+    @show
+
     <!-- pace loader -->
     @section('script')
         {{-- Main Script --}}
