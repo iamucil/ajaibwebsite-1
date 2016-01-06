@@ -1,21 +1,33 @@
-@extends('layouts.dashboard');
+@extends('layouts.dashboard')
 @section('title')
     Menu Management
 @stop
 
+@section('script')
+    @parent
+@stop
+
 @section('content')
-{{ $data->getContent() }}
-{{--     @forelse ($menus as $menu)
-        {{ $menu->name }}
-    @empty
-        Belum Ada data menu
-    @endforelse --}}
+    <div class="box">
+        <div class="box-header bg-transparent">
+            <h3 class="box-title">
+                <i class="icon-menu"></i>
+            <span>
+                Menu Management
+            </span>
+            </h3>
+        </div>
+        <div class="box-body">
+        </div>
+    </div>
 @stop
 
 @section('script-bottom')
     @parent
     <script type="text/javascript">
-    var menus   = '{!! $data->getContent() !!}';
+    var menus   = {!! $data->getContent() !!};
     console.log(menus);
+    // console.log(typeof(menus));
     </script>
 @stop
+
