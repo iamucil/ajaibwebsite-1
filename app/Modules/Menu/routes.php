@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['module' => 'Menu', 'prefix' => 'dashboard', 'namespace' => 'App\Modules\Menu\Controllers', 'middleware' => ['auth', 'role:admin:root']], function() {
+Route::group(['module' => 'Menu', 'prefix' => 'dashboard', 'namespace' => 'App\Modules\Menu\Controllers', 'middleware' => ['auth', 'role:admin|root']], function() {
 
     Route::resource('menus', 'MenuController', [
         'names' => [
