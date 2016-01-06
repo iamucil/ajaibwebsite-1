@@ -9,7 +9,7 @@ Author:matirasa
 
 @import url(http://weloveiconfonts.com/api/?family=entypo);
 @import url(http://weloveiconfonts.com/api/?family=fontawesome);
-@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
 
 /* @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700); */
 
@@ -1312,7 +1312,7 @@ ol.breadcrumb.newcrumb li a span {
 }
 
 
-/* 
+/*
 Dropdown menus
 */
 
@@ -1409,7 +1409,7 @@ Drodown in navbars
 }
 
 
-/* 
+/*
 Sidebar Menu
 */
 
@@ -1780,7 +1780,7 @@ li.hide-min-toggle {
 }
 
 
-/* 
+/*
 Show up sidemenu when minimize
 */
 
@@ -2044,7 +2044,7 @@ ul.topnav h4 {
 }
 
 
-/* 
+/*
         CONTENT
 */
 
@@ -2784,11 +2784,11 @@ FOOTER
     background: #fff;
     border-top: 1px solid #ccc;
     border-right: 1px solid #ccc;
-    color: #888; 
-    
-   
+    color: #888;
+
+
 }
 .backgroundBlink a{
-   color: #888; 
+   color: #888;
    font-weight: normal!important;
 }
