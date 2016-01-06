@@ -50,9 +50,11 @@ input[type=button] {
     background: linear-gradient(#ffffff, #dfdfdf);
 }
 #image_file {
-    width:250px;
+    width:80px;
+    height:30px;
 }
 #progress_info {
+	height: 30px;
     font-size:10pt;
 }
 #fileinfo,#error,#error2,#abort,#warnsize {

@@ -169,6 +169,10 @@ class UserController extends Controller {
     public function showProfile($id)
     {
         $user       = User::findOrFail($id);
+        if(is_null($user->photo))
+        {
+            $user->photo="http://api.randomuser.me/portraits/men/98.jpg";
+        }
         $url        = secure_url('/');
         return view('User::profile', compact('user', 'url'));
     }
@@ -203,7 +207,7 @@ class UserController extends Controller {
     public function uploadPhoto(Request $request)
     {
         $userId = $request->user_id;
-        $destinationPath = 'file/'.$this->directoryNaming('1');
+        $destinationPath = 'file/'.$this->directoryNaming($userId);
 
         if ($request->hasFile('image_file'))
         {
@@ -214,13 +218,13 @@ class UserController extends Controller {
             $resultUpload 	= $file->move($destinationPath, $fileRename);
             if ($resultUpload) {
                 $user = User::find($userId);
-                $user->photo = $destinationPath."/".$fileRename;
+                $user->photo = "/".$destinationPath."/".$fileRename;
                 $resultUpdate=$user->save();
             }
         }
 
         if ($resultUpdate) {
-            return \Response::json(['success' => true, "path" => $destinationPath."/".$fileRename], 200);
+            return \Response::json(['success' => true, "path" => $user->photo], 200);
         } else {
             return \Response::json('error', 400);
         }

@@ -90,6 +90,12 @@ function startUploading(act_url) {
     oProgress.style.display = 'block';
     oProgress.style.width = '0px';
 
+    var oBTransfered = document.getElementById('b_transfered');
+    oBTransfered.style.display = '';
+
+    var oProgressPercent = document.getElementById('progress_percent');
+    oProgressPercent.style.display = '';
+
     // get form data for POSTing
     //var vFD = document.getElementById('upload_form').getFormData(); // for FF3
     var vFD = new FormData(document.getElementById('upload_form')); 
@@ -153,6 +159,8 @@ function uploadProgress(e) { // upload process in progress
 }
 
 function uploadFinish(e) { // upload successfully finished
+    var responseText = JSON.parse(e.target.responseText);
+
     /*var oUploadResponse = document.getElementById('upload_response');
     oUploadResponse.innerHTML = e.target.responseText;
     oUploadResponse.style.display = 'block';*/
@@ -163,7 +171,7 @@ function uploadFinish(e) { // upload successfully finished
     document.getElementById('remaining').innerHTML = '| 00:00:00';*/
 
     $('#uploadPhotoModal').modal('hide');
-    refreshPhoto();
+    refreshPhoto(responseText.path);
 
     clearInterval(oTimer);
 }
