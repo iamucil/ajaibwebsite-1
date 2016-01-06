@@ -64,3 +64,7 @@ Route::get('/chat-client', function () {
 Route::get('/chat-client-2', function () {
     return view('chat-client-2');
 });
+
+Route::get('/greetings', function () {
+    return view('/emails/greeting');
+});
