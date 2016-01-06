@@ -114,14 +114,6 @@ class UserController extends Controller {
             ));
         }
 
-        if(!is_null($request->name))
-        {
-            $user->name=$request->name;
-        }
-        if(!is_null($request->email))
-        {
-            $user->email=$request->email;
-        }
         if(!is_null($request->firstname))
         {
             $user->firstname=$request->firstname;
@@ -129,10 +121,6 @@ class UserController extends Controller {
         if(!is_null($request->lastname))
         {
             $user->lastname=$request->lastname;
-        }
-        if(!is_null($request->phone))
-        {
-            $user->phone_number=$request->phone;
         }
         if(!is_null($request->address))
         {
@@ -210,5 +198,41 @@ class UserController extends Controller {
         // flash()->success('User activated');
 
         return redirect()->route('user.list');
+    }
+
+    public function uploadPhoto(Request $request)
+    {
+        $userId = $request->user_id;
+        $destinationPath = 'file/'.$this->directoryNaming('1');
+
+        if ($request->hasFile('image_file'))
+        {
+            $file 		= $request->file('image_file');
+            $fileName 	= $file->getClientOriginalName();
+            $fileExt 	= $file->getClientOriginalExtension();
+            $fileRename = $this->fileNaming($fileName) . '.' . $fileExt;
+            $resultUpload 	= $file->move($destinationPath, $fileRename);
+            if ($resultUpload) {
+                $user = User::find($userId);
+                $user->photo = $destinationPath."/".$fileRename;
+                $resultUpdate=$user->save();
+            }
+        }
+
+        if ($resultUpdate) {
+            return \Response::json(['success' => true, "path" => $destinationPath."/".$fileRename], 200);
+        } else {
+            return \Response::json('error', 400);
+        }
+    }
+
+    public function directoryNaming($name)
+    {
+        return hash('sha256', $name);
+    }
+
+    public function fileNaming($name)
+    {
+        return hash('sha256', sha1(microtime()) . '.' . gethostname() . '.' . $name);
     }
 }
