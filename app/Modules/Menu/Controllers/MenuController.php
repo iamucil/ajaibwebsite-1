@@ -14,12 +14,32 @@ class MenuController extends Controller {
      */
     public function index()
     {
-        // $user       = auth()->user()->roles;
-        $menus          = Menu::all();
+        $query      = Menu::all();
+        $items      = [];
+        if(!$query->isEmpty()){
+            foreach ($query as $menu) {
+                $parents            = $menu->parents();
+                $menu->parent_id    = 0;
+                if($parents->exists()){
+                    $parent             = $parents->first();
+                    $menu->parent_id    = $parent->id;
+                    $menu->kode_sistem  = $parent->id.'.'.$menu->id;
+                }else{
+                    $menu->parent_id    = 0;
+                    $menu->kode_sistem  = $menu->id;
+                }
+                $items[$menu->parent_id][]    = [
+                    'id' => $menu->id,
+                    'text' => $menu->name,
+                    'kode_sistem'   => $menu->kode_sistem
+                ];
+            }
+        }
 
-        print_r($menus->toArray());
-        die();
-        return view("Menu::index");
+        $parent_item    = $items[0];
+        $grid           = self::_createTree($items, $parent_item);
+        $data           = response()->json($grid);
+        return view("Menu::index", compact('data'));
     }
 
     /**
@@ -86,4 +106,20 @@ class MenuController extends Controller {
         //
     }
 
+    /**
+     * Create tree node for dhtmlx tree
+     * @param  Array &$list  List item
+     * @param  Array $parent Parent Item
+     * @return Array $tree Array tree
+     */
+    private function _createTree(&$list, $parent){
+        $tree = array();
+        foreach ($parent as $k=>$l){
+            if(isset($list[$l['id']])){
+                $l['item'] = self::_createTree($list, $list[$l['id']]);
+            }
+            $tree[] = $l;
+        }
+        return $tree;
+    }
 }
