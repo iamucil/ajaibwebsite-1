@@ -114,6 +114,11 @@
 @section('script-bottom')
     {{-- script bottom: additional script js --}}
     <script>
+        // init user properties
+        var user={!! Auth::user() !!};
+        // init pubnub key
+        var pubkey='{!! env("PUBNUB_KEY") !!}';
+        var subkey='{!! env("SUBNUB_KEY") !!}';
         jQuery(function() {
             //$('.chat-pop-over').popover();
             $('.chat-pop-over').webuiPopover({

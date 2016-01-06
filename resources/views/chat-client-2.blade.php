@@ -74,7 +74,7 @@
 <script type="text/javascript">
     var senderId = '';
     var receiverId = '';
-    var receiverChannel = 'OPERATOR';
+    var receiverChannel = 'operator';
     $(document).ready(function () {
         var now = new Date().today() + new Date().timeNow();
         var then = "31/12/2015 12:20:30";

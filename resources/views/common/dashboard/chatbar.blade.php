@@ -104,13 +104,12 @@
 @section('script-lib')
     @parent
     <!-- Include the PubNub Library -->
-    <script language="JavaScript" src="https://cdn.pubnub.com/pubnub-dev.js"></script>
+    <script language="javascript" src="https://cdn.pubnub.com/pubnub-dev.js"></script>
     <!-- Include the Chat functions -->
-    <script language="JavaScript" src="{{asset('js/chat/chat.js')}}"></script>
+    <script language="javascript" src="{{secure_asset('/js/chat/chat.js')}}"></script>
+    <script language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.0/moment.min.js"></script>
 
-    <script language="JavaScript" src="{{asset('js/moment.min.js')}}"></script>
-
-    <script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
+    <script type="text/javascript" src="https://l2.io/ip.js?var=myip"></script>
 @endsection
 @section('script-bottom')
     @parent
