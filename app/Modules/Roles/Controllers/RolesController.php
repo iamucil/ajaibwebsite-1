@@ -1,5 +1,6 @@
 <?php namespace App\Modules\Roles\Controllers;
 
+use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Modules\Roles\Models\Role;
@@ -139,41 +140,70 @@ class RolesController extends Controller {
     {
         // find admin users
         $user       = User::where('name', '=', 'administrator')->first();
+        $user_root  = User::where('name', '=', 'su');
 
         $root       = new Role();
-        $root->name                 = 'root';
-        $root->display_name         = 'Super User'; // optional
-        $root->description          = 'User is allowed to do everything'; // optional
-        if(!$root->exists()){
+        if(!$root->where('name', '=', 'root')->exists()){
+            $root->name                 = 'root';
+            $root->display_name         = 'Super User'; // optional
+            $root->description          = 'User is allowed to do everything'; // optional
             $root->save();
+        }else{
+            $role   = $root->where('name', '=', 'root')->first();
         }
 
         $admin      = new Role();
-        $admin->name                = 'admin';
-        $admin->display_name        = 'User Administrator'; // optional
-        $admin->description         = 'user is allowed to manage and edit other users data'; // optional
-        if(!$admin->exists()){
+        if(!$admin->where('name', '=', 'admin')->exists()){
+            $admin->name                = 'admin';
+            $admin->display_name        = 'User Administrator'; // optional
+            $admin->description         = 'user is allowed to manage and edit other users data'; // optional
             $admin->save();
+        }else{
+            $admin  = $admin->where('name', '=', 'admin')->first();
         }
 
         $operator   = new Role();
-        $operator->name             = 'operator';
-        $operator->display_name     = 'Operator'; // optional
-        $operator->description      = 'User Is Only Allowed To Manage And Edit Their Data'; // optional
-        if(!$operator->exists()){
+        if(!$operator->where('name', '=', 'operator')->exists()){
+            $operator->name             = 'operator';
+            $operator->display_name     = 'Operator'; // optional
+            $operator->description      = 'User Is Only Allowed To Manage And Edit Their Data'; // optional
             $operator->save();
+        }else{
+            $operator   = $operator->where('name', '=', 'operator')->first();
         }
 
         $users      = new Role();
-        $users->name             = 'users';
-        $users->display_name     = 'End User'; // optional
-        $users->description      = 'User is only allowed to manage and edit their data'; // optional
-        if(!$users->exists()){
+        if(!$users->where('name', '=', 'users')->exists()){
+            $users->name             = 'users';
+            $users->display_name     = 'End User'; // optional
+            $users->description      = 'User is only allowed to manage and edit their data'; // optional
             $users->save();
+        }else{
+            $users      = $users->where('name', '=', 'users')->first();
         }
 
-        if($user->exists()){
+        if($user->exists() AND !$user->first()->hasRole('admin')){
             $user->first()->attachRole($admin);
+        }
+
+        if(!$user_root->exists()){
+            $user_root  = User::firstOrCreate([
+                'name' => 'su',
+                'email' => 'root@jetcompany.co',
+                'password' => bcrypt('secret'),
+                'created_at' => DB::raw('NOW()'),
+                'updated_at' => DB::raw('NOW()'),
+                'phone_number' => '+6222222222222',
+                'status' => TRUE,
+                'channel' => '6222222222222',
+                'verification_code' => '222222',
+            ]);
+        }else{
+            $user_root  = $user_root->first();
+        }
+
+        if(!$user_root->hasRole('root')){
+            $user_root->attachRole($role);
         }
 
         if(Auth::check()){

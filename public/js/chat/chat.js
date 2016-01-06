@@ -19,20 +19,25 @@ var status='';
 
 
 $(function () {
-    // initialize user properties
-    name = user.name;
-    firstname = user.firstname;
-    lastname = user.lastname;
-    roles = user.roles[0].name;
-    channel = 'op-'+user.channel;
-    phone = user.phone_number;
-    status = user.status;
+    // check if user has assigned to roles ??
+    if(user.roles === undefined || user.roles.length == 0){
+        console.log('Roles for current user is undefined yet!! Please contact system admin');
+    }else{
+        // initialize user properties
+        name = user.name;
+        firstname = user.firstname;
+        lastname = user.lastname;
+        roles = user.roles[0].name;
+        channel = 'op-'+user.channel;
+        phone = user.phone_number;
+        status = user.status;
 
-    // initialize chat featre using PubNub
-    InitChat();
+        // initialize chat featre using PubNub
+        InitChat();
 
-    // listening to 'OPERATOR' channel for group and 'OP-USERNAME' channel for private
-    SubscribeChat();
+        // listening to 'OPERATOR' channel for group and 'OP-USERNAME' channel for private
+        SubscribeChat();
+    }
 
 });
 
