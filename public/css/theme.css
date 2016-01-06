@@ -604,6 +604,7 @@ Foundation Coustom
     height: 60px;
     line-height: 60px!important;
     color: #8c92a3!important;
+    text-decoration: none;
 }
 
 .dropdown-nest li a div {
@@ -666,7 +667,19 @@ Foundation Coustom
     margin-left: 5px;
     color: #8c92a3;
 }
+.read-notf a h3, .read-notf a p{
+   color: #cbcbcb!important;
+   font-weight: normal!important;
+   text-decoration: none;
 
+}
+.unread-notf a h3, .unread-notf a p{
+   color: #555!important;
+   font-weight: bold!important;
+   text-decoration: none;
+
+}
+   
 .top-dropdown-nest {
     height: 49px!important;
     position: absolute;
