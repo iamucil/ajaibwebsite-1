@@ -21,6 +21,10 @@
         <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
     @show
 
+    @section('css')
+        {{-- expr --}}
+    @show
+
     <!-- pace loader -->
     @section('script')
         {{-- Main Script --}}
@@ -117,6 +121,11 @@
 @section('script-bottom')
     {{-- script bottom: additional script js --}}
     <script>
+        // init user properties
+        var user={!! Auth::user() !!};
+        // init pubnub key
+        var pubkey='{!! env("PUBNUB_KEY") !!}';
+        var subkey='{!! env("SUBNUB_KEY") !!}';
         jQuery(function() {
             //$('.chat-pop-over').popover();
             $('.chat-pop-over').webuiPopover({

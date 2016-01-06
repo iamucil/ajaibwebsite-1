@@ -13,7 +13,8 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::post('/user/update', ['middleware' => 'oauth', 'as' => 'api.user.update', 'uses' => 'UserController@update']);
     });
 
-    Route::group(['prefix' => 'dashboard', 'module' => 'User'], function() {
+    Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['role:admin|root']], function() {
+
         Route::get('/users', ['as' => 'user.list', 'uses' => 'UserController@getListUsers']);
         Route::post('/users/{user}/setactive', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
         Route::delete('/users/{user}', ['as' => 'user.destroy', 'uses' => 'UserController@destroy']);
