@@ -8,7 +8,26 @@ var chatParameter = [];
 var senderId = '';
 var chatFeature;
 
+// user properties
+var name='';
+var firstname='';
+var lastname='';
+var roles='';
+var channel='';
+var phone='';
+var status='';
+
+
 $(function () {
+    // initialize user properties
+    name = user.name;
+    firstname = user.firstname;
+    lastname = user.lastname;
+    roles = user.roles[0].name;
+    channel = 'op-'+user.channel;
+    phone = user.phone_number;
+    status = user.status;
+
     // initialize chat featre using PubNub
     InitChat();
 
@@ -23,10 +42,10 @@ $(function () {
  */
 function InitChat() {
     chatFeature = PUBNUB.init({
-        publish_key: 'pub-c-20764d9e-b436-4776-b03a-adcae96c2a6b',
-        subscribe_key: 'sub-c-6bad3874-9efa-11e5-baf7-02ee2ddab7fe',
+        publish_key: pubkey,
+        subscribe_key: subkey,
         ssl : (('https:' == document.location.protocol) ? true : false),
-        uuid: 'op-yudha'
+        uuid: 'op-'+name
     });
 }
 
@@ -37,7 +56,7 @@ function InitChat() {
 function SubscribeChat() {
     // Subscribe/listen to the OPERATOR channel
     chatFeature.subscribe({
-        channel: ['OPERATOR','OP-011222333444'],
+        channel: [roles,channel],
         message: function (m) {
             // handle times
             var times = moment(m.time,"DD/MM/YYYY HH:mm:ss").fromNow();
@@ -50,7 +69,7 @@ function SubscribeChat() {
                 if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
 
-                    // Set parameter for the next usage of AppendChat function
+
 
 
                     // debugging to see the data
@@ -68,7 +87,11 @@ function SubscribeChat() {
                     // create new notification
                 }
             }
+            // Set parameter for the next usage of AppendChat function
             SetParam(m.sender_id, m);
+            if ($('#cn_' + m.sender_id)!==0) {
+                $('#cn_' + m.sender_id).remove();
+            }
             $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.sender_id + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
 
             // append chat to chat-conversation div
@@ -180,11 +203,11 @@ function publish(senderId) {
         channel: 'ch-'+obj.sender_id,
         message: {
             "token": 'token value',
-            "user_channel": 'OP-011222333444',
-            "user_name": 'op-yudha',
+            "user_channel": channel,
+            "user_name": roles+'-'+firstname,
             "text": text,
             "ip": '111.111.11.111',
-            "sender_id": '011222333444',
+            "sender_id": channel.split('-')[1],
             "receiver_id": '085432123456',
             "time": datetime
         }

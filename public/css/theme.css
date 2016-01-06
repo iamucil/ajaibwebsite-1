@@ -7,8 +7,8 @@ Last change:    11/03/2014 [fixed Float bug, vf]
 Author:matirasa
 -------------------------------------------------------------------*/
 
-@import url(http://weloveiconfonts.com/api/?family=entypo);
-@import url(http://weloveiconfonts.com/api/?family=fontawesome);
+@import url("entypo.css");
+@import url("font-awesome.css");
 @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
 
 /* @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700); */
