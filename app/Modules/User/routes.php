@@ -14,7 +14,6 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
     });
 
     Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['role:admin|root']], function() {
-
         Route::get('/users', ['as' => 'user.list', 'uses' => 'UserController@getListUsers']);
         Route::post('/users/{user}/setactive', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
         Route::delete('/users/{user}', ['as' => 'user.destroy', 'uses' => 'UserController@destroy']);
@@ -31,7 +30,6 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::get('/{user}', ['as' => 'user.profile', 'uses' => 'UserController@showProfile']);
         Route::post('/upload/photo', ['as' => 'user.profile.uploadphoto', 'uses' => 'UserController@uploadPhoto']);
     });
-
     // Route::resource('User', 'UserController');
 
 });
