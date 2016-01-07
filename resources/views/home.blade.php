@@ -29,8 +29,8 @@
                             </form>
                             <!--  end of Subscribe form -->
                             <ul>
-                                <li><img src="img/playstore.png"></li>
-                                <li><img src="img/appstore.png"></li>
+                                <li><img src="{{ secure_asset('img/playstore.png') }}"></li>
+                                <li><img src="{{ secure_asset('img/appstore.png') }}"></li>
                             </ul>
                             <div style="clear: both;"></div>
                         </div>
@@ -38,7 +38,7 @@
                     <!-- end of right description -->
                 </div>
             </div>
-        </div> <img class="pic-ajaib-phone" src="img/ajaib-iphone.png">
+        </div> <img class="pic-ajaib-phone" src="{{ secure_asset('img/ajaib-iphone.png') }}">
     </div>
     <!-- About Us Page
     ==========================================-->
@@ -53,11 +53,11 @@
                     </div>
                 </div>
                 <ul class="client-item">
-                    <li><img src="img/client/client_01.png"></li>
-                    <li><img src="img/client/client_02.png"></li>
-                    <li><img src="img/client/client_03.png"></li>
-                    <li><img src="img/client/client_04.png"></li>
-                    <li><img src="img/client/client_05.png"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_01.png') }}"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_02.png') }}"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_03.png') }}"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_04.png') }}"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_05.png') }}"></li>
                 </ul>
             </div>
         </div>
