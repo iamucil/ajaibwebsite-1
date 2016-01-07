@@ -40,9 +40,11 @@ Sizes: [
     <meta name="format-detection" content="telephone=no"/> <!-- disable auto telephone linking in iOS -->
     <title>Ajaib personal assistant</title>
     <style type="text/css">
+        @import url(https://fonts.googleapis.com/css?family=Roboto:100,400,300,700);
+        @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
         /* RESET STYLES */
         html {
-            background-color: #E1E1E1;
+            background-color:#fff;
             margin: 0;
             padding: 0;
         }
@@ -52,7 +54,7 @@ Sizes: [
             margin: 0;
             padding: 0;
             width: 100% !important;
-            font-family: Helvetica, Arial, "Lucida Grande", sans-serif;
+            font-family: "Roboto", Helvetica, Arial, sans-serif;
         }
 
         table {
@@ -192,11 +194,11 @@ Sizes: [
         }
 
         body, #bodyTable {
-            background-color: #E1E1E1;
+            background-color:#fff;
         }
 
         #emailHeader {
-            background-color: #E1E1E1;
+            background-color:#fff;
         }
 
         #emailBody {
@@ -204,7 +206,7 @@ Sizes: [
         }
 
         #emailFooter {
-            background-color: #E1E1E1;
+            background-color:#fff;
         }
 
         .nestedContainer {
@@ -439,7 +441,7 @@ Sizes: [
     </style>
     <![endif]-->
 </head>
-<body bgcolor="#E1E1E1" leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
+<body bgcolor="#fff" leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
 
 <!-- CENTER THE EMAIL // -->
 <!--
@@ -451,7 +453,7 @@ Sizes: [
    the email starts from this center, so we try to
    apply necessary styling e.g. background-color.
 -->
-<center style="background-color:#E1E1E1;">
+<center style="background-color:#fff;">
     <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable"
            style="table-layout: fixed;max-width:100% !important;width: 100% !important;min-width: 100% !important;">
         <tr>
@@ -512,11 +514,11 @@ Sizes: [
                                                                     <tr>
                                                                         <td align="left" class="textContent">
                                                                             <!-- CONTENT // -->
-                                                                            <div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#828282;text-align:center;line-height:120%;">
+                                                                            <div style="font-family:Roboto,Helvetica,Arial,sans-serif;font-size:10px;color:#828282;text-align:center;line-height:120%;">
                                                                                 If you can't see this message, <a
                                                                                         href="#" target="_blank"
-                                                                                        style="text-decoration:none;border-bottom:1px solid #828282;color:#828282;"><span
-                                                                                            style="color:#828282;">view&nbsp;it&nbsp;in&nbsp;your&nbsp;browser</span></a>.
+                                                                                        style="text-decoration:none;color:#fff;"><span
+                                                                                            style="color:#167ac6;;">view&nbsp;it&nbsp;in&nbsp;your&nbsp;browser</span></a>.
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -562,7 +564,7 @@ Sizes: [
                                in case its width is set to 100%.
                             -->
                             <table border="0" cellpadding="0" cellspacing="0" width="100%" style="color:#FFFFFF;"
-                                   bgcolor="#3498db">
+                                   bgcolor="#fff">
                                 <tr>
                                     <td align="center" valign="top">
                                         <!-- FLEXIBLE CONTAINER // -->
@@ -587,9 +589,12 @@ Sizes: [
                                                     <table border="0" cellpadding="30" cellspacing="0" width="100%">
                                                         <tr>
                                                             <td align="center" valign="top" class="textContent">
-                                                                <h1 style="color:#FFFFFF;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:35px;font-weight:normal;margin-bottom:5px;text-align:center;">
-                                                                    Account Registration
-                                                                </h1>
+                                                                <h1 style="color:#FF6600;line-height:100%;font-family:Roboto,Helvetica,Arial,sans-serif;font-size:35px;font-weight:400;margin-bottom:5px;text-align:center;">
+                                                                    Selamat datang di <strong>Ajaib!</strong>
+                                                                </h1> 
+                                                                <h3 style="color:#555;line-height:100%;font-family:Roboto,Helvetica,Arial,sans-serif;font-size:18px;font-weight:300;margin-top:10px;text-align:center;line-height:1.5em;">
+                                                                   Kami akan segera melayani Anda untuk mempermudah kehidupan Anda sehari-hari
+                                                                </h3>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -610,7 +615,7 @@ Sizes: [
                     <tr>
                         <td align="center" valign="top">
                             <!-- CENTERING TABLE // -->
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#F8F8F8">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#F8f8f8" style="border-radius:5px;">
                                 <tr>
                                     <td align="center" valign="top">
                                         <!-- FLEXIBLE CONTAINER // -->
@@ -622,7 +627,7 @@ Sizes: [
                                                             <td align="center" valign="top">
 
                                                                 <!-- CONTENT TABLE // -->
-                                                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                                <table border="0" cellpadding="0" cellspacing="0" width="100%" >
                                                                     <tr>
                                                                         <td valign="top" class="textContent">
                                                                             <!--
@@ -630,9 +635,9 @@ Sizes: [
                                                                                 you to edit certain row. It makes it easy for you to quickly edit row sections.
                                                                                 http://kb.mailchimp.com/templates/code/create-editable-content-areas-with-mailchimps-template-language
                                                                             -->
-                                                                            <h3 mc:edit="header" style="color:#5F5F5F;line-height:125%;font-family:Helvetica,Arial,sans-serif;font-size:20px;font-weight:normal;margin-top:0;margin-bottom:3px;text-align:left;">Dear User-Email,</h3>
-                                                                            {{--<h3 mc:edit="header" style="color:#5F5F5F;line-height:125%;font-family:Helvetica,Arial,sans-serif;font-size:20px;font-weight:normal;margin-top:0;margin-bottom:3px;text-align:left;">Dear {{ $user->email }},</h3>--}}
-                                                                            <div mc:edit="body" style="text-align:left;font-family:Helvetica,Arial,sans-serif;font-size:15px;margin-bottom:0;color:#5F5F5F;line-height:135%;">You have registered to become a Ajaib
+                                                                            <h3 mc:edit="header" style="color:#5F5F5F;line-height:125%;font-family:Roboto,Helvetica,Arial,sans-serif;font-size:20px;font-weight:normal;margin-top:0;margin-bottom:3px;text-align:left;">Dear User-Email,</h3>
+                                                                            {{--<h3 mc:edit="header" style="color:#5F5F5F;line-height:125%;font-family:Roboto,Helvetica,Arial,sans-serif;font-size:20px;font-weight:normal;margin-top:0;margin-bottom:3px;text-align:left;">Dear {{ $user->email }},</h3>--}}
+                                                                            <div mc:edit="body" style="text-align:left;font-family:Roboto,Helvetica,Arial,sans-serif;font-size:13px;margin-bottom:0;color:#5F5F5F;line-height:135%;">You have registered to become a Ajaib
                                                                     member. <br/>
                                                                     To confirm that this is your email, please insert
                                                                     the Verification Code</div>
@@ -676,12 +681,12 @@ Sizes: [
                                                     class="flexibleContainerCell">
 
                                                     <!-- CONTENT TABLE // -->
-                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                         <tr>
                                                             <td valign="top" class="imageContent">
                                                                 <img src="http://www.charlesmudy.com/respmail/respmail-full.jpg"
                                                                      width="500" class="flexibleImage"
-                                                                     style="max-width:500px;width:100%;display:block;"
+                                                                     style="text-align:center; margin: 0 auto;max-width:500px;width:100%;display:block;"
                                                                      alt="Confirmation" title="Confirmation"/>
                                                             </td>
                                                         </tr>
@@ -724,7 +729,7 @@ Sizes: [
                                                                        width="100%">
                                                                     <tr>
                                                                         <td align="center" valign="top"
-                                                                            style="border-top:1px solid #C8C8C8;"></td>
+                                                                            ></td>
                                                                     </tr>
                                                                 </table>
                                                                 <!-- // CONTENT TABLE -->
@@ -767,11 +772,11 @@ Sizes: [
                                                                     <tr>
                                                                         <td valign="top" class="textContent">
                                                                             <div mc:edit="body"
-                                                                                 style="text-align:left;font-family:Helvetica,Arial,sans-serif;font-size:11px;margin-bottom:0;color:#5F5F5F;line-height:135%;">
+                                                                                 style="text-align:left;font-family:Roboto,Helvetica,Arial,sans-serif;font-size:11px;margin-bottom:0;color:#5F5F5F;line-height:135%;">
                                                                                 This is automated email generated by
                                                                                 ajaib assistant system because this
                                                                                 email address listed in ajaib assistant
-                                                                                registration form. The information
+                                                                                registration form. <!-- The information
                                                                                 enclosed in this email (and any
                                                                                 attachments) may be legally privileged
                                                                                 and/or confidential and is intended only
@@ -790,7 +795,7 @@ Sizes: [
                                                                                 prohibited. If you have received this
                                                                                 communication in error, please
                                                                                 immediately notify us and delete this
-                                                                                message.
+                                                                                message. -->
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -821,7 +826,7 @@ Sizes: [
                    Its width can be set to 100% for a color band
                    that spans the width of the page.
                 -->
-                <table bgcolor="#E1E1E1" border="0" cellpadding="0" cellspacing="0" width="500" id="emailFooter">
+                <table bgcolor="#fff" border="0" cellpadding="0" cellspacing="0" width="500" id="emailFooter" style="border-top:1px solid #eee;">
 
                     <!-- FOOTER ROW // -->
                     <!--
@@ -843,16 +848,29 @@ Sizes: [
                                                     class="flexibleContainerCell">
                                                     <table border="0" cellpadding="30" cellspacing="0" width="100%">
                                                         <tr>
-                                                            <td valign="top" bgcolor="#E1E1E1">
+                                                            <td valign="top" bgcolor="#fff" style="padding: 15px 0 0 0;" >
 
-                                                                <div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#828282;text-align:center;line-height:120%;">
+                                                                <div style="font-family:Roboto,Helvetica,Arial,sans-serif;font-size:10px;color:#828282;text-align:left;line-height:120%;font-weight:300;">
                                                                     <div>Copyright &#169; 2015 <a
                                                                                 href="http://www.getajaib.com/"
                                                                                 target="_blank"
-                                                                                style="text-decoration:none;color:#828282;"><span
+                                                                                style="text-decoration:none;color:#fff;"><span
                                                                                     style="color:#828282;">ajaib</span></a>.
                                                                         All&nbsp;rights&nbsp;reserved.
                                                                     </div>
+                                                                </div>
+
+                                                            </td>
+                                                            <td valign="top" bgcolor="#fff" style="padding: 0;">
+
+                                                                <div style="font-family:Roboto,Helvetica,Arial,sans-serif;font-size:10px;text-align:right;line-height:120%;">
+                                                                    <ul style="list-style:none;">
+                                                                        <li style="display:inline-block;text-decoration:none;color:#ccc;text-decoration:none;font-size:18px;margin:0 10px 0 0;"><i class="fa fa-facebook"></i></li>
+                                                                        <li style="display:inline-block;text-decoration:none;color:#ccc;text-decoration:none;font-size:18px;margin:0 10px 0 0;"><i class="fa fa-twitter"></i></li>
+                                                                        <li style="display:inline-block;text-decoration:none;color:#ccc;text-decoration:none;font-size:18px;margin:0 10px 0 0;"><i class="fa fa-instagram"></i></li>
+                                                       
+                                                            
+                                                                    </ul>
                                                                 </div>
 
                                                             </td>
