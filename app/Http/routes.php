@@ -10,7 +10,6 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-use GuzzleHttp\Client;
 Route::get('/', function () {
     return view('home');
 });
@@ -18,12 +17,6 @@ Route::get('/', function () {
 Route::get('/backend', function () {
     return view('dashboard');
 });
-
-// Route::get('/admin', function () {
-//     return view('admin');
-// });
-
-
 
 Route::group([
     'prefix' => 'dashboard',
