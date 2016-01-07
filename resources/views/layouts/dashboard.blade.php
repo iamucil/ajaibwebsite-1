@@ -8,15 +8,18 @@
     @yield('meta')
     <title>Ajaib - @yield('title')</title>
 
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/jquery.webui-popover.css')}}" />
-    <!-- Custom styles for this template -->
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.style.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/dripicon.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
+    <!-- pace loader -->
+    @section('style')
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/jquery.webui-popover.css')}}" />
+        <!-- Custom styles for this template -->
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.style.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/dripicon.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
+    @show
 
     @section('css')
         {{-- expr --}}

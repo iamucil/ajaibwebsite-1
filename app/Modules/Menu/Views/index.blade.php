@@ -1,25 +1,15 @@
-@extends('layouts.dashboard')
+@extends('layouts.dashboard');
 @section('title')
     Menu Management
 @stop
 
-@section('script')
-    @parent
-@stop
-
 @section('content')
-    <div class="box">
-        <div class="box-header bg-transparent">
-            <h3 class="box-title">
-                <i class="icon-menu"></i>
-            <span>
-                Menu Management
-            </span>
-            </h3>
-        </div>
-        <div class="box-body">
-        </div>
-    </div>
+{{ $data->getContent() }}
+{{--     @forelse ($menus as $menu)
+        {{ $menu->name }}
+    @empty
+        Belum Ada data menu
+    @endforelse --}}
 @stop
 
 @section('script-bottom')
@@ -36,4 +26,3 @@
     });
     </script>
 @stop
-

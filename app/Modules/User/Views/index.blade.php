@@ -22,9 +22,37 @@
         </div>
     </div>
     <div class="box-body">
+<<<<<<< HEAD
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    #
+                </th>
+                <th>
+                    User Name
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Phone Number
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {{--*/ $nomor = 1 /*--}}
+            @forelse ($users as $user)
+=======
         <div class="table-responsive">
             <table class="table">
                 <thead>
+>>>>>>> upstream/master
                 <tr>
                     <th>
                         #
