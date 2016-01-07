@@ -5,6 +5,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+use App\Repositories\AssetRepository;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
@@ -12,9 +13,10 @@ use Illuminate\Http\Request;
 class UserController extends Controller {
     protected $User;
 
-    function __construct(UserRepository $user)
+    function __construct(UserRepository $user, AssetRepository $asset)
     {
         $this->User     = $user;
+        $this->Asset    = $asset;
         $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
     }
 
@@ -210,37 +212,8 @@ class UserController extends Controller {
 
     public function uploadPhoto(Request $request)
     {
-        $userId = $request->user_id;
-        $destinationPath = 'file/'.$this->directoryNaming($userId);
-
-        if ($request->hasFile('image_file'))
-        {
-            $file 		= $request->file('image_file');
-            $fileName 	= $file->getClientOriginalName();
-            $fileExt 	= $file->getClientOriginalExtension();
-            $fileRename = $this->fileNaming($fileName) . '.' . $fileExt;
-            $resultUpload 	= $file->move($destinationPath, $fileRename);
-            if ($resultUpload) {
-                $user = User::find($userId);
-                $user->photo = "/".$destinationPath."/".$fileRename;
-                $resultUpdate=$user->save();
-            }
-        }
-
-        if ($resultUpdate) {
-            return \Response::json(['success' => true, "path" => $user->photo], 200);
-        } else {
-            return \Response::json('error', 400);
-        }
+        $processUpload = $this->Asset->uploadPhoto($request);
+        return $processUpload;
     }
 
-    public function directoryNaming($name)
-    {
-        return hash('sha256', $name);
-    }
-
-    public function fileNaming($name)
-    {
-        return hash('sha256', sha1(microtime()) . '.' . gethostname() . '.' . $name);
-    }
 }
