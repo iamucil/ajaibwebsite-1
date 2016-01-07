@@ -171,7 +171,11 @@ class UserController extends Controller {
         $user       = User::findOrFail($id);
         if(is_null($user->photo))
         {
-            $user->photo="http://api.randomuser.me/portraits/men/98.jpg";
+            if($user->gender == 'female') {
+                $user->photo = "/img/avatar_female.png";
+            }else{
+                $user->photo = "/img/avatar_male.png";
+            }
         }
         $url        = secure_url('/');
         return view('User::profile', compact('user', 'url'));
