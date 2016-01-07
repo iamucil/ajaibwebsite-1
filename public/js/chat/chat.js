@@ -76,7 +76,7 @@ function SubscribeChat() {
                 if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
 
-
+                    // Set parameter for the next usage of AppendChat function
 
 
                     // debugging to see the data
