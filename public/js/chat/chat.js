@@ -47,13 +47,13 @@ $(function () {
         alertBox.onclick    = function(){
             $(this).alert('close')
         }
-    }else{
+    }else {
         // initialize user properties
         name = user.name;
         firstname = user.firstname;
         lastname = user.lastname;
         roles = user.roles[0].name;
-        channel = 'op-'+user.channel;
+        channel = 'op-' + user.channel;
         phone = user.phone_number;
         status = user.status;
 
@@ -63,7 +63,6 @@ $(function () {
         // listening to 'OPERATOR' channel for group and 'OP-USERNAME' channel for private
         SubscribeChat();
     }
-
 });
 
 /**
@@ -99,7 +98,7 @@ function SubscribeChat() {
                 if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
 
-
+                    // Set parameter for the next usage of AppendChat function
 
 
                     // debugging to see the data
