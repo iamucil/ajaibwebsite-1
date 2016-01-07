@@ -113,10 +113,11 @@
     @parent
     <script type="text/javascript">
         $('button#btn-delete').bind('click', function (event){
-            // event.preventDefault();
-            return confirm(
-                'Are you sure you wish to delete this recipe?'
-            );
+            event.preventDefault();
+            // return confirm(
+            //     'Are you sure you wish to delete this recipe?'
+            // );
+            return alertify.confirm("Are you sure you wish to delete this recipe?");
         })
     </script>
 @stop
