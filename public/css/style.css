@@ -261,7 +261,7 @@ a.fa.fa-angle-down:hover {
     color: #fff;
     text-transform: uppercase;
     font-weight: 600;
-    letter-spacing: 2px;
+    /*letter-spacing: 2px;*/
 }
 
 .topright-desc ul {
@@ -553,7 +553,7 @@ img.img-circle.team-img {
 }
 
 
-/* Gallery Section 
+/* Gallery Section
 ==============================*/
 
 #tf-works {

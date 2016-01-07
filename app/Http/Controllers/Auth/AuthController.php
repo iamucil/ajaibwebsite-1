@@ -51,9 +51,10 @@ class AuthController extends Controller
          * If Found data user with current credential,
          * Send Fresh Token
          */
+
         return Validator::make($data, [
             'email' => 'required|email|max:255',
-            'phone_number' => 'required|max:255|min:6|regex:/^\+?[^a-zA-Z]{5,}$/',
+            'phone_number' => 'required|integer|regex:/^[0-9]{6,11}$/',
         ]);
     }
 

@@ -23,7 +23,10 @@
                                     <input type="email" class="form-control" id="exampleInputName2" placeholder="Alamat email anda" name="email">
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" id="exampleInputEmail2" placeholder="+62" name="phone_number">
+                                    <div class="input-group">
+                                        <div class="input-group-addon" id="call-code-label"><strong>62</strong></div>
+                                        <input type="text" class="form-control" id="exampleInputEmail2" placeholder="" name="phone_number">
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-default btn-ajaib">Sign Up</button>
                             </form>
@@ -260,3 +263,18 @@
     </div>
 
 @endsection
+
+@section('script-bottom')
+    @parent
+    <script type="text/javascript">
+        var url     = '{!! url("/geo-ip") !!}';
+        $.getJSON( url, function( data ) {
+            var call_code   = document.createElement('span');
+            call_code.style.fontWeight  = 'bold';
+            call_code.innerHTML         = data.call_code;
+            document.getElementById('call-code-label').innerHTML    = '';
+            document.getElementById('call-code-label').appendChild(call_code);
+        }, 'json');
+    </script>
+    {{-- expr --}}
+@stop
