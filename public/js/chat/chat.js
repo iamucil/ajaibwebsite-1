@@ -21,41 +21,17 @@ var status='';
 $(function () {
     // check if user has assigned to roles ??
     if(user.roles === undefined || user.roles.length == 0){
-        console.log('Roles for current user is undefined yet!! Please contact system admin');
-        var alertBox    = document.createElement('div');
-        alertBox.classList.add('alert', 'alert-danger');
-        alertBox.setAttribute('role', 'alert');
-        alertBox.style.position = 'fixed';
-        alertBox.style.bottom   = 0;
-        alertBox.style.right    = 0;
-        alertBox.style.zIndex   = 9999;
-        alertBox.style.width    = '500px';
-        alertBox.style.marginRight  = '10px';
-        var alertClose          = document.createElement('button');
-        alertClose.classList.add('close');
-        alertClose.type         = 'button';
-        alertClose.setAttribute('data-dismiss', 'alert');
-        alertClose.setAttribute('aria-label', 'Close');
-        var closeIcon           = document.createElement('span');
-        closeIcon.setAttribute('aria-hidden', 'true');
-        closeIcon.innerHTML     = '&times;';
-        alertClose.appendChild(closeIcon);
-        alertBox.innerHTML  = '<strong>Roles </strong>for current user is undefined yet!! Please contact system admin';
-        // alertBox.appendChild(alertClose);
-        var preloader       = document.getElementById('preloader');
-        document.body.insertBefore(alertBox, preloader);
-        alertBox.onclick    = function(){
-            $(this).alert('close')
-        }
+        alertify.set({ delay: 10000 });
+        alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     }else{
         // initialize user properties
-        name = user.name;
-        firstname = user.firstname;
-        lastname = user.lastname;
-        roles = user.roles[0].name;
-        channel = 'op-'+user.channel;
-        phone = user.phone_number;
-        status = user.status;
+        name        = user.name;
+        firstname   = user.firstname;
+        lastname    = user.lastname;
+        roles       = user.roles[0].name;
+        channel     = 'op-'+user.channel;
+        phone       = user.phone_number;
+        status      = user.status;
 
         // initialize chat featre using PubNub
         InitChat();
