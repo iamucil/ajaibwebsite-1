@@ -15,7 +15,7 @@
 
                                 @include('common.errors')
 
-                                <form method="post" action="/auth/register" name="frm-register" id="form-register" novalidate>
+                                <form method="post" action="/auth/register" name="frm-register" id="form-register" novalidate name="form-register" id="form-register">
                                     {{ csrf_field() }}
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="control-label">Email address</label>
@@ -47,11 +47,17 @@
         var errors      = new Array();
         var url         = '{!! url("/geo-ip") !!}';
         $.getJSON( url, function( data ) {
+            var form        = document.forms['form-register'];
             var call_code   = document.createElement('span');
             call_code.style.fontWeight  = 'bold';
             call_code.innerHTML         = data.call_code;
+            var inpCountryId            = document.createElement('input');
+            inpCountryId.type           = 'hidden';
+            inpCountryId.value          = data.country_id;
+            inpCountryId.name           = 'country_id';
             document.getElementById('call-code-label').innerHTML    = '';
             document.getElementById('call-code-label').appendChild(call_code);
+            form.appendChild(inpCountryId);
         }, 'json');
         @if (count($errors) > 0)
             var errors  = {!! $errors !!}

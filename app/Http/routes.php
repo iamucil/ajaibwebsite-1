@@ -113,6 +113,7 @@ Route::get('/geo-ip', function (App\Country $country) {
     $longitude      = $result->longitude;
     $call_code      = $countries->calling_code;
     $capital        = $countries->capital;
-    return response()->json(compact('country_code', 'country_name', 'ip_address', 'latitude', 'longitude', 'call_code', 'capital'));
+    $country_id     = $countries->id;
+    return response()->json(compact('country_code', 'country_name', 'ip_address', 'latitude', 'longitude', 'call_code', 'capital', 'country_id'));
 
 });

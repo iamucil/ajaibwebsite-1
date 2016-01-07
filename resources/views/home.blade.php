@@ -17,7 +17,7 @@
                             <p>Masukan email dan no hp untuk menjadikan Ajaib
                                 <br> sebagai asisten anda.</p>
                             <!--  Subscribe form -->
-                            <form class="form-inline" method="POST" action="/auth/register" novalidate>
+                            <form class="form-inline" method="POST" action="/auth/register" novalidate name="form-register" id="form-register">
                                 {{ csrf_field() }}
                                 <div class="form-group">
                                     <input type="email" class="form-control" id="exampleInputName2" placeholder="Alamat email anda" name="email">
@@ -269,11 +269,17 @@
     <script type="text/javascript">
         var url     = '{!! url("/geo-ip") !!}';
         $.getJSON( url, function( data ) {
+            var form        = document.forms['form-register'];
             var call_code   = document.createElement('span');
             call_code.style.fontWeight  = 'bold';
             call_code.innerHTML         = data.call_code;
+            var inpCountryId            = document.createElement('input');
+            inpCountryId.type           = 'hidden';
+            inpCountryId.value          = data.country_id;
+            inpCountryId.name           = 'country_id';
             document.getElementById('call-code-label').innerHTML    = '';
             document.getElementById('call-code-label').appendChild(call_code);
+            form.appendChild(inpCountryId);
         }, 'json');
     </script>
     {{-- expr --}}
