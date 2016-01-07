@@ -125,7 +125,15 @@
     {{-- script bottom: additional script js --}}
     <script>
         // init user properties
-        var user={!! Auth::user() !!};
+        var user    = {!! Auth::user() !!};
+        if(Cookies.get('geoip') === undefined) {
+            var url     = '{!! url("/geo-ip") !!}';
+            $.getJSON( url, function( data ) {
+                Cookies.set('geoip', data, { expires: 1, path : '/'});
+            }, 'json');
+        }
+
+        // console.log(geo());
         // init pubnub key
         var pubkey='{!! env("PUBNUB_KEY") !!}';
         var subkey='{!! env("SUBNUB_KEY") !!}';

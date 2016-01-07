@@ -200,7 +200,7 @@ function load_js() {
  */
 function publish(senderId) {
     // decrypt sender id
-
+    var geoip   = Cookies.get('geoip');
     // get detail message from sender id decrypted
     var obj=GetParam(senderId);
     var text = $('.chat-text').val();
@@ -212,7 +212,7 @@ function publish(senderId) {
             "user_channel": channel,
             "user_name": roles+'-'+firstname,
             "text": text,
-            "ip": '111.111.11.111',
+            "ip": geoip.ip_address,
             "sender_id": channel.split('-')[1],
             "receiver_id": '085432123456',
             "time": datetime
