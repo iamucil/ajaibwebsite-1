@@ -11,6 +11,7 @@
 |
 */
 use GuzzleHttp\Client;
+
 Route::get('/', function () {
     return view('home');
 });
@@ -18,12 +19,6 @@ Route::get('/', function () {
 Route::get('/backend', function () {
     return view('dashboard');
 });
-
-// Route::get('/admin', function () {
-//     return view('admin');
-// });
-
-
 
 Route::group([
     'prefix' => 'dashboard',
@@ -71,7 +66,7 @@ Route::get('/greetings', function () {
 
 Route::get('/api/random-user', function () {
     $query_string   = request()->query;
-    $client = new Client([
+    $client         = new Client([
         'base_uri' => 'https://randomuser.me/api',
     ]);
 
@@ -96,4 +91,29 @@ Route::get('/api/random-user', function () {
             return $result->results[0]->user->picture->thumbnail;
             break;
     }
+});
+
+Route::get('/geo-ip', function (App\Country $country) {
+    $url    = 'https//freegeoip.net/json/';
+    $client         = new Client([
+        'base_uri' => '//freegeoip.net',
+    ]);
+    $response       = $client->request('GET', '/json/', [
+        'header' => [
+            'Content-Type' => 'application/json'
+        ], 'Accept' => 'application/json'
+    ]);
+
+    $result         = json_decode($response->getBody()->getContents());
+    $countries      = $country->where('iso_3166_2', '=', $result->country_code)->first();
+    $country_code   = $result->country_code;
+    $country_name   = $result->country_name;
+    $ip_address     = $result->ip;
+    $latitude       = $result->latitude;
+    $longitude      = $result->longitude;
+    $call_code      = $countries->calling_code;
+    $capital        = $countries->capital;
+    $country_id     = $countries->id;
+    return response()->json(compact('country_code', 'country_name', 'ip_address', 'latitude', 'longitude', 'call_code', 'capital', 'country_id'));
+
 });

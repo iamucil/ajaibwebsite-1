@@ -35,7 +35,8 @@ class UserRepository
                     'password' => bcrypt($data['phone_number']),
                     'phone_number' => $data['phone_number'],
                     'channel' => 1,
-                    'verification_code' => '******'
+                    'verification_code' => '******',
+                    'country_id' => $data['country_id'],
                 ]);
             }
 
