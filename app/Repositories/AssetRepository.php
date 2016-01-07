@@ -2,9 +2,16 @@
 namespace App\Repositories;
 
 use App\User;
+use Storage;
+use File;
 
 class AssetRepository
 {
+    public function __construct()
+    {
+        $this->storage_disk = env('ASSET_STORAGE');
+    }
+
     protected function directoryNaming($name)
     {
         return hash('sha256', $name);
@@ -18,7 +25,7 @@ class AssetRepository
     public function uploadPhoto($request)
     {
         $userId = $request->user_id;
-        $destinationPath = 'file/'.$this->directoryNaming($userId);
+        $destinationPath = 'files/'.$this->directoryNaming($userId);
 
         if ($request->hasFile('image_file'))
         {
@@ -26,7 +33,8 @@ class AssetRepository
             $fileName 	= $file->getClientOriginalName();
             $fileExt 	= $file->getClientOriginalExtension();
             $fileRename = $this->fileNaming($fileName) . '.' . $fileExt;
-            $resultUpload 	= $file->move($destinationPath, $fileRename);
+            $resultUpload = Storage::disk($this->storage_disk)->put($destinationPath.'/'.$fileRename, File::get($file));
+
             if ($resultUpload) {
                 $user = User::find($userId);
                 $user->photo = "/".$destinationPath."/".$fileRename;
@@ -34,11 +42,7 @@ class AssetRepository
             }
         }
 
-        if ($resultUpdate) {
-            return response()->json(['success' => true, "path" => $user->photo], 200);
-        } else {
-            return response()->json('error', 400);
-        }
+        return $resultUpdate;
     }
 }
 ?>

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use App\Repositories\AssetRepository;
+use Storage;
+use File;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
@@ -178,6 +180,8 @@ class UserController extends Controller {
             }else{
                 $user->photo = "/img/avatar_male.png";
             }
+        }else{
+            $user->photo = '/profile/photo/'.$id;
         }
         $url        = secure_url('/');
         return view('User::profile', compact('user', 'url'));
@@ -213,7 +217,26 @@ class UserController extends Controller {
     public function uploadPhoto(Request $request)
     {
         $processUpload = $this->Asset->uploadPhoto($request);
-        return $processUpload;
+
+        if ($processUpload) {
+            return response()->json(['success' => true, 'path' => 'photo/'.$request->user_id], 200);
+        } else {
+            return response()->json('error', 400);
+        }
+    }
+
+    public function getPhoto($id)
+    {
+        $user       = User::find($id);
+        $path = storage_path() . '/' . $user->photo;
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = \Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 
 }
