@@ -26,8 +26,14 @@
     @parent
     <script type="text/javascript">
     var menus   = {!! $data->getContent() !!};
-    console.log(menus);
-    // console.log(typeof(menus));
+    var geoloc  = [];
+    jQuery.post('//freegeoip.net/json/', function (response) {
+        console.log(response);
+    }, 'jsonp');
+
+    jQuery.getJSON('https://randomuser.me/api/?nat=us', function(response) {
+        console.log(response.results[0].user.picture.thumbnail);
+    });
     </script>
 @stop
 
