@@ -1189,9 +1189,9 @@ Header Navigation
     font-size: 16px;
 }
 .sideviewtoggle.btn.btn-default.btn-xs.icon-view-list{
-        border-radius: 50%;
+    border-radius: 50%;
     border-width: 2px;
-    margin: 0 0 0 40px;
+    /*margin: 0 0 0 40px;*/
 }
 
 /*
@@ -2791,4 +2791,30 @@ FOOTER
 .backgroundBlink a{
    color: #888;
    font-weight: normal!important;
+}
+
+/* File Upload Plugin CSS */
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.fileinput-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  -ms-filter: 'alpha(opacity=0)';
+  font-size: 200px;
+  direction: ltr;
+  cursor: pointer;
+}
+/* Fixes for IE < 8 */
+@media screen\9 {
+  .fileinput-button input {
+    filter: alpha(opacity=0);
+    font-size: 100%;
+    height: 100%;
+  }
 }
