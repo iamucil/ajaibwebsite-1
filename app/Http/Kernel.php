@@ -20,6 +20,7 @@ class Kernel extends HttpKernel
         \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class,
         // \App\Http\Middleware\VerifyCsrfToken::class,
         \App\Http\Middleware\ForceSSL::class,
+        \App\Http\Middleware\AuthTimeOut::class,
     ];
 
     /**
@@ -34,9 +35,12 @@ class Kernel extends HttpKernel
         /**
          * Entrust
          */
-        'role'          => 'Zizaco\Entrust\Middleware\EntrustRole',
-        'permission'    => 'Zizaco\Entrust\Middleware\EntrustPermission',
-        'ability'       => 'Zizaco\Entrust\Middleware\EntrustAbility',
+        // 'role'          => 'Zizaco\Entrust\Middleware\EntrustRole',
+        // 'permission'    => 'Zizaco\Entrust\Middleware\EntrustPermission',
+        // 'ability'       => 'Zizaco\Entrust\Middleware\EntrustAbility',
+        'role'          => \Zizaco\Entrust\Middleware\EntrustRole::class,
+        'permission'    => \Zizaco\Entrust\Middleware\EntrustPermission::class,
+        'ability'       => \Zizaco\Entrust\Middleware\EntrustAbility::class,
         /**
          * Oauth
          */

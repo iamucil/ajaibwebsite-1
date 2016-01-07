@@ -6,7 +6,6 @@ use App\Modules\Menu\Models\Menu;
 use Illuminate\Http\Request;
 
 class MenuController extends Controller {
-
     /**
      * Display a listing of the resource.
      *
