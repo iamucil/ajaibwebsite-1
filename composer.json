@@ -14,7 +14,7 @@
         "lucadegasperi/oauth2-server-laravel": "^5.1",
         "laracasts/flash": "^1.3",
         "doctrine/dbal": "^2.5",
-        "webpatser/laravel-countries": "^1.4"
+        "webpatser/laravel-countries": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
