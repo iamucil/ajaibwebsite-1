@@ -1,8 +1,8 @@
 /vendor
 /node_modules
 /config/database.php
-/public/file/*
 /app/Modules/Tests
+/storage/files/*
 Homestead.yaml
 Homestead.json
 .env

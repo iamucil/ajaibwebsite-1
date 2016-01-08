@@ -5,6 +5,9 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+use App\Repositories\AssetRepository;
+use Storage;
+use File;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
@@ -12,9 +15,10 @@ use Illuminate\Http\Request;
 class UserController extends Controller {
     protected $User;
 
-    function __construct(UserRepository $user)
+    function __construct(UserRepository $user, AssetRepository $asset)
     {
         $this->User     = $user;
+        $this->Asset    = $asset;
         $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
     }
 
@@ -171,7 +175,13 @@ class UserController extends Controller {
         $user       = User::findOrFail($id);
         if(is_null($user->photo))
         {
-            $user->photo="http://api.randomuser.me/portraits/men/98.jpg";
+            if($user->gender == 'female') {
+                $user->photo = "/img/avatar_female.png";
+            }else{
+                $user->photo = "/img/avatar_male.png";
+            }
+        }else{
+            $user->photo = '/profile/photo/'.$id;
         }
         $url        = secure_url('/');
         return view('User::profile', compact('user', 'url'));
@@ -206,37 +216,27 @@ class UserController extends Controller {
 
     public function uploadPhoto(Request $request)
     {
-        $userId = $request->user_id;
-        $destinationPath = 'file/'.$this->directoryNaming($userId);
+        $processUpload = $this->Asset->uploadPhoto($request);
 
-        if ($request->hasFile('image_file'))
-        {
-            $file 		= $request->file('image_file');
-            $fileName 	= $file->getClientOriginalName();
-            $fileExt 	= $file->getClientOriginalExtension();
-            $fileRename = $this->fileNaming($fileName) . '.' . $fileExt;
-            $resultUpload 	= $file->move($destinationPath, $fileRename);
-            if ($resultUpload) {
-                $user = User::find($userId);
-                $user->photo = "/".$destinationPath."/".$fileRename;
-                $resultUpdate=$user->save();
-            }
-        }
-
-        if ($resultUpdate) {
-            return \Response::json(['success' => true, "path" => $user->photo], 200);
+        if ($processUpload) {
+            return response()->json(['success' => true, 'path' => 'photo/'.$request->user_id], 200);
         } else {
-            return \Response::json('error', 400);
+            return response()->json('error', 400);
         }
     }
 
-    public function directoryNaming($name)
+    public function getPhoto($id)
     {
-        return hash('sha256', $name);
+        $user       = User::find($id);
+        $path = storage_path() . '/' . $user->photo;
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = \Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 
-    public function fileNaming($name)
-    {
-        return hash('sha256', sha1(microtime()) . '.' . gethostname() . '.' . $name);
-    }
 }
