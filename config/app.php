@@ -159,9 +159,8 @@ return [
          */
         LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
         LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
-
         Laracasts\Flash\FlashServiceProvider::class,
-
+        Webpatser\Countries\CountriesServiceProvider::class,
     ],
 
     /*
@@ -210,10 +209,10 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
-        // 'Entrust'   => 'Zizaco\Entrust\EntrustFacade',
-        'Entrust'       => Zizaco\Entrust\EntrustFacade::class,
+        'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
         'Flash'     => Laracasts\Flash\Flash::class,
+        'Countries' => Webpatser\Countries\CountriesFacade::class,
     ],
 
 ];

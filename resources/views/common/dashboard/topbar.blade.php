@@ -16,7 +16,7 @@
             <ul class="nav navbar-nav">
 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle text-gray" data-toggle="dropdown" role="button" aria-expanded="false"><img alt="" class="admin-pic img-circle" src="http://api.randomuser.me/portraits/thumb/men/28.jpg"> Hi, {{ Auth::user()->name }} <span class="caret"></span>
+                    <a href="#" class="dropdown-toggle text-gray" data-toggle="dropdown" role="button" aria-expanded="false"><img alt="" class="admin-pic img-circle" src="https://randomuser.me/api/portraits/thumb/men/84.jpg"> Hi, {{ Auth::user()->name }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-nest profile-dropdown" role="menu">
                         <li>

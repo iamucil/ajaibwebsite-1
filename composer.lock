@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2af529561691a636f78d4174c52cb43c",
-    "content-hash": "7778bbddac9b081e6276c440d0c6c1db",
+    "hash": "15323f5a5ebb75e9750df1bcd9b778fc",
+    "content-hash": "a693cf0cdd100b826e9d0515edfd36c7",
     "packages": [
         {
             "name": "artem-schander/l5-modular",
@@ -2903,6 +2903,58 @@
             "time": "2015-05-30 15:59:26"
         },
         {
+            "name": "webpatser/laravel-countries",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webpatser/laravel-countries.git",
+                "reference": "e29dcce821f2c4a522e35483c38632ca534db4ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webpatser/laravel-countries/zipball/e29dcce821f2c4a522e35483c38632ca534db4ee",
+                "reference": "e29dcce821f2c4a522e35483c38632ca534db4ee",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "laravel-library",
+            "autoload": {
+                "psr-0": {
+                    "Webpatser\\Countries": "src/"
+                },
+                "classmap": [
+                    "src/commands"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christoph Kempen",
+                    "email": "christoph@downsized.nl",
+                    "homepage": "http://downsized.nl/",
+                    "role": "developer"
+                },
+                {
+                    "name": "Paul Kievits",
+                    "role": "developer"
+                }
+            ],
+            "description": "Laravel Countries is a bundle for Laravel, providing Almost ISO 3166_2, 3166_3, currency, Capital and more for all countries.",
+            "homepage": "https://github.com/webpatser/laravel-countries",
+            "keywords": [
+                "countries",
+                "iso_3166_2",
+                "iso_3166_3",
+                "laravel"
+            ],
+            "time": "2015-08-21 12:12:14"
+        },
+        {
             "name": "zizaco/entrust",
             "version": "dev-laravel-5",
             "source": {
@@ -4200,7 +4252,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "zizaco/entrust": 20
+        "zizaco/entrust": 20,
+        "webpatser/laravel-countries": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

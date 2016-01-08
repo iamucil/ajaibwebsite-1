@@ -8,15 +8,23 @@
     @yield('meta')
     <title>Ajaib - @yield('title')</title>
 
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/jquery.webui-popover.css')}}" />
-    <!-- Custom styles for this template -->
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.style.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/dripicon.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
+    <!-- pace loader -->
+    @section('style')
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/jquery.webui-popover.css')}}" />
+        <!-- Custom styles for this template -->
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/dashboard.style.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/dripicon.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
+        <link rel="stylesheet" href="{{asset('js/slicknav/slicknav.css')}}" />
+        <!-- Slidebars CSS -->
+        <link rel="stylesheet" href="{{asset('js/offcanvas/sidetogglemenu.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/alertify.js/themes/alertify.core.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/alertify.js/themes/alertify.default.css') }}">
+    @show
 
     @section('css')
         {{-- expr --}}
@@ -25,9 +33,6 @@
     <!-- pace loader -->
     @section('script')
         {{-- Main Script --}}
-        <link rel="stylesheet" href="{{asset('js/slicknav/slicknav.css')}}" />
-        <!-- Slidebars CSS -->
-        <link rel="stylesheet" href="{{asset('js/offcanvas/sidetogglemenu.css')}}" />
     @show
 <body>
 <!-- preloader -->
@@ -109,7 +114,8 @@
     <script type='text/javascript' src="{{asset('/js/sliding-menu.js')}}"></script>
     <script type='text/javascript' src="{{asset('/js/scriptbreaker-multiple-accordion-1.js')}}"></script>
     <script type='text/javascript' src="{{asset('/js/app.js')}}"></script>
-
+    <script type='text/javascript' src="{{ secure_asset('/js/vendor/js-cookie/js.cookie.js') }}"></script>
+    <script type='text/javascript' src="{{ secure_asset('/js/vendor/alertify.js/lib/alertify.min.js') }}"></script>
     <!-- FLOT CHARTS -->
     <script src="{{asset('/js/offcanvas/sidetogglemenu.js')}}"></script>
     <!-- <script src="{{asset('js/offcanvas/jPushMenu.js')}}"></script> -->
@@ -119,7 +125,15 @@
     {{-- script bottom: additional script js --}}
     <script>
         // init user properties
-        var user={!! Auth::user() !!};
+        var user    = {!! Auth::user() !!};
+        if(Cookies.get('geoip') === undefined) {
+            var url     = '{!! url("/geo-ip") !!}';
+            $.getJSON( url, function( data ) {
+                Cookies.set('geoip', data, { expires: 1, path : '/'});
+            }, 'json');
+        }
+
+        // console.log(geo());
         // init pubnub key
         var pubkey='{!! env("PUBNUB_KEY") !!}';
         var subkey='{!! env("SUBNUB_KEY") !!}';

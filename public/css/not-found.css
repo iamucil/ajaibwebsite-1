@@ -1,0 +1,106 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+body {
+    background-color: #f5f5f5;
+    font-family: 'Roboto', sans-serif;
+    background: url(../img/pattern_ajaib_01.png);
+    background-attachment: fixed;
+    background-repeat: repeat;
+    padding-top: 40px;
+}
+
+.title-not-found {
+    margin: 0 auto;
+    width: 500px;
+    display: block;
+    min-height: 500px;
+}
+
+.title-not-found h1 {
+    text-align: left;
+    color: #fff;
+    font-weight: 400;
+    font-size: 5em;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: -3px;
+    line-height: 1em;
+    margin: 0 0 20px 0;
+    float: left;
+}
+
+.title-not-found p {
+    color: #fff;
+    font-weight: 300;
+    line-height: 1.5em;
+    padding: 25px 0 10px 0;
+}
+
+.title-not-found ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.title-not-found ul li {
+    display: inline-block;
+    margin: 0 3px 0 0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.title-not-found ul li a {
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.title-not-found ul li a i {
+    margin: 0 10px 0 0;
+}
+
+
+/*SVG ANIMATION*/
+
+.ghost {
+    float: left;
+}
+
+.ghost {
+    animation: float 3s ease-out infinite;
+}
+
+@keyframes float {
+    50% {
+        transform: translate(0, 20px);
+    }
+}
+
+.shadowFrame {
+    width: 130px;
+    margin-top: 15px;
+}
+
+.shadow {
+    animation: shrink 3s ease-out infinite;
+    transform-origin: center center;
+}
+
+.shadow ellipse {
+    transform-origin: center center;
+}
+
+@keyframes shrink {
+    0% {
+        width: 90%;
+        margin: 0 5%;
+    }
+    50% {
+        width: 60%;
+        margin: 0 18%;
+    }
+    100% {
+        width: 90%;
+        margin: 0 5%;
+    }
+}

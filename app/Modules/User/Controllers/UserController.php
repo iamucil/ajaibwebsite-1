@@ -5,6 +5,9 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+use App\Repositories\AssetRepository;
+use Storage;
+use File;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
@@ -12,9 +15,10 @@ use Illuminate\Http\Request;
 class UserController extends Controller {
     protected $User;
 
-    function __construct(UserRepository $user)
+    function __construct(UserRepository $user, AssetRepository $asset)
     {
         $this->User     = $user;
+        $this->Asset    = $asset;
         $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
     }
 
@@ -114,14 +118,6 @@ class UserController extends Controller {
             ));
         }
 
-        if(!is_null($request->name))
-        {
-            $user->name=$request->name;
-        }
-        if(!is_null($request->email))
-        {
-            $user->email=$request->email;
-        }
         if(!is_null($request->firstname))
         {
             $user->firstname=$request->firstname;
@@ -129,10 +125,6 @@ class UserController extends Controller {
         if(!is_null($request->lastname))
         {
             $user->lastname=$request->lastname;
-        }
-        if(!is_null($request->phone))
-        {
-            $user->phone_number=$request->phone;
         }
         if(!is_null($request->address))
         {
@@ -181,6 +173,16 @@ class UserController extends Controller {
     public function showProfile($id)
     {
         $user       = User::findOrFail($id);
+        if(is_null($user->photo))
+        {
+            if($user->gender == 'female') {
+                $user->photo = "/img/avatar_female.png";
+            }else{
+                $user->photo = "/img/avatar_male.png";
+            }
+        }else{
+            $user->photo = '/profile/photo/'.$id;
+        }
         $url        = secure_url('/');
         return view('User::profile', compact('user', 'url'));
     }
@@ -211,4 +213,30 @@ class UserController extends Controller {
 
         return redirect()->route('user.list');
     }
+
+    public function uploadPhoto(Request $request)
+    {
+        $processUpload = $this->Asset->uploadPhoto($request);
+
+        if ($processUpload) {
+            return response()->json(['success' => true, 'path' => 'photo/'.$request->user_id], 200);
+        } else {
+            return response()->json('error', 400);
+        }
+    }
+
+    public function getPhoto($id)
+    {
+        $user       = User::find($id);
+        $path = storage_path() . '/' . $user->photo;
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = \Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    }
+
 }

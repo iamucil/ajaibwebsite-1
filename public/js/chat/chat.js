@@ -21,16 +21,17 @@ var status='';
 $(function () {
     // check if user has assigned to roles ??
     if(user.roles === undefined || user.roles.length == 0){
-        console.log('Roles for current user is undefined yet!! Please contact system admin');
+        alertify.set({ delay: 10000 });
+        alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     }else{
         // initialize user properties
-        name = user.name;
-        firstname = user.firstname;
-        lastname = user.lastname;
-        roles = user.roles[0].name;
-        channel = 'op-'+user.channel;
-        phone = user.phone_number;
-        status = user.status;
+        name        = user.name;
+        firstname   = user.firstname;
+        lastname    = user.lastname;
+        roles       = user.roles[0].name;
+        channel     = 'op-'+user.channel;
+        phone       = user.phone_number;
+        status      = user.status;
 
         // initialize chat featre using PubNub
         InitChat();
@@ -62,6 +63,7 @@ function SubscribeChat() {
     // Subscribe/listen to the OPERATOR channel
     chatFeature.subscribe({
         channel: [roles,channel],
+        presence: function(m){console.log(m)},
         message: function (m) {
             // handle times
             var times = moment(m.time,"DD/MM/YYYY HH:mm:ss").fromNow();
@@ -74,7 +76,7 @@ function SubscribeChat() {
                 if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
 
-
+                    // Set parameter for the next usage of AppendChat function
 
 
                     // debugging to see the data
@@ -89,7 +91,15 @@ function SubscribeChat() {
                     // users has old notification then remove it
                     // alert($('#ss_'+ m.sender_id).length);
                     $('div#ss_'+ m.sender_id).remove();
-                    // create new notification
+
+                    //ChatBoxToggle($('#cb_'+ m.sender_id));
+
+                    //$('#cb_'+ m.sender_id).click(function(){
+                    //    alert($(this).attr('class'));
+                    //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
+                    //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
+                    //    }
+                    //});
                 }
             }
             // Set parameter for the next usage of AppendChat function
@@ -97,10 +107,11 @@ function SubscribeChat() {
             if ($('#cn_' + m.sender_id)!==0) {
                 $('#cn_' + m.sender_id).remove();
             }
+            // create new notification
             $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.sender_id + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
 
             // append chat to chat-conversation div
-            $('.chat-conversation').append(m.text);
+            $('.chat-conversation').append(m.text+'<br />');
 
             // $('.chat-logs').append(m.command+'<br />');
             //console.log(m);
@@ -121,6 +132,13 @@ function SubscribeChat() {
             console.log("Network Error")
         }
     });
+}
+
+function ChatBoxToggle(elm) {
+    // if chat-box already shown then blink it
+    if (elm.length !== 0) {
+        elm.addClass('chat-blink');
+    }
 }
 
 /**
@@ -176,7 +194,7 @@ function load_js() {
     var head = document.getElementsByTagName('head')[0];
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'http://ajaib-local/js/jquery.webui-popover.js';
+    script.src = 'https://ajaib-local/js/jquery.webui-popover.js';
     head.appendChild(script);
 
     $('.chat-pop-over').webuiPopover({
@@ -199,7 +217,7 @@ function load_js() {
  */
 function publish(senderId) {
     // decrypt sender id
-
+    var geoip   = Cookies.get('geoip');
     // get detail message from sender id decrypted
     var obj=GetParam(senderId);
     var text = $('.chat-text').val();
@@ -211,7 +229,7 @@ function publish(senderId) {
             "user_channel": channel,
             "user_name": roles+'-'+firstname,
             "text": text,
-            "ip": '111.111.11.111',
+            "ip": geoip.ip_address,
             "sender_id": channel.split('-')[1],
             "receiver_id": '085432123456',
             "time": datetime
