@@ -3,6 +3,11 @@
     User :: Add
 @stop
 
+@section('script-lib')
+    @parent
+    <script type="text/javascript" src="{{ secure_asset('/js/vendor/bootstrap3-typeahead.min.js') }}"></script>
+@stop
+
 @section('content')
     <div class="box">
         <div class="box-header bg-transparent">
@@ -64,6 +69,14 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label for="input-address" class="col-sm-2 control-label">Kota</label>
+                    <div class="col-sm-4">
+                        <input type="hidden" name="country_id" value="{{ old('country_id') }}" />
+                        <input type="hidden" name="country_name" value="{{ old('country_name') }}" />
+                        <input type="text" class="typehead" id="country" value="{{ old('country_name') }}" />
+                    </div>
+                </div>
+                <div class="form-group">
                     <label for="input-address" class="col-sm-2 control-label">Alamat</label>
                     <div class="col-sm-4">
                         <textarea class="form-control" id="input-address" name="address" rows="4"></textarea>
@@ -95,4 +108,24 @@
 
 @section('script-bottom')
     @parent
+    <script type="text/javascript">
+        $input          = $('.typeahead');
+        $country_id     = $("input[name='country_id']");
+        $country_name   = $("input[name='country_name']");
+        var url     = '{{ route("country.list") }}';
+        $.getJSON( url, function( data ) {
+            $("#country").typeahead({
+                source:data,
+                updater: function (item) {
+                    return item;
+                },
+                afterSelect: function(item){
+                    $input.val(item.name);
+                    $country_id.val(item.id);
+                    $country_name.val(item.name);
+                    // console.log(item);
+                }
+            });
+        }, 'json');
+    </script>
 @stop
