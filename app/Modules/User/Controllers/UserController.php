@@ -228,15 +228,9 @@ class UserController extends Controller {
     public function getPhoto($id)
     {
         $user       = User::find($id);
-        $path = storage_path() . '/' . $user->photo;
+        $pathPhoto  = storage_path() . '/' . $user->photo;
 
-        $file = File::get($path);
-        $type = File::mimeType($path);
-
-        $response = \Response::make($file, 200);
-        $response->header("Content-Type", $type);
-
-        return $response;
+        return $this->Asset->downloadFile($pathPhoto);
     }
 
 }
