@@ -151,7 +151,7 @@ After finishing cloning from github repo into local machine (phase 1, step 2)
    ASSET_STORAGE=s3
    S3_PUBLIC_KEY=AKIAJ6WZ4YNBXOKJOH4A
    S3_SECRET=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
-   S3_REGION=us-west-2
+   S3_REGION=ap-southeast-1
    S3_BUCKET=ajaibstorage
    ```
 6. detail ducumentation for FlySystem, you can visit [here](http://flysystem.thephpleague.com/)
