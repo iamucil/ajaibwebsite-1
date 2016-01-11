@@ -135,6 +135,19 @@ class UserController extends Controller {
             $user->gender=$request->gender;
         }
 
+        if(!is_null($request->file('image_file')))
+        {
+            $request->user_id = $ownerId;
+            $processUpload = $this->Asset->uploadPhoto($request);
+            if(!$processUpload)
+            {
+                return response()->json(array(
+                    'status'=>500,
+                    'message'=>'error upload photo'
+                ));
+            }
+        }
+
         $success=$user->save();
         if(!$success)
         {
