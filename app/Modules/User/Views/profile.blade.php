@@ -122,7 +122,7 @@
     @parent
     <script>
         function refreshPhoto(url_photo){
-            document.getElementById('photo-profile').src = url_photo;
+            document.getElementById('photo-profile').src = url_photo+'?'+ new Date().getTime();
         }
 
         function hiddenAjaxPhotoInfo(){
