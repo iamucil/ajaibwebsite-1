@@ -113,8 +113,8 @@ After finishing cloning from github repo into local machine (phase 1, step 2)
 2. ``composer require league/flysystem-aws-s3-v3``
 3. do ``composer update`` or ``composer install`` if neccessary
 4. setup .env for asset storage
-
-   ``ASSET_STORAGE=local`` use local storage, ``ASSET_STORAGE=s3`` use AWS storage,
+   * ``ASSET_STORAGE=local`` use local storage,
+   * ``ASSET_STORAGE=s3`` use AWS storage,
 5. setup .env to use AWS storage
 
    ```bash
