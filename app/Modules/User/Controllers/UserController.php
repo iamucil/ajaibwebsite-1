@@ -1,6 +1,8 @@
 <?php namespace App\Modules\User\Controllers;
 
 use App\User;
+use App\Role;
+use Validator;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
@@ -53,7 +55,8 @@ class UserController extends Controller {
      */
     public function create()
     {
-        //
+        $roles      = Role::where('name', '<>', 'root')->lists('name', 'id');
+        return view('User::create', compact('roles'));
     }
 
     /**
@@ -74,6 +77,31 @@ class UserController extends Controller {
                 'status'=>500,
                 'message'=>'error saving'
             ));
+        }
+    }
+
+    public function storeLocal(Request $request)
+    {
+        if (!$request->isMethod('post')) {
+            \App::abort(403, 'Unauthorized action.');
+        }else{
+            $data           = $request->all();
+            $validator      = Validator::make($data, [
+                'role_id' => 'required',
+                'firstname' => 'required',
+                'name' => 'required',
+                'email' => 'required|email|max:255',
+                'password' => 'required|alpha_num',
+                'retype-password' => 'required|same:password',
+                'phone_number' => 'required|integer|regex:/^[0-9]{6,11}$/',
+            ]);
+
+            if($validator->fails()){
+                flash()->error($validator->errors()->first());
+                return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
+            }else{
+                return redirect()->route('user.list');
+            }
         }
     }
 
