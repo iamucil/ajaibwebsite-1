@@ -73,7 +73,7 @@
                     <div class="col-sm-4">
                         <input type="hidden" name="country_id" value="{{ old('country_id') }}" />
                         <input type="hidden" name="country_name" value="{{ old('country_name') }}" />
-                        <input type="text" class="typehead" id="country" value="{{ old('country_name') }}" />
+                        <input type="text" class="typehead" id="country" value="{{ old('country_name') }}" autocomplete="off" />
                     </div>
                 </div>
                 <div class="form-group">
