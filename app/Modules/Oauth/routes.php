@@ -8,6 +8,8 @@ Route::group(['module' => 'Oauth', 'namespace' => 'App\Modules\Oauth\Controllers
             $result         = Authorizer::issueAccessToken();
             return Response::json($result);
         }]);
+
+        Route::post('/refresh_token', ['as' => 'refresh_token', 'uses' => 'OauthController@refreshToken']);
     });
 
     Route::group(['prefix' => 'oauth', 'as' => 'oauth.'], function () {

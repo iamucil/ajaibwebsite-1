@@ -55,7 +55,7 @@ class UserController extends Controller {
      */
     public function create()
     {
-        $roles      = Role::where('name', '<>', 'root')->lists('name', 'id');
+        $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');
         return view('User::create', compact('roles'));
     }
 
@@ -90,16 +90,17 @@ class UserController extends Controller {
                 'role_id' => 'required',
                 'firstname' => 'required',
                 'name' => 'required',
-                'email' => 'required|email|max:255',
+                'email' => 'required|email|max:255|unique:users',
                 'password' => 'required|alpha_num',
                 'retype-password' => 'required|same:password',
-                'phone_number' => 'required|integer|regex:/^[0-9]{6,11}$/',
+                'phone_number' => 'required|unique:users|integer|regex:/^[0-9]{6,11}$/',
             ]);
 
             if($validator->fails()){
                 flash()->error($validator->errors()->first());
                 return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
             }else{
+                flash()->success('Your data has been saved!');
                 return redirect()->route('user.list');
             }
         }
@@ -237,20 +238,6 @@ class UserController extends Controller {
         }else{
             flash()->error('Error occured');
         }
-        // $user       = $user->find($id);
-        // $user->status   = true;
-
-        // if($user->save()){
-        //     flash()->success('Activated user success');
-        // }else{
-        //     flash()->error('Error occured');
-        // }
-
-        // $user->update([
-        //     'status' => false
-        // ]);
-
-        // flash()->success('User activated');
 
         return redirect()->route('user.list');
     }

@@ -20,7 +20,7 @@ class OauthController extends Controller {
     public function __construct(User $user)
     {
         $this->User         = $user;
-        $this->middleware('auth', ['except' => ['grantAccess']]);
+        $this->middleware('auth', ['except' => ['grantAccess', 'refreshToken']]);
     }
     /**
      * Display a listing of the resource.
@@ -170,6 +170,45 @@ class OauthController extends Controller {
             $return['refresh_token']    = $result->refresh_token;
             $return['email']            = $email;
             $return['phone_number']     = $phone_number;
+            $return['expires']          = $result->expires_in;
+        }
+
+        return response()->json($return);
+    }
+
+    public function refreshToken(Request $request)
+    {
+        // setting oauth client
+        $base_uri       = secure_url('/');
+        $client = new Client([
+            'base_uri' => $base_uri,
+            'verify' => false
+        ]);
+        $return             = [];
+        $grant_type         = 'refresh_token';
+        $client_id          = $request->id;
+        $client_secret      = $request->secret;
+        $refresh_token      = $request->token;
+        $oauth              = OauthClient::where('id', $client_id)
+            ->where('secret', $client_secret);
+            // return $request->all();
+
+        if($oauth->exists()){
+            $params             = compact('grant_type', 'client_id', 'client_secret', 'refresh_token');
+            $response           = $client->request('POST', 'api/v1/oauth/access_token', [
+                'form_params' => $params,
+                'header' => [
+                    'Content-Type' => 'application/json'
+                ], 'Accept'     => 'application/json',
+            ]);
+
+            $code               = $response->getStatusCode(); // 200
+            $reason             = $response->getReasonPhrase(); // OK
+            $body               = $response->getBody();
+            $result             = $body->getContents();
+            $result             = json_decode($result);
+            $return['access_token']     = $result->access_token;
+            $return['refresh_token']    = $result->refresh_token;
             $return['expires']          = $result->expires_in;
         }
 
