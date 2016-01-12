@@ -117,3 +117,8 @@ Route::get('/geo-ip', function (App\Country $country) {
     return response()->json(compact('country_code', 'country_name', 'ip_address', 'latitude', 'longitude', 'call_code', 'capital', 'country_id'));
 
 });
+
+Route::get('/country/{name?}', ['as' => 'country.list', function(App\Country $country, $name = null) {
+    $countries      = $country->where(DB::raw('LOWER(name)'), 'LIKE', '%'.strtolower($name).'%')->get();
+    return $countries;
+}]);

@@ -22,6 +22,17 @@ class AssetRepository
         return hash('sha256', sha1(microtime()) . '.' . gethostname() . '.' . $name);
     }
 
+    public function downloadFile($pathFile)
+    {
+        $file = File::get($pathFile);
+        $type = File::mimeType($pathFile);
+
+        $response = \Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    }
+
     public function uploadPhoto($request)
     {
         $userId = $request->user_id;

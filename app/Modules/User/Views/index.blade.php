@@ -11,7 +11,7 @@
         <h3 class="box-title">
             <i class="icon-menu"></i>
         <span>
-            Client
+            Users
         </span>
         </h3>
 
@@ -22,6 +22,17 @@
         </div>
     </div>
     <div class="box-body">
+        @if (Auth::user()->hasRole(['root', 'admin']))
+            <div class="row">
+                <div class="col-md-4 col-md-offset-8">
+                    <div class="pull-right">
+                        <a href="{{ URL::route('user.add') }}" class="btn btn-success">
+                            <i class="fa fa-plus"></i> Tambah Data
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="table-responsive">
             <table class="table">
                 <thead>

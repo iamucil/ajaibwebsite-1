@@ -139,3 +139,20 @@ After finishing cloning from github repo into local machine (phase 1, step 2)
    client_secret  : YOUR_CLIENT_SECRET
    refresh_token  : REFRESH_TOKEN from previous action
    ```
+
+## FLYSYSTEM
+1. ``composer require league/flysystem``
+2. ``composer require league/flysystem-aws-s3-v3``
+3. do ``composer update`` or ``composer install`` if neccessary
+4. setup .env for asset storage
+   ``ASSET_STORAGE=local`` use local storage, ``ASSET_STORAGE=s3`` use AWS storage,
+5. setup .env to use AWS storage
+   ```
+   ASSET_STORAGE=s3
+   S3_PUBLIC_KEY=AKIAJ6WZ4YNBXOKJOH4A
+   S3_SECRET=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
+   S3_REGION=ap-southeast-1
+   S3_BUCKET=ajaibstorage
+   ```
+6. detail ducumentation for FlySystem, you can visit [here](http://flysystem.thephpleague.com/)
+7. detail ducumentation for AWS, you can visit [here](http://docs.aws.amazon.com/general/latest/gr/Welcome.html)
