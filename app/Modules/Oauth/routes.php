@@ -4,7 +4,7 @@ Route::group(['module' => 'Oauth', 'namespace' => 'App\Modules\Oauth\Controllers
     Route::group(['prefix' => 'api/v1/oauth', 'as' => 'oauth.'], function () {
         Route::post('/grant_access', ['as' => 'grant_access', 'uses' => 'OauthController@grantAccess']);
 
-        Route::post('access_token', ['as' => 'access_token', function() {
+        Route::post('/access_token', ['as' => 'access_token', function() {
             $result         = Authorizer::issueAccessToken();
             return Response::json($result);
         }]);
