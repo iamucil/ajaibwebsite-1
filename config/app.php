@@ -161,6 +161,7 @@ return [
         LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
         Webpatser\Countries\CountriesServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class,
     ],
 
     /*
@@ -213,6 +214,8 @@ return [
         'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
         'Flash'     => Laracasts\Flash\Flash::class,
         'Countries' => Webpatser\Countries\CountriesFacade::class,
+        'Form'      => Collective\Html\FormFacade::class,
+        'Html'      => Collective\Html\HtmlFacade::class,
     ],
 
 ];
