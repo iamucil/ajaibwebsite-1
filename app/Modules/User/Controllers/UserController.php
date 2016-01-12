@@ -55,7 +55,7 @@ class UserController extends Controller {
      */
     public function create()
     {
-        $roles      = Role::orWhereNotIn('name', ['root', 'users'])->lists('name', 'id');
+        $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');
         return view('User::create', compact('roles'));
     }
 
@@ -238,20 +238,6 @@ class UserController extends Controller {
         }else{
             flash()->error('Error occured');
         }
-        // $user       = $user->find($id);
-        // $user->status   = true;
-
-        // if($user->save()){
-        //     flash()->success('Activated user success');
-        // }else{
-        //     flash()->error('Error occured');
-        // }
-
-        // $user->update([
-        //     'status' => false
-        // ]);
-
-        // flash()->success('User activated');
 
         return redirect()->route('user.list');
     }
