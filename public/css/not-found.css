@@ -16,22 +16,22 @@ body {
 }
 
 .title-not-found h1 {
-    text-align: left;
+text-align: left;
     color: #fff;
     font-weight: 400;
-    font-size: 5em;
+    font-size: 4em;
     font-family: 'Montserrat', sans-serif;
     letter-spacing: -3px;
     line-height: 1em;
     margin: 0 0 20px 0;
-    float: left;
+    text-transform: uppercase;
 }
 
 .title-not-found p {
     color: #fff;
     font-weight: 300;
     line-height: 1.5em;
-    padding: 25px 0 10px 0;
+    padding: 0 0 10px 0;
 }
 
 .title-not-found ul {
