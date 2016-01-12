@@ -59,7 +59,7 @@
                     </a>
                 </li>
                 <li>
-                    Dashboard
+                    Dashboard ujian
                 </li>
             </ul>
             <!-- end of breadcrumbs -->
@@ -155,7 +155,7 @@
                 menu2 = new sidetogglemenu({ // initialize second menu example
                 id: 'right_chat_menu',
                 position: 'right',
-                pushcontent: false,
+                pushcontent: true,
                 //source: 'togglemenu.txt',
                 revealamt: -5
             });

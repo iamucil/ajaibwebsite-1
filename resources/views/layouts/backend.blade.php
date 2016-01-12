@@ -544,7 +544,7 @@
     <!-- end paper bg -->
 
 </div>
-    <div id="right_chat_menu" class="sidetogglemenu">
+    <div id="right-chat-menu-off" class="sidetogglemenu">
             <!-- Your right Slidebar content. -->
             <!-- Right Menu -->
             <aside class="right-off-canvas-menu">
@@ -622,8 +622,8 @@
 <script type='text/javascript' src="{{asset('/js/app.js')}}"></script>
 
 <!-- FLOT CHARTS -->
-<script src="{{asset('js/offcanvas/sidetogglemenu.js')}}"></script>
-<!-- <script src="{{asset('js/offcanvas/jPushMenu.js')}}"></script> -->
+<script type='text/javascript' src="{{asset('js/offcanvas/sidetogglemenu.js')}}"></script>
+
 
 <script>
    jQuery(function() {
@@ -641,13 +641,13 @@
              closeable:true//display close button or not
         });
 
-            menu2 = new sidetogglemenu({ // initialize second menu example
-            id: 'right_chat_menu',
+     menu2 = new sidetogglemenu({ // initialize second menu example
+            id: 'right-chat-menu-off',
             position: 'right',
             pushcontent: false,
             //source: 'togglemenu.txt',
             revealamt: -5
-        });
+        })
 
          setInterval(function(){
                 $(".chat-blink").toggleClass("backgroundBlink");
