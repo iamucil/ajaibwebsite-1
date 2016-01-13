@@ -6,6 +6,7 @@
 <!-- Include the PubNub Library -->
 var chatParameter = [];
 var senderId = '';
+var receiverId = '';
 var chatFeature;
 
 // user properties
@@ -69,11 +70,11 @@ function SubscribeChat() {
             var times = moment(m.time,"DD/MM/YYYY HH:mm:ss").fromNow();
 
             // user notification should be here
-            if (!m.receiver_id || 0 === m.receiver_id.length) {
+            if (!m.user_name || 0 === m.user_name.length) {
                 // it means users are not serviced yet.
                 // then push notifications to all operator
-                // if notification with this id not exist then create it
-                if ($('#cn_' + m.sender_id).length === 0) {
+                // if notification with this id doesn't exist then create it
+                //if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
 
                     // Set parameter for the next usage of AppendChat function
@@ -81,16 +82,16 @@ function SubscribeChat() {
 
                     // debugging to see the data
                     // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
-                }
+                //}
                 var serviced = false;
             } else {
                 var serviced = true;
                 // users has been serviced
                 // if users have been chat with this operator, then just change the style
-                if ($('#ss_'+ m.sender_id).length !== 0) {
+                if ($('#ss_'+ m.user_name).length !== 0) {
                     // users has old notification then remove it
                     // alert($('#ss_'+ m.sender_id).length);
-                    $('div#ss_'+ m.sender_id).remove();
+                    $('div#ss_'+ m.user_name).remove();
 
                     //ChatBoxToggle($('#cb_'+ m.sender_id));
 
@@ -104,11 +105,11 @@ function SubscribeChat() {
             }
             // Set parameter for the next usage of AppendChat function
             SetParam(m.sender_id, m);
-            if ($('#cn_' + m.sender_id)!==0) {
-                $('#cn_' + m.sender_id).remove();
+            if ($('#cn_' + m.user_name)!==0) {
+                $('#cn_' + m.user_name).remove();
             }
             // create new notification
-            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.sender_id + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
+            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name+ '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
 
             // append chat to chat-conversation div
             $('.chat-conversation').append(m.text+'<br />');
@@ -151,15 +152,15 @@ function AppendChat(senderId,serviced) {
     var obj = GetParam(senderId);
 
     // move to div slim scroll
-    $('.slim-scroll').prepend('<div id="ss_' + obj.sender_id + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user_name + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
+    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user_name + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
 
     // remove old notification
-    $('#cn_' + obj.sender_id).remove();
+    $('#cn_' + obj.user_name).remove();
 
     //alert($('.chat-bottom').find('div').attr('id',senderId).attr('id'));
     //if ($('div#cb_' + obj.sender_id).length === 0) {
-    if (!serviced) {
-        $('.chat-bottom').append('<div id=\"cb_'+ obj.sender_id + '\"class="chat-list chat-active">' +
+    if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
+        $('.chat-bottom').append('<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' +
             '<a class="chat-pop-over" data-title="' + obj.user_name + '" href="#">' + obj.user_name + '</a>' +
             '<div class="webui-popover-content">' +
             '<div class="chat-conversation">' +
@@ -184,6 +185,7 @@ function AppendChat(senderId,serviced) {
         //$('#cb_'+obj.sender_id);
 
         // blinking chat bottom
+        $('#cb_'+ obj.user_name).addClass('');
     }
 }
 
@@ -216,31 +218,48 @@ function load_js() {
  * @param senderId
  */
 function publish(senderId) {
-    // decrypt sender id
-    var geoip   = Cookies.get('geoip');
-    // get detail message from sender id decrypted
-    var obj=GetParam(senderId);
-    var text = $('.chat-text').val();
-    var datetime = "LastSync: " + new Date().today() + " @ " + new Date().timeNow();
-    chatFeature.publish({
-        channel: 'ch-'+obj.sender_id,
-        message: {
-            "token": 'token value',
-            "user_channel": channel,
-            "user_name": roles+'-'+firstname,
-            "text": text,
-            "ip": geoip.ip_address,
-            "sender_id": channel.split('-')[1],
-            "receiver_id": '085432123456',
-            "time": datetime
+    $.post('https://ajaib-local/dashboard/chat/insertlog',{
+            sender_id: user.id,
+            receiver_id: '7',
+            message: 'test',
+            ip_address: '10.10.10.1',
+            useragent: 'firefox',
+            read: '2016-01-11',
+            created_at: '2016-01-11 16:21:23',
+            updated_at: '2016-01-11 16:21:23'
+        }, function(data) {
+            if (data.status=='201') {
+                // success then publish message
+                // decrypt sender id
+                var geoip   = Cookies.get('geoip');
+                // get detail message from sender id decrypted
+                var obj=GetParam(senderId);
+                var text = $('.chat-text').val();
+                var datetime = "LastSync: " + new Date().today() + " @ " + new Date().timeNow();
+                chatFeature.publish({
+                    channel: 'ch-'+obj.sender_channel,
+                    message: {
+                        "user_name": roles+'-'+firstname,
+                        "text": text,
+                        "ip": geoip.ip_address,
+                        "sender_id": user.id,
+                        "sender_channel": 'op-'+user.channel,
+                        "receiver_id": obj.sender_id,
+                        "time": datetime
+                    }
+                });
+
+                // append the text to conversation area
+                $('.chat-conversation').append('<p>'+text+'</p>');
+
+                // set chat text to null
+                $('.chat-text').val('')
+            } else {
+                // fail
+                alertify.error("Gagal insert log chat. Periksa koneksi database!");
+            }
         }
-    });
-
-    // append the text to conversation area
-    $('.chat-conversation').append('<p>'+text+'</p>');
-
-    // set chat text to null
-    $('.chat-text').val('')
+    );
 }
 
 function whileTyping() {

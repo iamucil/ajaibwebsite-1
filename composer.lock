@@ -5,7 +5,6 @@
         "This file is @generated automatically"
     ],
     "hash": "91d930540dd1f51c4a470a9004af12d0",
-    "content-hash": "3b6bd494c64fa45ab27910f95f1846de",
     "packages": [
         {
             "name": "artem-schander/l5-modular",

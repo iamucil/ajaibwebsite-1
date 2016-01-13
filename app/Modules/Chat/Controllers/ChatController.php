@@ -11,8 +11,9 @@ class ChatController extends Controller {
 
 	public function __construct()
 	{
-		$this->middleware("oauth");
-		$this->middleware("oauth-user");
+		$this->middleware("oauth", ['only' => ['index', 'store']]);
+		$this->middleware("oauth-user", ['only' => ['index', 'store']]);
+        $this->middleware('auth', ['except' => ['index', 'store']]);
 	}
 
 	/**
@@ -40,7 +41,8 @@ class ChatController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		echo 'create';
+		echo '<script>console.log("test")</script>';
 	}
 
 	/**
@@ -110,6 +112,47 @@ class ChatController extends Controller {
 	public function destroy($id)
 	{
 		//
+	}
+
+	/**
+	 * Insert into chat logs from user dashboard (operator/admin)
+	 *
+	 * @param Request $request
+	 */
+	public function insertLog(Request $request)
+	{
+        /**
+         * sender id,
+         * receiver id,
+         * message,
+         * ip address
+         * useragent
+         * read,
+         * created at
+         * updated at
+         */
+		$return 	= [];
+		$chat=Chat::create([
+				'sender_id' => $request->sender_id,
+				'receiver_id' => $request->receiver_id,
+				'message' => $request->message,
+				'ip_address' => $request->ip_address,
+				'useragent' => $request->useragent,
+				'read' => $request->read,
+				'ceated_at' => $request->created_at,
+				'updated_at' => $request->updated_at
+		]);
+		if($chat){
+			$return['status'] = 201;
+			$return['message'] = 'success';
+		}else{
+			$return['status'] = 500;
+			$return['message'] = 'error';
+		}
+
+		return response()->json($return);
+        // get user login
+        #echo var_dump(auth()->user());
 	}
 
 }
