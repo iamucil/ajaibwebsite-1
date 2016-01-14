@@ -18,6 +18,8 @@ var channel='';
 var phone='';
 var status='';
 
+// pubnub init properties
+var authk = $('meta[name="csrf-token"]').attr('content')
 
 $(function () {
     // check if user has assigned to roles ??
@@ -37,6 +39,12 @@ $(function () {
         // initialize chat featre using PubNub
         InitChat();
 
+        // operator grant access
+        // grant global channel (without auth)
+        GrantChat(roles,'',true,false,0);
+        // grant operator private channel
+        GrantChat(channel,authk,true,true,0);
+
         // listening to 'OPERATOR' channel for group and 'OP-USERNAME' channel for private
         SubscribeChat();
     }
@@ -52,23 +60,47 @@ function InitChat() {
         publish_key: pubkey,
         subscribe_key: subkey,
         secret_key: skey,
+        auth_key: authk,
         ssl : (('https:' == document.location.protocol) ? true : false),
-        uuid: 'op-'+name
+        uuid: name
     });
 }
 
-function GrantChat(channel, auth) {
-    // grant pubnub access
-    chatFeature.grant({
-        channel: channel,
-        auth_key: auth,
-        read: true,
-        write: true,
-        ttl: 1,
-        callback: function(m){
-            console.log(m);
-        }
-    });
+/**
+ * Function to granting user using Pubnub Access Manager
+ * @param channel, specified channel to grant
+ * @param auth, specified auth to grant
+ * @param read, subscribe access
+ * @param write, publish access
+ * @param ttl, time to live => 0, forefer / without limit
+ */
+function GrantChat(channel, auth, read, write, ttl) {
+    // channel-pnpres used because we are using pubnub presence
+    // grant pubnub access on global channel and private channel
+    if (auth === '') {
+        // no need authentication
+        chatFeature.grant({
+            channel: channel+','+channel+'-pnpres',
+            read: read,
+            write: write,
+            ttl: ttl,
+            callback: function(m){
+                console.log(m);
+            }
+        });
+    } else {
+        // need authentication
+        chatFeature.grant({
+            channel: channel+','+channel+'-pnpres',
+            auth_key: auth,
+            read: read,
+            write: write,
+            ttl: ttl,
+            callback: function(m){
+                console.log(m);
+            }
+        });
+    }
 }
 
 function RevokeChat(channel, auth) {
@@ -91,7 +123,7 @@ function SubscribeChat() {
     // Subscribe/listen to the OPERATOR channel
     chatFeature.subscribe({
         channel: [roles,channel],
-        presence: function(m){console.log(m)},
+        //presence: function(m){console.log(m)},
         message: function (m) {
             // handle times
             var times = moment(m.time,"DD/MM/YYYY HH:mm:ss").fromNow();
