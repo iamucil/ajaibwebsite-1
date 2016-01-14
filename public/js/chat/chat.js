@@ -21,18 +21,20 @@ var status='';
 
 $(function () {
     // check if user has assigned to roles ??
-    if(user.roles === undefined || user.roles.length == 0){
+    if(authRoles === undefined || authRoles.length == 0){
         alertify.set({ delay: 10000 });
         alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     }else{
         // initialize user properties
-        name        = user.name;
-        firstname   = user.firstname;
-        lastname    = user.lastname;
-        roles       = user.roles[0].name;
-        channel     = 'op-'+user.channel;
-        phone       = user.phone_number;
-        status      = user.status;
+        // console.log(authUser.roles);
+        // console.log(authRoles)
+        name        = authUser.name;
+        firstname   = authUser.firstname;
+        lastname    = authUser.lastname;
+        roles       = authUser.roles[0].name;
+        channel     = 'op-'+authUser.channel;
+        phone       = authUser.phone_number;
+        status      = authUser.status;
 
         // initialize chat featre using PubNub
         InitChat();
