@@ -110,7 +110,7 @@ class UserController extends Controller {
             $validator      = Validator::make($data, [
                 'role_id' => 'required',
                 'firstname' => 'required',
-                'name' => 'required',
+                'name' => 'required|unique::users',
                 'email' => 'required|email|max:255|unique:users',
                 'password' => 'required|alpha_num',
                 'retype-password' => 'required|same:password',
