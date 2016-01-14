@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "91d930540dd1f51c4a470a9004af12d0",
+    "hash": "61d9dfcbe8bdba6258a47bdc0bd8eb3c",
+    "content-hash": "1c97f61fa96ca7eae85d5cb9490e88a8",
     "packages": [
         {
             "name": "artem-schander/l5-modular",
@@ -58,16 +59,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.12.1",
+            "version": "3.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5ee0f33fafe47740c03ff38ddb73ae4f52b4da5b"
+                "reference": "07e01f31ebfe283f24d06544c0cd615b5758486c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5ee0f33fafe47740c03ff38ddb73ae4f52b4da5b",
-                "reference": "5ee0f33fafe47740c03ff38ddb73ae4f52b4da5b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/07e01f31ebfe283f24d06544c0cd615b5758486c",
+                "reference": "07e01f31ebfe283f24d06544c0cd615b5758486c",
                 "shasum": ""
             },
             "require": {
@@ -133,7 +134,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-01-06 22:50:48"
+            "time": "2016-01-13 02:19:36"
         },
         {
             "name": "classpreloader/classpreloader",
@@ -1107,6 +1108,50 @@
             "time": "2015-12-22 15:52:08"
         },
         {
+            "name": "laracasts/utilities",
+            "version": "2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laracasts/PHP-Vars-To-Js-Transformer.git",
+                "reference": "4402a0ed774f8eb36ea7ba169341d9d5b6049378"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laracasts/PHP-Vars-To-Js-Transformer/zipball/4402a0ed774f8eb36ea7ba169341d9d5b6049378",
+                "reference": "4402a0ed774f8eb36ea7ba169341d9d5b6049378",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laracasts\\Utilities\\JavaScript\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jeffrey Way",
+                    "email": "jeffrey@laracasts.com"
+                }
+            ],
+            "description": "Transform your PHP to JavaScript",
+            "keywords": [
+                "javascript",
+                "laravel"
+            ],
+            "time": "2015-10-01 05:16:28"
+        },
+        {
             "name": "laravel/framework",
             "version": "v5.1.28",
             "source": {
@@ -1531,16 +1576,16 @@
         },
         {
             "name": "lucadegasperi/oauth2-server-laravel",
-            "version": "5.1.1",
+            "version": "5.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lucadegasperi/oauth2-server-laravel.git",
-                "reference": "583d720be20b9487d157dea603031fd0d3206978"
+                "reference": "9b754d7a36b65abfa5d808522a2df200efc7834c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lucadegasperi/oauth2-server-laravel/zipball/583d720be20b9487d157dea603031fd0d3206978",
-                "reference": "583d720be20b9487d157dea603031fd0d3206978",
+                "url": "https://api.github.com/repos/lucadegasperi/oauth2-server-laravel/zipball/9b754d7a36b65abfa5d808522a2df200efc7834c",
+                "reference": "9b754d7a36b65abfa5d808522a2df200efc7834c",
                 "shasum": ""
             },
             "require": {
@@ -1594,7 +1639,7 @@
                 "oauth2",
                 "server"
             ],
-            "time": "2015-12-22 07:59:52"
+            "time": "2016-01-13 14:34:20"
         },
         {
             "name": "monolog/monolog",

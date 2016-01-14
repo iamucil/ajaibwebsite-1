@@ -162,6 +162,8 @@ return [
         Laracasts\Flash\FlashServiceProvider::class,
         Webpatser\Countries\CountriesServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        App\Providers\ComposerServiceProvider::class,
+        Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
     ],
 
     /*
@@ -216,6 +218,7 @@ return [
         'Countries' => Webpatser\Countries\CountriesFacade::class,
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
+        'Javascript' => Laracasts\Utilities\JavaScript\JavaScriptFacade::class,
     ],
 
 ];

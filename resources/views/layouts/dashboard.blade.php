@@ -125,7 +125,6 @@
     {{-- script bottom: additional script js --}}
     <script>
         // init user properties
-        var user    = {!! Auth::user() !!};
         if(Cookies.get('geoip') === undefined) {
             var url     = '{!! url("/geo-ip") !!}';
             $.getJSON( url, function( data ) {
@@ -166,8 +165,8 @@
             },1500);
 
         });
-
     </script>
+
 @show
 </body>
 </html>
