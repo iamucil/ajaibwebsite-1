@@ -34,6 +34,10 @@ class Authenticate
      */
     public function handle($request, Closure $next)
     {
+        if($this->auth->check() AND !$this->auth->user()->hasRole(['admin', 'root', 'operator'])) {
+            $this->auth->logout();
+            app()->abort(401, 'Unauthorized credentials.');
+        }
         if ($this->auth->guest()) {
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
