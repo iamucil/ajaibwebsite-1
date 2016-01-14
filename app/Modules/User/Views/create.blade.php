@@ -65,7 +65,7 @@
                 <div class="form-group">
                     <label for="input-phone_number" class="col-sm-2 control-label">Nomor Telepon</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="input-retype-password" placeholder="" name="phone_number">
+                        <input type="text" class="form-control" id="input-retype-password" placeholder="" name="phone_number" value="{{ old('phone_number') }}">
                     </div>
                 </div>
                 <div class="form-group">
@@ -87,10 +87,10 @@
                     <div class="col-sm-4">
                         <div class="radio">
                             <label>
-                                <input type="radio" name="gender" value="male"> Laki-laki
+                                <input type="radio" name="gender" value="male" {{ request()->old('gender', $user['gender']) == 'male' ? 'checked' : '' }}> Laki-laki
                             </label>
                             <label>
-                                <input type="radio" name="gender" value="female"> Perempuan
+                                <input type="radio" name="gender" value="female" {{ request()->old('gender', $user['gender']) == 'female' ? 'checked' : '' }}> Perempuan
                             </label>
                         </div>
                     </div>

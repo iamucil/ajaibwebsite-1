@@ -2,6 +2,7 @@
 
 use App\User;
 use App\Role;
+use App\Country;
 use Validator;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -56,7 +57,8 @@ class UserController extends Controller {
     public function create()
     {
         $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');
-        return view('User::create', compact('roles'));
+        $user['gender'] = 'male';
+        return view('User::create', compact('roles', 'user'));
     }
 
     /**
@@ -86,6 +88,25 @@ class UserController extends Controller {
             \App::abort(403, 'Unauthorized action.');
         }else{
             $data           = $request->all();
+            $countries      = Country::where('id', '=', ($data['country_id'] == '') ? NULL : $data['country_id']);
+            $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+            $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+            $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+            $data['channel']        = '';
+            if($countries->exists()){
+                $country                = $countries->first();
+                $calling_code           = $country->calling_code;
+                $match_regex            = sprintf('/^[(]?[\%s]{%s}[) ]{0,2}[0-9]{3,}[ ]?$/i', $calling_code, strlen($calling_code));
+                var_dump(preg_match($match_regex, $data['phone_number']));
+                $data['phone_number']   = preg_replace('/^[\0{0}]/i', '${1}'.$calling_code, $data['phone_number']);
+                echo $data['phone_number'].'<br />';
+                $regex      = sprintf('/^[(]?[\%s]{%s}[) ]{0,%s}/i', $calling_code, strlen($calling_code),strlen($calling_code));
+                $regexp     = sprintf('/^[(]?[0-9]{%s}[) ]{0,%s}/i', strlen($calling_code),strlen($calling_code));
+                $data['phone_number']   = preg_replace($regex, '${1}', $data['phone_number']);
+                $data['channel']        = preg_replace($regex, '${1}', $data['phone_number']);
+            }
+
+            die();
             $validator      = Validator::make($data, [
                 'role_id' => 'required',
                 'firstname' => 'required',
@@ -94,12 +115,21 @@ class UserController extends Controller {
                 'password' => 'required|alpha_num',
                 'retype-password' => 'required|same:password',
                 'phone_number' => 'required|unique:users|integer|regex:/^[0-9]{6,11}$/',
+                'country_id' => 'required',
+                'channel' => 'required'
+            ], [
+                'country_id.required' => 'You must define your country',
+                'channel.required' => 'Please define your country'
             ]);
 
             if($validator->fails()){
                 flash()->error($validator->errors()->first());
                 return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
             }else{
+                echo '<pre>';
+                print_r($request->all());
+                echo '</pre>';
+                die();
                 flash()->success('Your data has been saved!');
                 return redirect()->route('user.list');
             }
