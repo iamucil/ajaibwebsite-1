@@ -51,10 +51,37 @@ function InitChat() {
     chatFeature = PUBNUB.init({
         publish_key: pubkey,
         subscribe_key: subkey,
+        secret_key: skey,
         ssl : (('https:' == document.location.protocol) ? true : false),
         uuid: 'op-'+name
     });
 }
+
+function GrantChat(channel, auth) {
+    // grant pubnub access
+    chatFeature.grant({
+        channel: channel,
+        auth_key: auth,
+        read: true,
+        write: true,
+        ttl: 1,
+        callback: function(m){
+            console.log(m);
+        }
+    });
+}
+
+function RevokeChat(channel, auth) {
+    pubnub.revoke({
+        channel: channel,
+        auth_key: auth,
+        callback: function(m){
+            console.log(m);
+        }
+    });
+}
+
+
 
 /**
  * Initializing for subscribe on group channel and private channel
