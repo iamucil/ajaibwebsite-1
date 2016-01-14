@@ -130,11 +130,13 @@ class OauthController extends Controller {
         $grant_type         = 'password';
         $client_id          = $request->id;
         $client_secret      = $request->secret;
-        $verification_code  = $request->code;
+        $verification_code  = preg_replace('/\s[\s]+/', '', $request->code);
+        $verification_code  = preg_replace('/[\s\W]+/', '', $request->code);
+
         $email              = '';
         $phone_number       = '';
         $password           = '';
-        $query              = User::where('verification_code', $verification_code);
+        $query              = User::where('verification_code', '=', ($verification_code == '') ? NULL : $verification_code);
         $user               = [];
         $return             = [];
         if($query->exists()){
@@ -147,31 +149,34 @@ class OauthController extends Controller {
             $phone_number   = $user->phone_number;
             $password       = $user->phone_number;
             $username       = $user->email;
+            $oauth              = OauthClient::where('id', $client_id)
+                ->where('secret', $client_secret);
+
+            if($oauth->exists()){
+                $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
+                $response           = $client->request('POST', 'api/v1/oauth/access_token', [
+                    'form_params' => $params,
+                    'header' => [
+                        'Content-Type' => 'application/json'
+                    ], 'Accept'     => 'application/json',
+                ]);
+
+                $code               = $response->getStatusCode(); // 200
+                $reason             = $response->getReasonPhrase(); // OK
+                $body               = $response->getBody();
+                $result             = $body->getContents();
+                $result             = json_decode($result);
+                $return['access_token']     = $result->access_token;
+                $return['refresh_token']    = $result->refresh_token;
+                $return['email']            = $email;
+                $return['phone_number']     = $phone_number;
+                $return['expires']          = $result->expires_in;
+            }
+        }else{
+            $return['status']   = 404;
+            $return['message']  = 'Not Found';
         }
 
-        $oauth              = OauthClient::where('id', $client_id)
-            ->where('secret', $client_secret);
-
-        if($oauth->exists()){
-            $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
-            $response           = $client->request('POST', 'api/v1/oauth/access_token', [
-                'form_params' => $params,
-                'header' => [
-                    'Content-Type' => 'application/json'
-                ], 'Accept'     => 'application/json',
-            ]);
-
-            $code               = $response->getStatusCode(); // 200
-            $reason             = $response->getReasonPhrase(); // OK
-            $body               = $response->getBody();
-            $result             = $body->getContents();
-            $result             = json_decode($result);
-            $return['access_token']     = $result->access_token;
-            $return['refresh_token']    = $result->refresh_token;
-            $return['email']            = $email;
-            $return['phone_number']     = $phone_number;
-            $return['expires']          = $result->expires_in;
-        }
 
         return response()->json($return);
     }

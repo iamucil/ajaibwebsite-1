@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use Illuminate\Support\Facades\Lang;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -25,8 +26,8 @@ class AuthController extends Controller
 
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     protected $user;
-    protected $redirectPath     = '/dashboard/';
-
+    protected $redirectPath         = '/dashboard/';
+    protected $redirectAfterLogout  = '/auth/login';
     /**
      * Create a new authentication controller instance.
      *
@@ -53,8 +54,8 @@ class AuthController extends Controller
          */
 
         return Validator::make($data, [
-            'email' => 'required|email|max:255',
-            'phone_number' => 'required|integer|regex:/^[0-9]{6,11}$/',
+            'email' => 'required|email|max:255|unique:users',
+            'phone_number' => 'required|integer|unique:users|regex:/^[0-9]{6,11}$/',
         ]);
     }
 
@@ -90,5 +91,45 @@ class AuthController extends Controller
         return redirect()->route('auth.success.get')
             ->with('user', $user['user'])
             ->with('status', (bool)$user['exists']);
+    }
+
+    public function doLogin(Request $request)
+    {
+        $field          = filter_var($request[$this->loginUsername()], FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+        $request->merge([
+            $field => $request->input($this->loginUsername()),
+            'status' => true
+        ]);
+        $this->validate($request, [
+            $this->loginUsername() => 'required',
+            'password' => 'required',
+        ], [
+            $this->loginUsername().'.required' => 'Please fill your username or email',
+            'password.required' => 'Please define your password'
+        ]);
+        $credentials    = $request->only([$field, 'password', 'status']);
+        $throttles      = $this->isUsingThrottlesLoginsTrait();
+
+        if ($throttles && $this->hasTooManyLoginAttempts($request)) {
+            return $this->sendLockoutResponse($request);
+        }
+
+
+        if (Auth::attempt($credentials, $request->has('remember'))) {
+            return $this->handleUserWasAuthenticated($request, $throttles);
+        }
+
+        // If the login attempt was unsuccessful we will increment the number of attempts
+        // to login and redirect the user back to the login form. Of course, when this
+        // user surpasses their maximum number of attempts they will get locked out.
+        if ($throttles) {
+            $this->incrementLoginAttempts($request);
+        }
+
+        return redirect($this->loginPath())
+            ->withInput($request->only($this->loginUsername(), 'remember'))
+            ->withErrors([
+                $this->loginUsername() => $this->getFailedLoginMessage(),
+            ]);
     }
 }
