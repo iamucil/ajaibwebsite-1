@@ -39,7 +39,7 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
-
+    protected $maps     = ['name' => 'myname'];
     public function countries()
     {
         return $this->hasOne('App\Country');

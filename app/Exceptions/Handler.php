@@ -54,12 +54,6 @@ class Handler extends ExceptionHandler
 
         if($e instanceof QueryException) {
             return response()->view('errors.sql', ['exception' => $e]);
-            // abort(301, 'Unauthorized action.');
-            // echo '<pre>';
-            // echo 'status Code';
-            // print_r($e->getBindings());
-            // echo '</pre>';
-            // die();
         }
 
         return parent::render($request, $e);
