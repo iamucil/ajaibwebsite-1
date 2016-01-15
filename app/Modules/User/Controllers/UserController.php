@@ -1,5 +1,6 @@
 <?php namespace App\Modules\User\Controllers;
 
+use DB;
 use App\User;
 use App\Role;
 use App\Country;
@@ -225,18 +226,41 @@ class UserController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function destroy(Request $request, User $user)
+    public function destroy($id, Request $request, User $user)
     {
         $this->authorize('destroy', $user);
+        // $response = $this->call('DELETE', '/users/'.$id, ['_token' => csrf_token()]);
+        echo '<pre>';
+        if(!$request->has('_method') OR $request->_method !== 'DELETE'){
+            app::abort(403, 'Unauthorized action.');
+        }
+        $result         = DB::transaction(function ($id) use ($id) {
+            $result     = true;
+            $result     &= DB::table('users')->where('id', '=', $id)->delete();
+            $result     &= DB::table('role_user')->where('user_id', '=', $id)->delete();
 
-        $user->delete();
-        flash('Your data has been deleted');
+            return $result;
+        });
+
+        if((bool)$result === true){
+            flash()->success('Your data has been deleted');
+        }else{
+            flash()->error('Unable to delete data user');
+        }
+
         return redirect()->route('user.list');
     }
 
     public function getListUsers(Request $request)
     {
-        $users       = User::orderBy('name', 'DESC')->paginate(15);
+        $users      = User::select(DB::raw('"users".*'))
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->whereNotIn('roles.name', ['root'])
+            ->orderBy('users.name', 'DESC')
+            ->orderBy('users.created_at', 'DESC')
+            ->orderBy('roles.name', 'ASC')
+            ->paginate(15);
         return view('User::index', compact('users'));
     }
 
