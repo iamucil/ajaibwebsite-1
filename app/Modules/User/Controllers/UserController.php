@@ -88,49 +88,47 @@ class UserController extends Controller {
             \App::abort(403, 'Unauthorized action.');
         }else{
             $data           = $request->all();
-            $countries      = Country::where('id', '=', ($data['country_id'] == '') ? NULL : $data['country_id']);
-            $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
-            $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
-            $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
-            $data['channel']        = '';
-            if($countries->exists()){
-                $country                = $countries->first();
-                $calling_code           = $country->calling_code;
-                $match_regex            = sprintf('/^[(]?[\%s]{%s}[) ]{0,2}[0-9]{3,}[ ]?$/i', $calling_code, strlen($calling_code));
-                var_dump(preg_match($match_regex, $data['phone_number']));
-                $data['phone_number']   = preg_replace('/^[\0{0}]/i', '${1}'.$calling_code, $data['phone_number']);
-                echo $data['phone_number'].'<br />';
-                $regex      = sprintf('/^[(]?[\%s]{%s}[) ]{0,%s}/i', $calling_code, strlen($calling_code),strlen($calling_code));
-                $regexp     = sprintf('/^[(]?[0-9]{%s}[) ]{0,%s}/i', strlen($calling_code),strlen($calling_code));
-                $data['phone_number']   = preg_replace($regex, '${1}', $data['phone_number']);
-                $data['channel']        = preg_replace($regex, '${1}', $data['phone_number']);
-            }
-
-            die();
             $validator      = Validator::make($data, [
-                'role_id' => 'required',
+                'role_id' => 'required|exists:roles,id',
                 'firstname' => 'required',
-                'name' => 'required|unique::users',
+                'name' => 'required|unique:users',
                 'email' => 'required|email|max:255|unique:users',
                 'password' => 'required|alpha_num',
                 'retype-password' => 'required|same:password',
                 'phone_number' => 'required|unique:users|integer|regex:/^[0-9]{6,11}$/',
-                'country_id' => 'required',
-                'channel' => 'required'
+                'country_id' => 'required'
             ], [
-                'country_id.required' => 'You must define your country',
-                'channel.required' => 'Please define your country'
+                'country_id.required' => 'You must define your country'
             ]);
 
             if($validator->fails()){
                 flash()->error($validator->errors()->first());
                 return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
             }else{
-                echo '<pre>';
-                print_r($request->all());
-                echo '</pre>';
-                die();
-                flash()->success('Your data has been saved!');
+                $countries      = Country::where('id', '=', ($data['country_id'] == '') ? NULL : $data['country_id']);
+                $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+                $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+                $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+                $data['channel']        = hash('crc32b', bcrypt(uniqid(rand()*time())));
+                if($countries->exists()){
+                    $country            = $countries->first();
+                    $calling_code       = $country->calling_code;
+                    $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
+                    $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
+                    $data['channel']            = preg_replace($regexp, '${2}', $data['phone_number']);
+                    $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+                    $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
+                    $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
+                }
+                $data['status']         = true;
+                $data['password']       = bcrypt($data['password']);
+                $data['verification_code']  = '******';
+                $request->merge($data);
+                $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name']);
+                $user           = User::firstOrCreate($input);
+                $user->roles()->attach($request->role_id);
+
+                flash()->success('Penambahan data berhasil!');
                 return redirect()->route('user.list');
             }
         }
