@@ -63,12 +63,6 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="input-phone_number" class="col-sm-2 control-label">Nomor Telepon</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" id="input-retype-password" placeholder="" name="phone_number" value="{{ old('phone_number') }}">
-                    </div>
-                </div>
-                <div class="form-group">
                     <label for="input-address" class="col-sm-2 control-label">Kota</label>
                     <div class="col-sm-4">
                         <input type="hidden" name="country_id" value="{{ old('country_id') }}" />
@@ -79,7 +73,14 @@
                 <div class="form-group">
                     <label for="input-address" class="col-sm-2 control-label">Alamat</label>
                     <div class="col-sm-4">
-                        <textarea class="form-control" id="input-address" name="address" rows="4"></textarea>
+                        <textarea class="form-control" id="input-address" name="address" rows="4">{{ old('address') }}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-phone_number" class="col-sm-2 control-label">Nomor Telepon</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="input-retype-password" placeholder="" name="phone_number" value="{{ old('phone_number') }}">
+                        <span id="helpBlock" class="help-block">ex: 85600000000.</span>
                     </div>
                 </div>
                 <div class="form-group">
