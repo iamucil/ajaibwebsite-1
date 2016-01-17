@@ -132,22 +132,46 @@ class ChatController extends Controller {
          * updated at
          */
 		$return 	= [];
-		$chat=Chat::create([
-				'sender_id' => $request->sender_id,
-				'receiver_id' => $request->receiver_id,
-				'message' => $request->message,
-				'ip_address' => $request->ip_address,
-				'useragent' => $request->useragent,
-				'read' => $request->read,
-				'ceated_at' => $request->created_at,
-				'updated_at' => $request->updated_at
-		]);
-		if($chat){
+
+        $ownerId =  Authorizer::getResourceOwnerId();
+        $user=User::find($ownerId);
+
+        if(is_null($user))
+        {
+            $return[]= response()->json(array(
+                'status'=>404,
+                'message'=>'not found'
+            ));
+        }
+        return $return;
+//		$chat=Chat::create([
+//				'sender_id' => $request->sender_id,
+//				'receiver_id' => $request->receiver_id,
+//				'message' => $request->message,
+//				'ip_address' => $request->ip_address,
+//				'useragent' => $request->useragent,
+//				'read' => $request->read
+////				'ceated_at' => $request->created_at,
+////				'updated_at' => $request->updated_at
+//		]);
+        $id = DB::table('chats')->insertGetId(
+            [
+                'sender_id' => $request->sender_id,
+                'receiver_id' => $request->receiver_id,
+                'message' => $request->message,
+                'ip_address' => $request->ip_address,
+                'useragent' => $request->useragent,
+                'read' => $request->read
+            ]
+        );
+		if($id>0){
 			$return['status'] = 201;
 			$return['message'] = 'success';
+//			$return['data']['message_id'] = $id;
 		}else{
 			$return['status'] = 500;
 			$return['message'] = 'error';
+//            $return['data']['message_id'] = $id;
 		}
 
 		return response()->json($return);
