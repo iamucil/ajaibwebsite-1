@@ -148,7 +148,7 @@ class OauthController extends Controller {
                 'verification_code' => str_repeat('*', 6)
             ]);
             $user           = $query->first();
-            if(!$user->hasRole('users')){
+            if(!$user->hasRole('users') OR $user->hasRole('users') === NULL){
                 $return['status']   = 404;
                 $return['message']  = 'Not Found';
             }else{
