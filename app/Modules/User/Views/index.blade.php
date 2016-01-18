@@ -62,7 +62,7 @@
                             {{ $nomor }}
                         </td>
                         <td>
-                            {{ $user->name }}
+                            {{ $user->username }}
                         </td>
                         <td>
                             {{ $user->email }}
