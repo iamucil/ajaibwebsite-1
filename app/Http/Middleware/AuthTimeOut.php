@@ -28,7 +28,7 @@ class AuthTimeOut
         if(!$this->session->has('lastActivityTime')){
             $this->session->put('lastActivityTime',time());
         } elseif(time() - $this->session->get('lastActivityTime') > $this->timeout) {
-            if(!Auth::user()->hasRole('users')){
+            if(auth()->check() AND !auth()->user()->hasRole('users')){
                 $this->session->forget('lastActivityTime');
                 Auth::logout();
                 return redirect()->route('login')->with(['warning' => 'You had not activity in '.$this->timeout/60 .' minutes ago.']);
