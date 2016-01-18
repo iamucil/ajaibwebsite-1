@@ -143,10 +143,10 @@ class OauthController extends Controller {
         if($query->exists()){
             // return $query->first();
             // Update data users
-            // $query->update([
-            //     'status' => true,
-            //     'verification_code' => str_repeat('*', 6)
-            // ]);
+            $query->update([
+                'status' => true,
+                'verification_code' => str_repeat('*', 6)
+            ]);
             $user           = $query->first();
             if(!$user->hasRole('users')){
                 $return['status']   = 404;
