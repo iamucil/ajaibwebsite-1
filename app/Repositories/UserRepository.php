@@ -19,14 +19,15 @@ class UserRepository
         if($role->exists()){
             $country            = Country::find($data['country_id']);
             $calling_code       = $country->calling_code;
+            $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+            $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
             $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
             $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
             $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
             $data['channel']        = hash('crc32b', bcrypt(uniqid(rand()*time())));
+            $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
             $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
-            $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
             $data['channel']    = preg_replace($regexp, '${2}', $data['phone_number']);
-            $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
             $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
             $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
             $data['status']     = false;
@@ -62,7 +63,9 @@ class UserRepository
              * set role to end user
              */
             $role_user  = $role->first();
-            $user->roles()->attach($role_user->id);
+            if(!$user->hasRole($role_user->name)){
+                $user->roles()->attach($role_user->id);
+            }
 
             /**
              * And finnaly send email greeting to registered user
