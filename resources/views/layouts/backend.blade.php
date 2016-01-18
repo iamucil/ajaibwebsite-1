@@ -343,51 +343,45 @@
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
                                     </li>
-                                    <li class="edumix-sticky-title">
-
-                                        <a href="#">
-                                            <h3 class="text-black "> <i class="icon-warning"></i> Sticky Very Important<span class="text-red fontello-record" ></span></h3>
-                                            <p class="text-black">1 minute ago</p>
-                                        </a>
-                                    </li>
+                     
                                     <li>
                                         <div class="slim-scroll">
-                                            <div>
-                                                <i class="fontello-megaphone"></i>
+                                            <div class="unread-notf">
+                                               
                                                 <a href="#">
-                                                    <h3>Announcements <span class="text-green fontello-record" ></span>
+                                                    <h3>0809272382 
                                                     </h3>
                                                     <p>Just Now !</p>
                                                 </a>
                                             </div>
-                                            <div>
-                                                <i class="  fontello-attach-1"></i>
+                                            <div class="read-notf">
+                                                
                                                 <a href="#">
-                                                    <h3>Complete your profile<span class="text-yellow fontello-record" ></span>
+                                                    <h3>+62 082347823473
                                                     </h3>
                                                     <p>2 Minute Ago</p>
                                                 </a>
                                             </div>
-                                            <div>
-                                                <i class="  fontello-calendar-1"></i>
+                                            <div class="read-notf">
+                                        
                                                 <a href="#">
-                                                    <h3>New Schedule Realease<span class="text-yellow fontello-record" ></span>
+                                                    <h3>+62 3453454353
                                                     </h3>
                                                     <p>30 Minute ago</p>
                                                 </a>
                                             </div>
-                                            <div>
-                                                <i class="fontello-database-1"></i>
+                                            <div class="read-notf">
+                                               
                                                 <a href="#">
-                                                    <h3>New Student Data<span class="text-orange fontello-record" ></span>
+                                                    <h3>+62 34542524553454
                                                     </h3>
                                                     <p>1 Hour ago</p>
                                                 </a>
                                             </div>
-                                            <div>
-                                                <i class="fontello-graduation-cap"></i>
+                                            <div class="read-notf">
+                                  
                                                 <a href="#">
-                                                    <h3>Graduate Student List<span class="fontello-record" ></span>
+                                                    <h3>+62 656577657657
                                                     </h3>
                                                     <p>2 Days ago</p>
                                                 </a>
@@ -450,24 +444,18 @@
             <!-- Chat bottom -->
             <div class="chat-bottom">
                 <div class="chat-list chat-active chat-blink">
+                        <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Blink</a>
                         <div class="webui-popover-content">
                             <div class="chat-conversation">
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
+
+                            <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
+                            <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
+                                kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
+                            <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
+                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
+                            
+        
                             </div>
                             <div class="textarea-nest">
                                 <div class="form-group">
@@ -484,24 +472,16 @@
                 </div>
          
                <div class="chat-list chat-active">
+                        <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Aktif</a>
                         <div class="webui-popover-content">
                             <div class="chat-conversation">
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
+                            
+                            <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
+                            <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
+                                kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
+                            <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
+                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
                             </div>
                             <div class="textarea-nest">
                                 <div class="form-group">
@@ -518,24 +498,16 @@
                 </div>
 
                 <div class="chat-list chat-idle">
-                                  <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Idle</a>
+                        <div class="close-box">X</div>
+                        <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Idle</a>
                         <div class="webui-popover-content">
                             <div class="chat-conversation">
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
-                            <p>popover contenbnbnbnbt</p>
+                            
+                            <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
+                            <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
+                                kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
+                            <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
+                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
                             </div>
                             <div class="textarea-nest">
                                 <div class="form-group">
@@ -572,7 +544,7 @@
     <!-- end paper bg -->
 
 </div>
-    <div id="right_chat_menu" class="sidetogglemenu">
+    <div id="right-chat-menu-off" class="sidetogglemenu">
             <!-- Your right Slidebar content. -->
             <!-- Right Menu -->
             <aside class="right-off-canvas-menu">
@@ -650,8 +622,8 @@
 <script type='text/javascript' src="{{asset('/js/app.js')}}"></script>
 
 <!-- FLOT CHARTS -->
-<script src="{{asset('js/offcanvas/sidetogglemenu.js')}}"></script>
-<!-- <script src="{{asset('js/offcanvas/jPushMenu.js')}}"></script> -->
+<script type='text/javascript' src="{{asset('js/offcanvas/sidetogglemenu.js')}}"></script>
+
 
 <script>
    jQuery(function() {
@@ -669,19 +641,25 @@
              closeable:true//display close button or not
         });
 
-            menu2 = new sidetogglemenu({ // initialize second menu example
-            id: 'right_chat_menu',
+     menu2 = new sidetogglemenu({ // initialize second menu example
+            id: 'right-chat-menu-off',
             position: 'right',
             pushcontent: false,
             //source: 'togglemenu.txt',
             revealamt: -5
-        });
+        })
 
- setInterval(function(){
-        $(".chat-blink").toggleClass("backgroundBlink");
-     },1500);
+         setInterval(function(){
+                $(".chat-blink").toggleClass("backgroundBlink");
+             },1500);
 
-    })
+            })
+
+           $(document).on('click','.close-box',function(){
+            $(this).parent().fadeTo(300,0,function(){
+                  $(this).remove();
+            });
+});
 
 
 </script>

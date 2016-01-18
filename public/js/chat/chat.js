@@ -6,14 +6,50 @@
 <!-- Include the PubNub Library -->
 var chatParameter = [];
 var senderId = '';
+var receiverId = '';
 var chatFeature;
 
-$(function () {
-    // initialize chat featre using PubNub
-    InitChat();
+// user properties
+var name='';
+var firstname='';
+var lastname='';
+var roles='';
+var channel='';
+var phone='';
+var status='';
 
-    // listening to 'OPERATOR' channel for group and 'OP-USERNAME' channel for private
-    SubscribeChat();
+// pubnub init properties
+var authk = $('meta[name="csrf-token"]').attr('content')
+
+$(function () {
+    // check if user has assigned to roles ??
+    if(authRoles === undefined || authRoles.length == 0){
+        alertify.set({ delay: 10000 });
+        alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
+    }else{
+        // initialize user properties
+        // console.log(authUser.roles);
+        // console.log(authRoles)
+        name        = authUser.name;
+        firstname   = authUser.firstname;
+        lastname    = authUser.lastname;
+        roles       = authUser.roles[0].name;
+        channel     = 'op-'+authUser.channel;
+        phone       = authUser.phone_number;
+        status      = authUser.status;
+
+        // initialize chat featre using PubNub
+        InitChat();
+
+        // operator grant access
+        // grant global channel (without auth)
+        GrantChat(roles,'',true,false,0);
+        // grant operator private channel
+        GrantChat(channel,authk,true,true,0);
+
+        // listening to 'OPERATOR' channel for group and 'OP-USERNAME' channel for private
+        SubscribeChat();
+    }
 
 });
 
@@ -23,11 +59,63 @@ $(function () {
  */
 function InitChat() {
     chatFeature = PUBNUB.init({
-        publish_key: 'pub-c-20764d9e-b436-4776-b03a-adcae96c2a6b',
-        subscribe_key: 'sub-c-6bad3874-9efa-11e5-baf7-02ee2ddab7fe',
-        uuid: 'op-yudha'
+        publish_key: pubkey,
+        subscribe_key: subkey,
+        secret_key: skey,
+        auth_key: authk,
+        ssl : (('https:' == document.location.protocol) ? true : false),
+        uuid: name
     });
 }
+
+/**
+ * Function to granting user using Pubnub Access Manager
+ * @param channel, specified channel to grant
+ * @param auth, specified auth to grant
+ * @param read, subscribe access
+ * @param write, publish access
+ * @param ttl, time to live => 0, forefer / without limit
+ */
+function GrantChat(channel, auth, read, write, ttl) {
+    // channel-pnpres used because we are using pubnub presence
+    // grant pubnub access on global channel and private channel
+    if (auth === '') {
+        // no need authentication
+        chatFeature.grant({
+            channel: channel+','+channel+'-pnpres',
+            read: read,
+            write: write,
+            ttl: ttl,
+            callback: function(m){
+                console.log(m);
+            }
+        });
+    } else {
+        // need authentication
+        chatFeature.grant({
+            channel: channel+','+channel+'-pnpres',
+            auth_key: auth,
+            read: read,
+            write: write,
+            ttl: ttl,
+            callback: function(m){
+                console.log(m);
+            }
+        });
+    }
+}
+
+function RevokeChat(channel, auth) {
+    pubnub.revoke({
+        channel: channel,
+        auth_key: auth,
+        callback: function(m){
+            console.log(m);
+        }
+    });
+}
+
+
 
 /**
  * Initializing for subscribe on group channel and private channel
@@ -36,17 +124,18 @@ function InitChat() {
 function SubscribeChat() {
     // Subscribe/listen to the OPERATOR channel
     chatFeature.subscribe({
-        channel: ['OPERATOR','OP-011222333444'],
+        channel: [roles,channel],
+        //presence: function(m){console.log(m)},
         message: function (m) {
             // handle times
             var times = moment(m.time,"DD/MM/YYYY HH:mm:ss").fromNow();
 
             // user notification should be here
-            if (!m.receiver_id || 0 === m.receiver_id.length) {
+            if (!m.user_name || 0 === m.user_name.length) {
                 // it means users are not serviced yet.
                 // then push notifications to all operator
-                // if notification with this id not exist then create it
-                if ($('#cn_' + m.sender_id).length === 0) {
+                // if notification with this id doesn't exist then create it
+                //if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
 
                     // Set parameter for the next usage of AppendChat function
@@ -54,24 +143,37 @@ function SubscribeChat() {
 
                     // debugging to see the data
                     // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
-                }
+                //}
                 var serviced = false;
             } else {
                 var serviced = true;
                 // users has been serviced
                 // if users have been chat with this operator, then just change the style
-                if ($('#ss_'+ m.sender_id).length !== 0) {
+                if ($('#ss_'+ m.user_name).length !== 0) {
                     // users has old notification then remove it
                     // alert($('#ss_'+ m.sender_id).length);
-                    $('div#ss_'+ m.sender_id).remove();
-                    // create new notification
+                    $('div#ss_'+ m.user_name).remove();
+
+                    //ChatBoxToggle($('#cb_'+ m.sender_id));
+
+                    //$('#cb_'+ m.sender_id).click(function(){
+                    //    alert($(this).attr('class'));
+                    //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
+                    //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
+                    //    }
+                    //});
                 }
             }
+            // Set parameter for the next usage of AppendChat function
             SetParam(m.sender_id, m);
-            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.sender_id + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
+            if ($('#cn_' + m.user_name)!==0) {
+                $('#cn_' + m.user_name).remove();
+            }
+            // create new notification
+            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name+ '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
 
             // append chat to chat-conversation div
-            $('.chat-conversation').append(m.text);
+            $('.chat-conversation').append(m.text+'<br />');
 
             // $('.chat-logs').append(m.command+'<br />');
             //console.log(m);
@@ -94,6 +196,13 @@ function SubscribeChat() {
     });
 }
 
+function ChatBoxToggle(elm) {
+    // if chat-box already shown then blink it
+    if (elm.length !== 0) {
+        elm.addClass('chat-blink');
+    }
+}
+
 /**
  * Append chat to chat-conversation box on chat panel
  * @param senderId
@@ -104,15 +213,15 @@ function AppendChat(senderId,serviced) {
     var obj = GetParam(senderId);
 
     // move to div slim scroll
-    $('.slim-scroll').prepend('<div id="ss_' + obj.sender_id + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user_name + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
+    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user_name + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
 
     // remove old notification
-    $('#cn_' + obj.sender_id).remove();
+    $('#cn_' + obj.user_name).remove();
 
     //alert($('.chat-bottom').find('div').attr('id',senderId).attr('id'));
     //if ($('div#cb_' + obj.sender_id).length === 0) {
-    if (!serviced) {
-        $('.chat-bottom').append('<div id=\"cb_'+ obj.sender_id + '\"class="chat-list chat-active">' +
+    if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
+        $('.chat-bottom').append('<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' +
             '<a class="chat-pop-over" data-title="' + obj.user_name + '" href="#">' + obj.user_name + '</a>' +
             '<div class="webui-popover-content">' +
             '<div class="chat-conversation">' +
@@ -137,6 +246,7 @@ function AppendChat(senderId,serviced) {
         //$('#cb_'+obj.sender_id);
 
         // blinking chat bottom
+        $('#cb_'+ obj.user_name).addClass('');
     }
 }
 
@@ -147,7 +257,7 @@ function load_js() {
     var head = document.getElementsByTagName('head')[0];
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'http://ajaib-local/js/jquery.webui-popover.js';
+    script.src = 'https://ajaib-local/js/jquery.webui-popover.js';
     head.appendChild(script);
 
     $('.chat-pop-over').webuiPopover({
@@ -169,31 +279,48 @@ function load_js() {
  * @param senderId
  */
 function publish(senderId) {
-    // decrypt sender id
+    $.post('https://ajaib-local/dashboard/chat/insertlog',{
+            sender_id: user.id,
+            receiver_id: '7',
+            message: 'test',
+            ip_address: '10.10.10.1',
+            useragent: 'firefox',
+            read: '2016-01-11',
+            created_at: '2016-01-11 16:21:23',
+            updated_at: '2016-01-11 16:21:23'
+        }, function(data) {
+            if (data.status=='201') {
+                // success then publish message
+                // decrypt sender id
+                var geoip   = Cookies.get('geoip');
+                // get detail message from sender id decrypted
+                var obj=GetParam(senderId);
+                var text = $('.chat-text').val();
+                var datetime = "LastSync: " + new Date().today() + " @ " + new Date().timeNow();
+                chatFeature.publish({
+                    channel: 'ch-'+obj.sender_channel,
+                    message: {
+                        "user_name": roles+'-'+firstname,
+                        "text": text,
+                        "ip": geoip.ip_address,
+                        "sender_id": user.id,
+                        "sender_channel": 'op-'+user.channel,
+                        "receiver_id": obj.sender_id,
+                        "time": datetime
+                    }
+                });
 
-    // get detail message from sender id decrypted
-    var obj=GetParam(senderId);
-    var text = $('.chat-text').val();
-    var datetime = "LastSync: " + new Date().today() + " @ " + new Date().timeNow();
-    chatFeature.publish({
-        channel: 'ch-'+obj.sender_id,
-        message: {
-            "token": 'token value',
-            "user_channel": 'OP-011222333444',
-            "user_name": 'op-yudha',
-            "text": text,
-            "ip": '111.111.11.111',
-            "sender_id": '011222333444',
-            "receiver_id": '085432123456',
-            "time": datetime
+                // append the text to conversation area
+                $('.chat-conversation').append('<p>'+text+'</p>');
+
+                // set chat text to null
+                $('.chat-text').val('')
+            } else {
+                // fail
+                alertify.error("Gagal insert log chat. Periksa koneksi database!");
+            }
         }
-    });
-
-    // append the text to conversation area
-    $('.chat-conversation').append('<p>'+text+'</p>');
-
-    // set chat text to null
-    $('.chat-text').val('')
+    );
 }
 
 function whileTyping() {

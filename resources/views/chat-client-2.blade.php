@@ -68,13 +68,30 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 
 <!-- Get Client Ip Address -->
-<script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
+<script type="text/javascript" src="https://l2.io/ip.js?var=myip"></script>
 
 <!-- Instantiate PubNub -->
 <script type="text/javascript">
     var senderId = '';
     var receiverId = '';
-    var receiverChannel = 'OPERATOR';
+    var receiverChannel = 'operator';
+    var PUBNUB_demo = PUBNUB.init({
+        publish_key: 'pub-c-20764d9e-b436-4776-b03a-adcae96c2a6b',
+        subscribe_key: 'sub-c-6bad3874-9efa-11e5-baf7-02ee2ddab7fe',
+        ssl : (('https:' == document.location.protocol) ? true : false),
+        uuid: 'user-olivia'
+    });
+
+    PUBNUB_demo.subscribe({
+        channel: 'ch-085432123456',
+        presence: function(m){console.log(m)},
+        message: function (m) {
+            receiverId = m.sender_id;
+            receiverChannel = m.sender_channel;
+            $('.discussion').append('<li class="other"><div class="avatar"></div><div class="messages">'+ m.text +'<time datetime="2009-11-13T20:00">Timothy • 51 min</time></div></li>');
+        }
+    });
+
     $(document).ready(function () {
         var now = new Date().today() + new Date().timeNow();
         var then = "31/12/2015 12:20:30";
@@ -84,6 +101,11 @@
         var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
         console.log(s);
         console.log(moment(now, "DD/MM/YYYY HH:mm:ss").fromNow());
+        PUBNUB_demo.history({
+            channel : receiverChannel,
+            count : 100,
+            callback : function(m){console.log(m)}
+        });
     });
 
 
@@ -97,21 +119,6 @@
         return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
     }
 
-    var PUBNUB_demo = PUBNUB.init({
-        publish_key: 'pub-c-20764d9e-b436-4776-b03a-adcae96c2a6b',
-        subscribe_key: 'sub-c-6bad3874-9efa-11e5-baf7-02ee2ddab7fe',
-        uuid: 'user-olivia'
-    });
-
-    PUBNUB_demo.subscribe({
-        channel: 'ch-085432123456',
-        message: function (m) {
-            receiverId = m.sender_id;
-            receiverChannel = m.user_channel;
-            $('.discussion').append('<li class="other"><div class="avatar"></div><div class="messages">'+ m.text +'<time datetime="2009-11-13T20:00">Timothy • 51 min</time></div></li>');
-        }
-    });
-
     $('#send_bt').click(function () {
         var text = $('#chat_tf').val();
         $('.discussion').append('<li class="self"><div class="avatar"></div><div class="messages"><p>'+text+'</p><time datetime="2009-11-13T20:14">37 mins</time></div></li>')
@@ -119,12 +126,11 @@
         PUBNUB_demo.publish({
             channel: receiverChannel,
             message: {
-                "token": 'token value',
-                "user_channel": 'ch-085432123456',
                 "user_name": 'Olivia',
                 "text": text,
                 "ip": myip,
-                "sender_id": '085432123456',
+                "sender_id": '7',
+                "sender_channel": 'ch-085432123456',
                 "receiver_id": receiverId,
                 "time": datetime
             },

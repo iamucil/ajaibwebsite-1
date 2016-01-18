@@ -1,10 +1,17 @@
 <?php namespace App\Modules\User\Controllers;
 
+use DB;
 use App\User;
+use App\Role;
+use App\Country;
+use Validator;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+use App\Repositories\AssetRepository;
+use Storage;
+use File;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
@@ -12,9 +19,10 @@ use Illuminate\Http\Request;
 class UserController extends Controller {
     protected $User;
 
-    function __construct(UserRepository $user)
+    function __construct(UserRepository $user, AssetRepository $asset)
     {
         $this->User     = $user;
+        $this->Asset    = $asset;
         $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
     }
 
@@ -49,7 +57,9 @@ class UserController extends Controller {
      */
     public function create()
     {
-        //
+        $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');
+        $user['gender'] = 'male';
+        return view('User::create', compact('roles', 'user'));
     }
 
     /**
@@ -70,6 +80,58 @@ class UserController extends Controller {
                 'status'=>500,
                 'message'=>'error saving'
             ));
+        }
+    }
+
+    public function storeLocal(Request $request)
+    {
+        if (!$request->isMethod('post')) {
+            \App::abort(403, 'Unauthorized action.');
+        }else{
+            $data           = $request->all();
+            $validator      = Validator::make($data, [
+                'role_id' => 'required|exists:roles,id',
+                'firstname' => 'required',
+                'name' => 'required|unique:users',
+                'email' => 'required|email|max:255|unique:users',
+                'password' => 'required|alpha_num',
+                'retype-password' => 'required|same:password',
+                'phone_number' => 'required|unique:users|integer|regex:/^[0-9]{6,11}$/',
+                'country_id' => 'required'
+            ], [
+                'country_id.required' => 'You must define your country'
+            ]);
+
+            if($validator->fails()){
+                flash()->error($validator->errors()->first());
+                return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
+            }else{
+                $countries      = Country::where('id', '=', ($data['country_id'] == '') ? NULL : $data['country_id']);
+                $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+                $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+                $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+                $data['channel']        = hash('crc32b', bcrypt(uniqid(rand()*time())));
+                if($countries->exists()){
+                    $country            = $countries->first();
+                    $calling_code       = $country->calling_code;
+                    $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
+                    $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
+                    $data['channel']            = preg_replace($regexp, '${2}', $data['phone_number']);
+                    $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+                    $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
+                    $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
+                }
+                $data['status']         = true;
+                $data['password']       = bcrypt($data['password']);
+                $data['verification_code']  = '******';
+                $request->merge($data);
+                $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name']);
+                $user           = User::firstOrCreate($input);
+                $user->roles()->attach($request->role_id);
+
+                flash()->success('Penambahan data berhasil!');
+                return redirect()->route('user.list');
+            }
         }
     }
 
@@ -114,14 +176,6 @@ class UserController extends Controller {
             ));
         }
 
-        if(!is_null($request->name))
-        {
-            $user->name=$request->name;
-        }
-        if(!is_null($request->email))
-        {
-            $user->email=$request->email;
-        }
         if(!is_null($request->firstname))
         {
             $user->firstname=$request->firstname;
@@ -130,10 +184,6 @@ class UserController extends Controller {
         {
             $user->lastname=$request->lastname;
         }
-        if(!is_null($request->phone))
-        {
-            $user->phone_number=$request->phone;
-        }
         if(!is_null($request->address))
         {
             $user->address=$request->address;
@@ -141,6 +191,19 @@ class UserController extends Controller {
         if(!is_null($request->gender))
         {
             $user->gender=$request->gender;
+        }
+
+        if(!is_null($request->file('image_file')))
+        {
+            $request->user_id = $ownerId;
+            $processUpload = $this->Asset->uploadPhoto($request);
+            if(!$processUpload)
+            {
+                return response()->json(array(
+                    'status'=>500,
+                    'message'=>'error upload photo'
+                ));
+            }
         }
 
         $success=$user->save();
@@ -163,24 +226,57 @@ class UserController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function destroy(Request $request, User $user)
+    public function destroy($id, Request $request, User $user)
     {
         $this->authorize('destroy', $user);
+        // $response = $this->call('DELETE', '/users/'.$id, ['_token' => csrf_token()]);
+        echo '<pre>';
+        if(!$request->has('_method') OR $request->_method !== 'DELETE'){
+            app::abort(403, 'Unauthorized action.');
+        }
+        $result         = DB::transaction(function ($id) use ($id) {
+            $result     = true;
+            $result     &= DB::table('users')->where('id', '=', $id)->delete();
+            $result     &= DB::table('role_user')->where('user_id', '=', $id)->delete();
 
-        $user->delete();
-        flash('Your data has been deleted');
+            return $result;
+        });
+
+        if((bool)$result === true){
+            flash()->success('Your data has been deleted');
+        }else{
+            flash()->error('Unable to delete data user');
+        }
+
         return redirect()->route('user.list');
     }
 
     public function getListUsers(Request $request)
     {
-        $users       = User::all();
+        $users      = User::select(DB::raw('"users".*'))
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->whereNotIn('roles.name', ['root'])
+            ->orderBy('users.name', 'DESC')
+            ->orderBy('users.created_at', 'DESC')
+            ->orderBy('roles.name', 'ASC')
+            ->paginate(15);
         return view('User::index', compact('users'));
     }
 
     public function showProfile($id)
     {
         $user       = User::findOrFail($id);
+        if(is_null($user->photo))
+        {
+            if($user->gender == 'female') {
+                $user->photo = "/img/avatar_female.png";
+            }else{
+                $user->photo = "/img/avatar_male.png";
+            }
+        }else{
+            $user->photo = '/profile/photo/'.$id;
+        }
         $url        = secure_url('/');
         return view('User::profile', compact('user', 'url'));
     }
@@ -189,21 +285,32 @@ class UserController extends Controller {
     {
         $this->authorize('setStatus', $user);
 
-        $user       = $user->find($id);
-        $user->status   = true;
-
-        if($user->save()){
+        if($this->User->setActive($id)){
             flash()->success('Activated user success');
         }else{
             flash()->error('Error occured');
         }
 
-        // $user->update([
-        //     'status' => false
-        // ]);
-
-        // flash()->success('User activated');
-
         return redirect()->route('user.list');
     }
+
+    public function uploadPhoto(Request $request)
+    {
+        $processUpload = $this->Asset->uploadPhoto($request);
+
+        if ($processUpload) {
+            return response()->json(['success' => true, 'path' => 'photo/'.$request->user_id], 200);
+        } else {
+            return response()->json('error', 400);
+        }
+    }
+
+    public function getPhoto($id)
+    {
+        $user       = User::find($id);
+        $pathPhoto  = storage_path() . '/' . $user->photo;
+
+        return $this->Asset->downloadFile($pathPhoto);
+    }
+
 }

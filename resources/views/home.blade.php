@@ -17,20 +17,23 @@
                             <p>Masukan email dan no hp untuk menjadikan Ajaib
                                 <br> sebagai asisten anda.</p>
                             <!--  Subscribe form -->
-                            <form class="form-inline" method="POST" action="/auth/register" novalidate>
+                            <form class="form-inline" method="POST" action="/auth/register" novalidate name="form-register" id="form-register">
                                 {{ csrf_field() }}
                                 <div class="form-group">
                                     <input type="email" class="form-control" id="exampleInputName2" placeholder="Alamat email anda" name="email">
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" id="exampleInputEmail2" placeholder="+62" name="phone_number">
+                                    <div class="input-group">
+                                        <div class="input-group-addon" id="call-code-label"><strong>62</strong></div>
+                                        <input type="text" class="form-control" id="exampleInputEmail2" placeholder="" name="phone_number">
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-default btn-ajaib">Sign Up</button>
                             </form>
                             <!--  end of Subscribe form -->
                             <ul>
-                                <li><img src="img/playstore.png"></li>
-                                <li><img src="img/appstore.png"></li>
+                                <li><img src="{{ secure_asset('img/playstore.png') }}"></li>
+                                <li><img src="{{ secure_asset('img/appstore.png') }}"></li>
                             </ul>
                             <div style="clear: both;"></div>
                         </div>
@@ -38,7 +41,7 @@
                     <!-- end of right description -->
                 </div>
             </div>
-        </div> <img class="pic-ajaib-phone" src="img/ajaib-iphone.png">
+        </div> <img class="pic-ajaib-phone" src="{{ secure_asset('img/ajaib-iphone.png') }}">
     </div>
     <!-- About Us Page
     ==========================================-->
@@ -53,11 +56,11 @@
                     </div>
                 </div>
                 <ul class="client-item">
-                    <li><img src="img/client/client_01.png"></li>
-                    <li><img src="img/client/client_02.png"></li>
-                    <li><img src="img/client/client_03.png"></li>
-                    <li><img src="img/client/client_04.png"></li>
-                    <li><img src="img/client/client_05.png"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_01.png') }}"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_02.png') }}"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_03.png') }}"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_04.png') }}"></li>
+                    <li><img src="{{ secure_asset('/img/client/client_05.png') }}"></li>
                 </ul>
             </div>
         </div>
@@ -260,3 +263,24 @@
     </div>
 
 @endsection
+
+@section('script-bottom')
+    @parent
+    <script type="text/javascript">
+        var url     = '{!! url("/geo-ip") !!}';
+        $.getJSON( url, function( data ) {
+            var form        = document.forms['form-register'];
+            var call_code   = document.createElement('span');
+            call_code.style.fontWeight  = 'bold';
+            call_code.innerHTML         = data.call_code;
+            var inpCountryId            = document.createElement('input');
+            inpCountryId.type           = 'hidden';
+            inpCountryId.value          = data.country_id;
+            inpCountryId.name           = 'country_id';
+            document.getElementById('call-code-label').innerHTML    = '';
+            document.getElementById('call-code-label').appendChild(call_code);
+            form.appendChild(inpCountryId);
+        }, 'json');
+    </script>
+    {{-- expr --}}
+@stop

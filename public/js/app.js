@@ -28,7 +28,7 @@ $(function() {
     });
 });
 
-/*     
+/*
  * Add collapse and remove events to boxes
  */
 
@@ -36,7 +36,7 @@ $(function() {
     "use strict";
 
     $("[data-widget='collapse']").click(function() {
-        //Find the box parent        
+        //Find the box parent
         var box = $(this).parents(".box").first();
         //Find the body and the footer
         var bf = box.find(".box-body, .box-footer");

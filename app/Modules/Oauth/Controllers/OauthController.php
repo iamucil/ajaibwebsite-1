@@ -20,7 +20,7 @@ class OauthController extends Controller {
     public function __construct(User $user)
     {
         $this->User         = $user;
-        $this->middleware('auth', ['except' => ['grantAccess']]);
+        $this->middleware('auth', ['except' => ['grantAccess', 'refreshToken']]);
     }
     /**
      * Display a listing of the resource.
@@ -29,8 +29,8 @@ class OauthController extends Controller {
      */
     public function index()
     {
-        $clients        = OauthClient::all();
-        return view("Oauth::index", compact('clients'));
+        $clients        = OauthClient::orderBy('name', 'DESC')->paginate(15);
+        return view("Oauth::index", ['clients' => $clients]);
     }
 
     /**
@@ -130,11 +130,13 @@ class OauthController extends Controller {
         $grant_type         = 'password';
         $client_id          = $request->id;
         $client_secret      = $request->secret;
-        $verification_code  = $request->code;
+        $verification_code  = preg_replace('/\s[\s]+/', '', $request->code);
+        $verification_code  = preg_replace('/[\s\W]+/', '', $request->code);
+
         $email              = '';
         $phone_number       = '';
         $password           = '';
-        $query              = User::where('verification_code', $verification_code);
+        $query              = User::where('verification_code', '=', ($verification_code == '') ? NULL : $verification_code);
         $user               = [];
         $return             = [];
         if($query->exists()){
@@ -147,13 +149,57 @@ class OauthController extends Controller {
             $phone_number   = $user->phone_number;
             $password       = $user->phone_number;
             $username       = $user->email;
+            $oauth              = OauthClient::where('id', $client_id)
+                ->where('secret', $client_secret);
+
+            if($oauth->exists()){
+                $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
+                $response           = $client->request('POST', 'api/v1/oauth/access_token', [
+                    'form_params' => $params,
+                    'header' => [
+                        'Content-Type' => 'application/json'
+                    ], 'Accept'     => 'application/json',
+                ]);
+
+                $code               = $response->getStatusCode(); // 200
+                $reason             = $response->getReasonPhrase(); // OK
+                $body               = $response->getBody();
+                $result             = $body->getContents();
+                $result             = json_decode($result);
+                $return['access_token']     = $result->access_token;
+                $return['refresh_token']    = $result->refresh_token;
+                $return['email']            = $email;
+                $return['phone_number']     = $phone_number;
+                $return['expires']          = $result->expires_in;
+            }
+        }else{
+            $return['status']   = 404;
+            $return['message']  = 'Not Found';
         }
 
+
+        return response()->json($return);
+    }
+
+    public function refreshToken(Request $request)
+    {
+        // setting oauth client
+        $base_uri       = secure_url('/');
+        $client = new Client([
+            'base_uri' => $base_uri,
+            'verify' => false
+        ]);
+        $return             = [];
+        $grant_type         = 'refresh_token';
+        $client_id          = $request->id;
+        $client_secret      = $request->secret;
+        $refresh_token      = $request->token;
         $oauth              = OauthClient::where('id', $client_id)
             ->where('secret', $client_secret);
+            // return $request->all();
 
         if($oauth->exists()){
-            $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
+            $params             = compact('grant_type', 'client_id', 'client_secret', 'refresh_token');
             $response           = $client->request('POST', 'api/v1/oauth/access_token', [
                 'form_params' => $params,
                 'header' => [
@@ -168,8 +214,6 @@ class OauthController extends Controller {
             $result             = json_decode($result);
             $return['access_token']     = $result->access_token;
             $return['refresh_token']    = $result->refresh_token;
-            $return['email']            = $email;
-            $return['phone_number']     = $phone_number;
             $return['expires']          = $result->expires_in;
         }
 

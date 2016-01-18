@@ -1,5 +1,5 @@
 @extends('layouts.authentication')
-@section('title', 'Register')
+@section('title', 'Log-in')
 
 @section('content')
     @include('common.auth')

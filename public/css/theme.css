@@ -7,9 +7,9 @@ Last change:    11/03/2014 [fixed Float bug, vf]
 Author:matirasa
 -------------------------------------------------------------------*/
 
-@import url(http://weloveiconfonts.com/api/?family=entypo);
-@import url(http://weloveiconfonts.com/api/?family=fontawesome);
-@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+@import url("entypo.css");
+@import url("font-awesome.css");
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
 
 /* @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700); */
 
@@ -604,6 +604,7 @@ Foundation Coustom
     height: 60px;
     line-height: 60px!important;
     color: #8c92a3!important;
+    text-decoration: none;
 }
 
 .dropdown-nest li a div {
@@ -666,7 +667,19 @@ Foundation Coustom
     margin-left: 5px;
     color: #8c92a3;
 }
+.read-notf a h3, .read-notf a p{
+   color: #cbcbcb!important;
+   font-weight: normal!important;
+   text-decoration: none;
 
+}
+.unread-notf a h3, .unread-notf a p{
+   color: #555!important;
+   font-weight: bold!important;
+   text-decoration: none;
+
+}
+   
 .top-dropdown-nest {
     height: 49px!important;
     position: absolute;
@@ -1189,9 +1202,9 @@ Header Navigation
     font-size: 16px;
 }
 .sideviewtoggle.btn.btn-default.btn-xs.icon-view-list{
-        border-radius: 50%;
+    border-radius: 50%;
     border-width: 2px;
-    margin: 0 0 0 40px;
+    /*margin: 0 0 0 40px;*/
 }
 
 /*
@@ -1312,7 +1325,7 @@ ol.breadcrumb.newcrumb li a span {
 }
 
 
-/* 
+/*
 Dropdown menus
 */
 
@@ -1409,7 +1422,7 @@ Drodown in navbars
 }
 
 
-/* 
+/*
 Sidebar Menu
 */
 
@@ -1780,7 +1793,7 @@ li.hide-min-toggle {
 }
 
 
-/* 
+/*
 Show up sidemenu when minimize
 */
 
@@ -2044,7 +2057,7 @@ ul.topnav h4 {
 }
 
 
-/* 
+/*
         CONTENT
 */
 
@@ -2784,11 +2797,37 @@ FOOTER
     background: #fff;
     border-top: 1px solid #ccc;
     border-right: 1px solid #ccc;
-    color: #888; 
-    
-   
+    color: #888;
+
+
 }
 .backgroundBlink a{
-   color: #888; 
+   color: #888;
    font-weight: normal!important;
+}
+
+/* File Upload Plugin CSS */
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.fileinput-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  -ms-filter: 'alpha(opacity=0)';
+  font-size: 200px;
+  direction: ltr;
+  cursor: pointer;
+}
+/* Fixes for IE < 8 */
+@media screen\9 {
+  .fileinput-button input {
+    filter: alpha(opacity=0);
+    font-size: 100%;
+    height: 100%;
+  }
 }
