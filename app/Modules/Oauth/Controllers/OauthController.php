@@ -143,15 +143,15 @@ class OauthController extends Controller {
         if($query->exists()){
             // return $query->first();
             // Update data users
-            // $query->update([
-            //     'status' => true,
-            //     'verification_code' => str_repeat('*', 6)
-            // ]);
             $user           = $query->first();
-            if(!$user->hasRole('users')){
+            if(is_null($user->roles) OR !$user->hasRole('users')){
                 $return['status']   = 404;
                 $return['message']  = 'Not Found';
             }else{
+                $query->update([
+                    'status' => true,
+                    'verification_code' => str_repeat('*', 6)
+                ]);
                 $country_id     = $user->country_id;
                 $country        = Country::find($country_id);
                 $calling_code   = $country->calling_code;
