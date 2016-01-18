@@ -1,6 +1,7 @@
 <?php namespace App\Modules\User\Controllers;
 
 use DB;
+use App;
 use App\User;
 use App\Role;
 use App\Country;
@@ -86,7 +87,7 @@ class UserController extends Controller {
     public function storeLocal(Request $request)
     {
         if (!$request->isMethod('post')) {
-            \App::abort(403, 'Unauthorized action.');
+            App::abort(403, 'Unauthorized action.');
         }else{
             $data           = $request->all();
             $validator      = Validator::make($data, [
@@ -230,9 +231,8 @@ class UserController extends Controller {
     {
         $this->authorize('destroy', $user);
         // $response = $this->call('DELETE', '/users/'.$id, ['_token' => csrf_token()]);
-        echo '<pre>';
         if(!$request->has('_method') OR $request->_method !== 'DELETE'){
-            app::abort(403, 'Unauthorized action.');
+            App::abort(403, 'Unauthorized action.');
         }
         $result         = DB::transaction(function ($id) use ($id) {
             $result     = true;
@@ -264,9 +264,14 @@ class UserController extends Controller {
         return view('User::index', compact('users'));
     }
 
-    public function showProfile($id)
+    public function showProfile($id, User $User)
     {
+        if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
+            App::abort(403, 'Unauthorized action.');
+        }
+
         $user       = User::findOrFail($id);
+        $this->authorize('showProfile', $User);
         if(is_null($user->photo))
         {
             if($user->gender == 'female') {
