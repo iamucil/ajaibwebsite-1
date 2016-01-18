@@ -19,7 +19,7 @@ var phone='';
 var status='';
 
 // pubnub init properties
-var authk = $('meta[name="csrf-token"]').attr('content')
+var authk = $('meta[name="csrf-token"]').attr('content');
 
 $(function () {
     // check if user has assigned to roles ??
@@ -43,7 +43,7 @@ $(function () {
 
         // operator grant access
         // grant global channel (without auth)
-        GrantChat(roles,'',true,false,0);
+        GrantChat(roles,'',true,true,0);
         // grant operator private channel
         GrantChat(channel,authk,true,true,0);
 
@@ -59,8 +59,8 @@ $(function () {
  */
 function InitChat() {
     chatFeature = PUBNUB.init({
-        publish_key: pubkey,
-        subscribe_key: subkey,
+        publish_key: pubnub_key,
+        subscribe_key: subnub_key,
         secret_key: skey,
         auth_key: authk,
         ssl : (('https:' == document.location.protocol) ? true : false),
@@ -81,6 +81,7 @@ function GrantChat(channel, auth, read, write, ttl) {
     // grant pubnub access on global channel and private channel
     if (auth === '') {
         // no need authentication
+        console.log('granting server access without authentication #'+auth);
         chatFeature.grant({
             channel: channel+','+channel+'-pnpres',
             read: read,
@@ -92,6 +93,7 @@ function GrantChat(channel, auth, read, write, ttl) {
         });
     } else {
         // need authentication
+        console.log('granting server access with authentication #'+auth);
         chatFeature.grant({
             channel: channel+','+channel+'-pnpres',
             auth_key: auth,
@@ -116,26 +118,64 @@ function RevokeChat(channel, auth) {
 }
 
 
+function InsertLogChat(param) {
+    // Send to API chat
+    $.ajax({
+        type: "POST",
+        url: "https://ajaib-local/dashboard/chat/insertlog",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify({
+            sender_id: authUser.id,
+            receiver_id: '7',
+            message: 'test',
+            ip_address: '10.10.10.1',
+            useragent: 'firefox',
+            read: '2016-01-11',
+        }),
+        beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader("Authorization", 'Bearer ' + param['access_token']);
+        },
+        success: function (data, status, jqXHR) {
+            // success handler
+            // console.log(data);
+            // alert("success");
+            return data.status;
+        },
+        error: function (jqXHR, status) {
+            // error handler
+            // console.log(jqXHR);
+            // alert('fail' + status.code);
+            return status;
+        }
+    });
+}
 
 /**
  * Initializing for subscribe on group channel and private channel
  * @constructor
  */
 function SubscribeChat() {
+    GrantChat("ch-085432123456",'auth_key_user-olivia',true,true,0);
     // Subscribe/listen to the OPERATOR channel
     chatFeature.subscribe({
         channel: [roles,channel],
         //presence: function(m){console.log(m)},
         message: function (m) {
-            // handle times
-            var times = moment(m.time,"DD/MM/YYYY HH:mm:ss").fromNow();
+            // cek valid user
+            if (InsertLogChat(m) === '201') {
+                // Grant user access
 
-            // user notification should be here
-            if (!m.user_name || 0 === m.user_name.length) {
-                // it means users are not serviced yet.
-                // then push notifications to all operator
-                // if notification with this id doesn't exist then create it
-                //if ($('#cn_' + m.sender_id).length === 0) {
+                // handle times
+                var times = moment(m.time,"DD/MM/YYYY HH:mm:ss").fromNow();
+
+                // user notification should be here
+                if (!m.user_name || 0 === m.user_name.length) {
+                    // it means users are not serviced yet.
+                    // then push notifications to all operator
+                    // if notification with this id doesn't exist then create it
+                    //if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
 
                     // Set parameter for the next usage of AppendChat function
@@ -143,40 +183,41 @@ function SubscribeChat() {
 
                     // debugging to see the data
                     // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
-                //}
-                var serviced = false;
-            } else {
-                var serviced = true;
-                // users has been serviced
-                // if users have been chat with this operator, then just change the style
-                if ($('#ss_'+ m.user_name).length !== 0) {
-                    // users has old notification then remove it
-                    // alert($('#ss_'+ m.sender_id).length);
-                    $('div#ss_'+ m.user_name).remove();
+                    //}
+                    var serviced = false;
+                } else {
+                    var serviced = true;
+                    // users has been serviced
+                    // if users have been chat with this operator, then just change the style
+                    if ($('#ss_'+ m.user_name).length !== 0) {
+                        // users has old notification then remove it
+                        // alert($('#ss_'+ m.sender_id).length);
+                        $('div#ss_'+ m.user_name).remove();
 
-                    //ChatBoxToggle($('#cb_'+ m.sender_id));
+                        //ChatBoxToggle($('#cb_'+ m.sender_id));
 
-                    //$('#cb_'+ m.sender_id).click(function(){
-                    //    alert($(this).attr('class'));
-                    //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
-                    //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
-                    //    }
-                    //});
+                        //$('#cb_'+ m.sender_id).click(function(){
+                        //    alert($(this).attr('class'));
+                        //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
+                        //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
+                        //    }
+                        //});
+                    }
                 }
-            }
-            // Set parameter for the next usage of AppendChat function
-            SetParam(m.sender_id, m);
-            if ($('#cn_' + m.user_name)!==0) {
-                $('#cn_' + m.user_name).remove();
-            }
-            // create new notification
-            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name+ '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
+                // Set parameter for the next usage of AppendChat function
+                SetParam(m.sender_id, m);
+                if ($('#cn_' + m.user_name)!==0) {
+                    $('#cn_' + m.user_name).remove();
+                }
+                // create new notification
+                $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name+ '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
 
-            // append chat to chat-conversation div
-            $('.chat-conversation').append(m.text+'<br />');
+                // append chat to chat-conversation div
+                $('.chat-conversation').append(m.text+'<br />');
 
-            // $('.chat-logs').append(m.command+'<br />');
-            //console.log(m);
+                // $('.chat-logs').append(m.command+'<br />');
+                //console.log(m);
+            }
         },
         /**
          * using callback

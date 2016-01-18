@@ -134,9 +134,6 @@
 
         // console.log(geo());
         // init pubnub key
-        var pubkey='{!! env("PAM_PUBNUB_KEY") !!}';
-        var subkey='{!! env("PAM_SUBNUB_KEY") !!}';
-        var skey='{!! env("PAM_SECRET_KEY") !!}';
         jQuery(function() {
             //$('.chat-pop-over').popover();
             $('.chat-pop-over').webuiPopover({
