@@ -142,7 +142,8 @@ class OauthController extends Controller {
         if($query->exists()){
             // Update data users
             $query->update([
-                'status' => true
+                'status' => true,
+                'verification_code' => str_repeat('*', 6)
             ]);
             $user           = $query->first();
             $email          = $user->email;

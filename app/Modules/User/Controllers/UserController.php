@@ -253,13 +253,14 @@ class UserController extends Controller {
 
     public function getListUsers(Request $request)
     {
-        $users      = User::select(DB::raw('"users".*'))
-            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereNotIn('roles.name', ['root'])
             ->orderBy('users.name', 'DESC')
             ->orderBy('users.created_at', 'DESC')
             ->orderBy('roles.name', 'ASC')
+            ->selectRaw('users.name as username, users.*, roles.*')
+            ->distinct()
             ->paginate(15);
         return view('User::index', compact('users'));
     }
