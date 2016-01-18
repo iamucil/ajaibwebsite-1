@@ -259,8 +259,8 @@ class UserController extends Controller {
             ->orderBy('users.name', 'DESC')
             ->orderBy('users.created_at', 'DESC')
             ->orderBy('roles.name', 'ASC')
-            ->selectRaw('users.name as username, users.*, roles.*')
-            ->distinct()
+            ->selectRaw('users.name as username, roles.id as role_id, users.*')
+            // ->distinct()
             ->paginate(15);
         return view('User::index', compact('users'));
     }

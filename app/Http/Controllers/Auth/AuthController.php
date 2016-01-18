@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Country;
 use Illuminate\Support\Facades\Lang;
 use Validator;
 use App\Http\Controllers\Controller;
@@ -56,7 +57,7 @@ class AuthController extends Controller
 
         return Validator::make($data, [
             'email' => 'required|email|max:255|unique:users',
-            'phone_number' => 'required|integer|unique:users|regex:/^[0-9]{6,11}$/',
+            'phone_number' => 'required|integer|unique:users',
             'country_id' => 'required|exists:countries,id',
         ]);
     }
@@ -80,8 +81,18 @@ class AuthController extends Controller
 
     public function doRegister(Request $request)
     {
-        $validator      = $this->validator($request->all());
-
+        $data               = $request->all();
+        $country            = Country::find($data['country_id']);
+        $calling_code       = $country->calling_code;
+        $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+        $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+        $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
+        $request->merge($data);
+        $validator          = $this->validator($request->all());
         if ($validator->fails()) {
             return redirect('/auth/register')
                 ->withErrors($validator, 'register')

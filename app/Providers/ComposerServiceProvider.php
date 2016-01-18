@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\User;
 use JavaScript;
 class ComposerServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,17 @@ class ComposerServiceProvider extends ServiceProvider
             $user       = null;
             if(auth()->check()) {
                 $user   = auth()->user();
+                $user->gender   = $user->gender ?: 'male';
+                if(is_null($user->photo))
+                {
+                    if($user->gender == 'female') {
+                        $user->photo = secure_asset("/img/avatar_female.png");
+                    }else{
+                        $user->photo = secure_asset("/img/avatar_male.png");
+                    }
+                }else{
+                    $user->photo = '/profile/photo/'.$id;
+                }
             }
             JavaScript::put([
                 'authUser' => $user,
