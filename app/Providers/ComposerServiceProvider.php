@@ -33,6 +33,9 @@ class ComposerServiceProvider extends ServiceProvider
             JavaScript::put([
                 'authUser' => $user,
                 'authRoles' => $user->roles,
+                'pubnub_key' => env('PAM_PUBNUB_KEY'),
+                'subnub_key' => env('PAM_SUBNUB_KEY'),
+                'skey' => env('PAM_SECRET_KEY'),
             ]);
 
             $view->with('authUser', $user);

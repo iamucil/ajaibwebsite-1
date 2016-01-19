@@ -66,18 +66,29 @@
 <script src="https://cdn.pubnub.com/pubnub-dev.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
-
+<script type='text/javascript' src="{{ secure_asset('/js/vendor/js-cookie/js.cookie.js') }}"></script>
 <!-- Get Client Ip Address -->
 <script type="text/javascript" src="https://l2.io/ip.js?var=myip"></script>
 
 <!-- Instantiate PubNub -->
 <script type="text/javascript">
+    console.log(Cookies);
+    var token = '';
     var senderId = '';
     var receiverId = '';
     var receiverChannel = 'operator';
+    var user_auth = 'auth_key_user-olivia';
+
+    GenerateToken("O9F72B");
+
+    if (Cookies.get('geoip') === undefined) {
+        Cookies.set('geoip', data, { expires: 1, path : '/'})
+    }
+
     var PUBNUB_demo = PUBNUB.init({
-        publish_key: 'pub-c-20764d9e-b436-4776-b03a-adcae96c2a6b',
-        subscribe_key: 'sub-c-6bad3874-9efa-11e5-baf7-02ee2ddab7fe',
+        publish_key: 'pub-c-b9a7e925-c096-4eee-b72b-c68cba8e7ce2',
+        subscribe_key: 'sub-c-946edbfa-ba70-11e5-85eb-02ee2ddab7fe',
+        auth_key: user_auth,
         ssl : (('https:' == document.location.protocol) ? true : false),
         uuid: 'user-olivia'
     });
@@ -92,6 +103,45 @@
         }
     });
 
+    function SetToken(token) {
+        this.token = token;
+    }
+
+    function GenerateToken(vercode) {
+        // get access token
+        $.ajax({
+            type: "POST",
+            url: "https://ajaib-local/api/v1/oauth/grant_access",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                id:"1rtllily0HU1he171GhrybMFC0l0U7T0Ub0tfmEe",
+                secret:"glp37di4iU360r70pTqwJhrybiadySgd7CXThmqG",
+                code:vercode
+            }),
+            success: function (data, status, jqXHR) {
+                // success handler
+                token = data['access_token'];
+                console.log(token);
+            },
+            error: function (jqXHR, status) {
+                // error handler
+                console.log(jqXHR);
+                alert('fail' + status.code);
+            }
+        });
+    }
+
+    function GetToken() {
+        return token;
+    }
+
+
+    // Get token
+    $('#get_token').click(function () {
+
+    });
+
     $(document).ready(function () {
         var now = new Date().today() + new Date().timeNow();
         var then = "31/12/2015 12:20:30";
@@ -103,11 +153,16 @@
         console.log(moment(now, "DD/MM/YYYY HH:mm:ss").fromNow());
         PUBNUB_demo.history({
             channel : receiverChannel,
-            count : 100,
-            callback : function(m){console.log(m)}
+            count : 10,
+            callback : function(m){
+                RenderHistory(m);
+            }
         });
     });
 
+    function RenderHistory(m) {
+
+    }
 
     // For todays date;
     Date.prototype.today = function () {
@@ -131,6 +186,7 @@
                 "ip": myip,
                 "sender_id": '7',
                 "sender_channel": 'ch-085432123456',
+                "sender_auth": user_auth,
                 "receiver_id": receiverId,
                 "time": datetime
             },
@@ -179,6 +235,41 @@
 
         return text;
     }
+
+    function InitUser(id) {
+        // Send to API chat
+        $.ajax({
+            type: "POST",
+            url: "https://ajaib-local/dashboard/chat/insertlog",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                sender_id: authUser.id,
+                receiver_id: '7',
+                message: 'test',
+                ip_address: '10.10.10.1',
+                useragent: 'firefox',
+                read: '2016-01-11',
+            }),
+            beforeSend: function(xhr) {
+                // Set the OAuth header from the session ID
+                xhr.setRequestHeader("Authorization", 'Bearer ' + param['access_token']);
+            },
+            success: function (data, status, jqXHR) {
+                // success handler
+                // console.log(data);
+                // alert("success");
+                return data.status;
+            },
+            error: function (jqXHR, status) {
+                // error handler
+                // console.log(jqXHR);
+                // alert('fail' + status.code);
+                return status;
+            }
+        });
+    }
+
 </script>
 </body>
 </html>
