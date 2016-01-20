@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\User;
+use App\Country;
 use JavaScript;
 class ComposerServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,9 @@ class ComposerServiceProvider extends ServiceProvider
     {
         view()->composer('layouts.dashboard', function ($view) {
             $user       = null;
+            $country    = Country::where('iso_3166_2', '=', 'ID')
+                ->get(['calling_code', 'id'])
+                ->first();
             if(auth()->check()) {
                 $user   = auth()->user();
                 $user->gender   = $user->gender ?: 'male';
@@ -38,7 +42,7 @@ class ComposerServiceProvider extends ServiceProvider
                 'skey' => env('PAM_SECRET_KEY'),
             ]);
 
-            $view->with('authUser', $user);
+            $view->with(['authUser' => $user, 'country' => $country]);
         });
     }
 
