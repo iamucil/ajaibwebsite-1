@@ -4,6 +4,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Modules\Chat\Models\Chat;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 
@@ -12,8 +13,8 @@ class ChatController extends Controller {
     public function __construct()
     {
         $this->middleware("oauth", ['only' => ['index', 'store', 'insertLog']]);
-        $this->middleware("oauth-user", ['only' => ['index', 'store']]);
-        $this->middleware('auth', ['except' => ['index', 'store']]);
+        $this->middleware("oauth-user", ['only' => ['index', 'store', 'insertLog']]);
+        $this->middleware('auth', ['except' => ['index', 'store', 'insertLog']]);
     }
 
     /**
@@ -134,24 +135,22 @@ class ChatController extends Controller {
         $return 	= [];
 
         $ownerId =  Authorizer::getResourceOwnerId();
-        $user=User::find($ownerId);
 
-        if(is_null($user))
+        if(is_null($ownerId))
         {
             $return['status']= 404;
             $return['message']= 'not found';
         } else {
-            $id = DB::table('chats')->insertGetId(
-                [
-                    'sender_id' => $request->sender_id,
-                    'receiver_id' => $request->receiver_id,
-                    'message' => $request->message,
-                    'ip_address' => $request->ip_address,
-                    'useragent' => $request->useragent,
-                    'read' => $request->read
-                ]
-            );
-            if($id>0){
+            $chat=Chat::create([
+                'sender_id' => $request->sender_id,
+                'receiver_id' => $request->receiver_id,
+                'message' => $request->message,
+                'ip_address' => $request->ip_address,
+                'useragent' => $request->useragent,
+                'read' => $request->read
+            ]);
+
+            if($chat){
                 $return['status'] = 201;
                 $return['message'] = 'success';
             }else{
@@ -159,17 +158,6 @@ class ChatController extends Controller {
                 $return['message'] = 'error';
             }
         }
-
-//		$chat=Chat::create([
-//				'sender_id' => $request->sender_id,
-//				'receiver_id' => $request->receiver_id,
-//				'message' => $request->message,
-//				'ip_address' => $request->ip_address,
-//				'useragent' => $request->useragent,
-//				'read' => $request->read
-////				'ceated_at' => $request->created_at,
-////				'updated_at' => $request->updated_at
-//		]);
 
         return response()->json($return);
         // get user login
