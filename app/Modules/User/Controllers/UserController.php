@@ -70,17 +70,40 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
-        $user= $this->User->createOrUpdateUser($request->all());
-        if($user){
+        $data               = $request->all();
+        $country            = Country::find($data['country_id']);
+        $calling_code       = $country->calling_code;
+        $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+        $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+        $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
+        $request->merge($data);
+        $validator      = Validator::make($request->all(), [
+            'email' => 'required|email|max:255|unique:users',
+            'phone_number' => 'required|integer|unique:users',
+            'country_id' => 'required|exists:countries,id',
+        ]);
+        if($validator->fails()){
             return response()->json(array(
-                'status'=>201,
-                'message'=>'success saving'
+                'status' => 400,
+                'message' => $validator->errors()->first()
             ));
-        }else{
-            return response()->json(array(
-                'status'=>500,
-                'message'=>'error saving'
-            ));
+        }else {
+            $user = $this->User->createOrUpdateUser($request->all());
+            if ($user) {
+                return response()->json(array(
+                    'status' => 201,
+                    'message' => 'success saving'
+                ));
+            } else {
+                return response()->json(array(
+                    'status' => 500,
+                    'message' => 'error saving'
+                ));
+            }
         }
     }
 
