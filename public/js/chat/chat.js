@@ -91,7 +91,7 @@ function GrantChat(channel, auth, read, write, ttl) {
             write: write,
             ttl: ttl,
             callback: function(m){
-                console.log(m)
+                //console.log(m)
             },
             error: function(m){console.error(m)}
         });
@@ -104,7 +104,7 @@ function GrantChat(channel, auth, read, write, ttl) {
             write: write,
             ttl: ttl,
             callback: function(m){
-                console.log(m);
+                //console.log(m);
             }
         });
     } else {
@@ -117,7 +117,7 @@ function GrantChat(channel, auth, read, write, ttl) {
             write: write,
             ttl: ttl,
             callback: function(m){
-                console.log(m);
+                //console.log(m);
             }
         });
     }
@@ -201,7 +201,7 @@ function SubscribeChat() {
         message: function (m) {
             // cek valid user based on insert log proses
             var logResponse = InsertLogChat(m);
-
+            //console.log(m);
             // valid user permit to chat
             logResponse.success(function(data){
 
@@ -388,7 +388,7 @@ function publish(senderId) {
 
         if (data.status=='201') {
             // success then publish message
-            var datetime = "LastSync: " + new Date().today() + " @ " + new Date().timeNow();
+            var datetime = getDate();
             chatFeature.publish({
                 channel: obj.sender_channel,
                 message: {
@@ -399,6 +399,9 @@ function publish(senderId) {
                     "sender_channel": channel,
                     "receiver_id": obj.sender_id,
                     "time": datetime
+                },
+                callback: function(m) {
+                    //console.log(m);
                 }
             });
 
