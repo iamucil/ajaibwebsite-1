@@ -37,14 +37,16 @@ class UserRepository
             $data['password']           = bcrypt('+'.$data['phone_number']);
             // merge all request input
             request()->merge($data);
+
             // check whether data user is exists
             $query = User::where('email', request()->email)
                 ->orWhere('phone_number', request()->phone_number);
+
             /**
              * if user is exists reset verification data to default and status to false
              * otherwise insert new data into table users
              */
-
+            // dd(request()->all());
             if ($query->exists()) {
                 $query->update([
                     'verification_code' => str_repeat('*', 6),
@@ -54,7 +56,7 @@ class UserRepository
                 $exists = true;
             } else {
                 $exists = false;
-                $input  = request()->except(['_token']);
+                $input  = request()->except(['_token', 'ext_phone']);
                 $user = User::firstOrCreate($input);
             }
 

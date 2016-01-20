@@ -17,7 +17,7 @@
                             <p>Masukan email dan no hp untuk menjadikan Ajaib
                                 <br> sebagai asisten anda.</p>
                             <!--  Subscribe form -->
-                            <form class="form-inline" method="POST" action="/auth/register" novalidate name="form-register" id="form-register">
+                            <form class="form-inline frm-signup" method="POST" action="/auth/register" novalidate name="form-register" id="form-register">
                                 {{ csrf_field() }}
                                 <div class="form-group">
                                     <input type="email" class="form-control" id="exampleInputName2" placeholder="Alamat email anda" name="email">
@@ -281,6 +281,39 @@
             document.getElementById('call-code-label').appendChild(call_code);
             form.appendChild(inpCountryId);
         }, 'json');
+
+        $('.frm-signup').submit(function(evt) {
+            var Form    = this;
+            // var action  = '//'+ server + '/auth/register';
+            var $action     = Form.action;
+            var $data       = {};
+            var $errors     = {};
+            $.each(this.elements, function(i, v){
+                var input = $(v);
+                $data[input.attr("name")] = input.val();
+                delete $data["undefined"];
+            });
+
+            $.ajax({
+                cache: false,
+                url : $action,
+                type: "POST",
+                dataType : "json",
+                data : $data,
+                context : Form,
+                beforeSend: function () {
+                    // do nothing
+                }
+            }).done(function(data) {
+                if(data.errors != null){
+                    console.log(data.errors);
+                }
+            });
+
+            console.log($errors);
+            // evt.preventDefault();
+            return true;
+        })
     </script>
     {{-- expr --}}
 @stop

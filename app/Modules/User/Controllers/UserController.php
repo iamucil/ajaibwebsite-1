@@ -25,6 +25,25 @@ class UserController extends Controller {
         $this->User     = $user;
         $this->Asset    = $asset;
         $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
+        $this->beforeFilter(function() {
+            $country        = Country::where('iso_3166_2', '=', 'ID')
+                ->get(['calling_code', 'id'])
+                ->first();
+            $calling_code   = $country->calling_code;
+            $regexp         = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+            $regex          = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+            $phone_number   = request()->phone_number ?: null;
+            $phone_number   = preg_replace('/\s[\s]+/', '', $phone_number);
+            $phone_number   = preg_replace('/[\s\W]+/', '', $phone_number);
+            $phone_number   = preg_replace('/^[\+]+/', '', $phone_number);
+            $phone_number   = preg_replace($regexp, '', $phone_number);
+            $phone_number   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $phone_number);
+            $data['ext_phone']  = $phone_number;
+            $data['country_id'] = $country->id;
+            $data['calling_code']   = $calling_code;
+            return request()->merge($data);
+
+        }, ['on' => 'post', 'only' => ['store','storeLocal']]);
     }
 
     /**
@@ -70,17 +89,41 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
-        $user= $this->User->createOrUpdateUser($request->all());
-        if($user){
+        $data               = $request->all();
+        $country            = Country::find($data['country_id']);
+        $calling_code       = $country->calling_code;
+        $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+        $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+        $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+        $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
+        $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
+        $data['calling_code']   = $calling_code;
+        $request->merge($data);
+        $validator      = Validator::make($request->all(), [
+            'email' => 'required|email|max:255|unique:users',
+            'phone_number' => 'required|integer|unique:users',
+            'country_id' => 'required|exists:countries,id',
+        ]);
+        if($validator->fails()){
             return response()->json(array(
-                'status'=>201,
-                'message'=>'success saving'
+                'status' => 400,
+                'message' => $validator->errors()->first()
             ));
-        }else{
-            return response()->json(array(
-                'status'=>500,
-                'message'=>'error saving'
-            ));
+        }else {
+            $user = $this->User->createOrUpdateUser($request->all());
+            if ($user) {
+                return response()->json(array(
+                    'status' => 201,
+                    'message' => 'success saving'
+                ));
+            } else {
+                return response()->json(array(
+                    'status' => 500,
+                    'message' => 'error saving'
+                ));
+            }
         }
     }
 
@@ -98,35 +141,43 @@ class UserController extends Controller {
                 'password' => 'required|alpha_num',
                 'retype-password' => 'required|same:password',
                 'phone_number' => 'required|unique:users|integer|regex:/^[0-9]{6,11}$/',
-                'country_id' => 'required'
+                'country_id' => 'required',
+                'ext_phone' => 'required|integer|unique:users,phone_number',
             ], [
-                'country_id.required' => 'You must define your country'
+                'country_id.required' => 'You must define your country',
+                'ext_phone.required' => 'Please fill your phone number',
+                'ext_phone.integer' => 'Phone number must be integer',
+                'ext_phone.unique' => 'Phone number already been taken',
             ]);
 
             if($validator->fails()){
                 flash()->error($validator->errors()->first());
                 return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
             }else{
-                $countries      = Country::where('id', '=', ($data['country_id'] == '') ? NULL : $data['country_id']);
-                $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
-                $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
-                $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
-                $data['channel']        = hash('crc32b', bcrypt(uniqid(rand()*time())));
-                if($countries->exists()){
-                    $country            = $countries->first();
-                    $calling_code       = $country->calling_code;
-                    $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
-                    $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
-                    $data['channel']            = preg_replace($regexp, '${2}', $data['phone_number']);
-                    $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
-                    $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
-                    $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
-                }
+                // $countries      = Country::where('id', '=', ($data['country_id'] == '') ? NULL : $data['country_id']);
+                // $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+                // $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+                // $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+                $data['channel']    = hash('crc32b', bcrypt(uniqid(rand()*time())));
+                $calling_code       = $data['calling_code'];
+                $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
+                $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+                $data['channel']    = preg_replace($regexp, '${2}', $data['ext_phone']);
+                $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
+                $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
+
+                // if($countries->exists()){
+                //     $country            = $countries->first();
+                //     $calling_code       = $country->calling_code;
+                //     $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
+                // }
                 $data['status']         = true;
                 $data['password']       = bcrypt($data['password']);
                 $data['verification_code']  = '******';
                 $request->merge($data);
-                $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name']);
+                $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                // $input['phone_number']  = $request->ext_phone;
+                array_set($input, 'phone_number', $request->ext_phone);
                 $user           = User::firstOrCreate($input);
                 $user->roles()->attach($request->role_id);
 
