@@ -39,6 +39,24 @@ class AuthController extends Controller
     {
         $this->middleware('guest', ['except' => 'getLogout']);
         $this->user         = $user;
+        $this->beforeFilter(function() {
+            $country        = Country::where('iso_3166_2', '=', 'ID')
+                ->get(['calling_code', 'id'])
+                ->first();
+            $calling_code   = $country->calling_code;
+            $regexp         = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+            $regex          = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+            $phone_number   = request()->phone_number ?: null;
+            $phone_number   = preg_replace('/\s[\s]+/', '', $phone_number);
+            $phone_number   = preg_replace('/[\s\W]+/', '', $phone_number);
+            $phone_number   = preg_replace('/^[\+]+/', '', $phone_number);
+            $phone_number   = preg_replace($regexp, '', $phone_number);
+            $phone_number   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $phone_number);
+            $data['ext_phone']  = $phone_number;
+            $data['country_id'] = $country->id;
+            return request()->merge($data);
+
+        }, ['on' => 'post', 'only' => 'doRegister']);
     }
 
     /**
@@ -58,7 +76,12 @@ class AuthController extends Controller
         return Validator::make($data, [
             'email' => 'required|email|max:255|unique:users',
             'phone_number' => 'required|integer|unique:users',
+            'ext_phone' => 'required|integer|unique:users,phone_number',
             'country_id' => 'required|exists:countries,id',
+        ], [
+            'ext_phone.required' => 'Please fill your phone number',
+            'ext_phone.integer' => 'Phone number must be integer',
+            'ext_phone.unique' => 'Phone number already been taken'
         ]);
     }
 
@@ -81,25 +104,46 @@ class AuthController extends Controller
 
     public function doRegister(Request $request)
     {
-        $data               = $request->all();
-        $country            = Country::find($data['country_id']);
-        $calling_code       = $country->calling_code;
-        $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
-        $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
-        $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
-        $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
-        $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
-        $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
-        $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
-        $request->merge($data);
+        // $data               = $request->all();
+        // $country            = Country::find($data['country_id']);
+        // $calling_code       = $country->calling_code;
+        // $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+        // $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+        // $phone_number       = $data['phone_number'];
+        // $data['phone_number']   = preg_replace('/\s[\s]+/', '', $phone_number);
+        // $data['phone_number']   = preg_replace('/[\s\W]+/', '', $phone_number);
+        // $data['phone_number']   = preg_replace('/^[\+]+/', '', $phone_number);
+        // $data['phone_number']   = preg_replace($regexp, '', $phone_number);
+        // $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $phone_number);
+        // $request->merge($data);
+        // dd($request->all());
+        // die();
         $validator          = $this->validator($request->all());
+
         if ($validator->fails()) {
-            return redirect('/auth/register')
-                ->withErrors($validator, 'register')
-                ->withInput()
-                ->with('errors', $validator->errors());
+            if(request()->ajax()){
+                return response()->json([
+                    'status' => [
+                        'code' => 400,
+                        'message' => 'The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing)'
+                    ],
+                    'data' => $request->all(),
+                    'errors' => $validator->errors()
+                ]);
+            }else{
+                return redirect('/auth/register')
+                    ->withErrors($validator, 'register')
+                    ->withInput()
+                    ->with('errors', $validator->errors());
+            }
         }
 
+        if(request()->ajax()){
+            return response()->json(['status' => [
+                'code' => 200,
+                'message' => 'Success'
+            ], 'data' => $request->all(), 'errors' => NULL]);
+        }
         $user           = $this->user->createOrUpdateUser($request->all());
         return redirect()->route('auth.success.get')
             ->with('user', $user['user'])

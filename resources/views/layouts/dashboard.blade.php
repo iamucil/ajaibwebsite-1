@@ -138,15 +138,15 @@
             //$('.chat-pop-over').popover();
             $('.chat-pop-over').webuiPopover({
                 placement:'auto',
-                 padding:false,
+                padding:false,
                 width:'300',//can be set with  number
                 //height:'300',//can be set with  number
                 height:'400',//can be set with  number
                 animation:'',
-                 offsetTop:-18,  // offset the top of the popover
+                offsetTop:-18,  // offset the top of the popover
                 multi:true,//allow other popovers in page at same time
-                 dismissible:false, // if popover can be dismissed by  outside click or escape key
-                 closeable:true//display close button or not
+                dismissible:false, // if popover can be dismissed by  outside click or escape key
+                closeable:true//display close button or not
             });
 
                 menu2 = new sidetogglemenu({ // initialize second menu example
