@@ -46,7 +46,7 @@ class UserRepository
              * if user is exists reset verification data to default and status to false
              * otherwise insert new data into table users
              */
-            // dd(request()->all());
+             // dd(request()->all());
             if ($query->exists()) {
                 $query->update([
                     'verification_code' => str_repeat('*', 6),
@@ -56,7 +56,7 @@ class UserRepository
                 $exists = true;
             } else {
                 $exists = false;
-                $input  = request()->except(['_token', 'ext_phone']);
+                $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
                 $user = User::firstOrCreate($input);
             }
 
