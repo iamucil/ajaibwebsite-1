@@ -143,9 +143,9 @@ class UserController extends Controller {
                 'email' => 'required|email|max:255|unique:users',
                 'password' => 'required|alpha_num',
                 'retype-password' => 'required|same:password',
-                'phone_number' => 'required|unique:users|integer|regex:/^[0-9]{6,11}$/',
+                'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
                 'country_id' => 'required',
-                'ext_phone' => 'required|integer|unique:users,phone_number',
+                'ext_phone' => 'required|unique:users,phone_number|regex:/^[0-9]{6,}$/',
             ], [
                 'country_id.required' => 'You must define your country',
                 'ext_phone.required' => 'Please fill your phone number',
