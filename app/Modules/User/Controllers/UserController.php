@@ -60,14 +60,27 @@ class UserController extends Controller {
         {
             return response()->json(array(
                     'status'=>404,
-                    'message'=>'not found'
-            ));
-        }
-        return response()->json(array(
+                    'message'=>'Data Not Found'
+            ),404);
+        }else{
+            $datauser = [
+                'id'=>$user['id'],
+                'firstname'=>$user['firstname'],
+                'lastname'=>$user['lastname'],
+                'address'=>$user['address'],
+                'gender'=>$user['gender'],
+                'phone_number'=>$user['phone_number'],
+                'email'=>$user['email'],
+                'photo'=>$user['photo'],
+                'channel'=>$user['channel']
+            ];
+
+            return response()->json(array(
                 'status'=>200,
-                'message'=>'success retrieve',
-                'data'=>$user
-        ));
+                'message'=>'Success Retrieve Data',
+                'data'=>$datauser
+            ),200);
+        }
     }
 
     /**
@@ -89,18 +102,6 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
-//        $data               = $request->all();
-//        $country            = Country::find($data['country_id']);
-//        $calling_code       = $country->calling_code;
-//        $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
-//        $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
-//        $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
-//        $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
-//        $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
-//        $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
-//        $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
-//        $data['calling_code']   = $calling_code;
-//        $request->merge($data);
         $validator      = Validator::make($request->all(), [
             'email' => 'required|email|max:255|unique:users',
             'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
@@ -108,9 +109,9 @@ class UserController extends Controller {
         ]);
         if($validator->fails()){
             return response()->json(array(
-                'status' => 400,
+                'status' => 500,
                 'message' => $validator->errors()->first()
-            ));
+            ),500);
         }else {
             $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
             // $input['phone_number']  = $request->ext_phone;
@@ -119,13 +120,13 @@ class UserController extends Controller {
             if ($user) {
                 return response()->json(array(
                     'status' => 201,
-                    'message' => 'success saving'
-                ));
+                    'message' => 'Success Saving'
+                ),201);
             } else {
                 return response()->json(array(
                     'status' => 500,
-                    'message' => 'error saving'
-                ));
+                    'message' => 'Error Saving'
+                ),500);
             }
         }
     }
@@ -220,15 +221,16 @@ class UserController extends Controller {
      */
     public function update(Request $request)
     {
-        $ownerId =  Authorizer::getResourceOwnerId();
+        //$ownerId =  Authorizer::getResourceOwnerId();
+        $ownerId =  5;
         $user=User::find($ownerId);
 
         if(is_null($user))
         {
             return response()->json(array(
                 'status'=>404,
-                'message'=>'not found'
-            ));
+                'message'=>'Data Not Found'
+            ),404);
         }
 
         if(!is_null($request->firstname))
@@ -256,8 +258,8 @@ class UserController extends Controller {
             {
                 return response()->json(array(
                     'status'=>500,
-                    'message'=>'error upload photo'
-                ));
+                    'message'=>'Error Upload Photo'
+                ),500);
             }
         }
 
@@ -266,13 +268,13 @@ class UserController extends Controller {
         {
             return response()->json(array(
                     'status'=>500,
-                    'message'=>'error updating'
-            ));
+                    'message'=>'Error Updating'
+            ),500);
         }
         return response()->json(array(
                 'status'=>201,
-                'message'=>'success updating'
-        ));
+                'message'=>'Success Updating'
+        ),201);
     }
 
     /**
