@@ -89,18 +89,18 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
-        $data               = $request->all();
-        $country            = Country::find($data['country_id']);
-        $calling_code       = $country->calling_code;
-        $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
-        $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
-        $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
-        $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
-        $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
-        $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
-        $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
-        $data['calling_code']   = $calling_code;
-        $request->merge($data);
+//        $data               = $request->all();
+//        $country            = Country::find($data['country_id']);
+//        $calling_code       = $country->calling_code;
+//        $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+//        $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+//        $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+//        $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+//        $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+//        $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
+//        $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
+//        $data['calling_code']   = $calling_code;
+//        $request->merge($data);
         $validator      = Validator::make($request->all(), [
             'email' => 'required|email|max:255|unique:users',
             'phone_number' => 'required|integer|unique:users',
@@ -112,7 +112,10 @@ class UserController extends Controller {
                 'message' => $validator->errors()->first()
             ));
         }else {
-            $user = $this->User->createOrUpdateUser($request->all());
+            $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+            // $input['phone_number']  = $request->ext_phone;
+            array_set($input, 'phone_number', $request->ext_phone);
+            $user = $this->User->createOrUpdateUser($input);
             if ($user) {
                 return response()->json(array(
                     'status' => 201,
