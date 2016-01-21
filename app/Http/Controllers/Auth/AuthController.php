@@ -75,8 +75,8 @@ class AuthController extends Controller
 
         return Validator::make($data, [
             'email' => 'required|email|max:255|unique:users',
-            'phone_number' => 'required|integer|unique:users',
-            'ext_phone' => 'required|integer|unique:users,phone_number',
+            'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
+            'ext_phone' => 'required|unique:users,phone_number|regex:/^[0-9]{6,}$/',
             'country_id' => 'required|exists:countries,id',
         ], [
             'ext_phone.required' => 'Please fill your phone number',
