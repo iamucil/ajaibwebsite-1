@@ -32,7 +32,7 @@ class ChatController extends Controller {
             'status'=>200,
             'message'=>'success retrieve',
             'data'=>$chat
-        ));
+        ),200);
     }
 
     /**
@@ -61,13 +61,13 @@ class ChatController extends Controller {
         if($chat){
             return response()->json(array(
                 'status'=>201,
-                'message'=>'success saving'
-            ));
+                'message'=>'Success Saving'
+            ),201);
         }else{
             return response()->json(array(
                 'status'=>500,
-                'message'=>'error saving'
-            ));
+                'message'=>'Error Saving'
+            ),500);
         }
     }
 
