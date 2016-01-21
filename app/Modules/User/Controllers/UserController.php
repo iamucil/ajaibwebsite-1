@@ -103,7 +103,7 @@ class UserController extends Controller {
 //        $request->merge($data);
         $validator      = Validator::make($request->all(), [
             'email' => 'required|email|max:255|unique:users',
-            'phone_number' => 'required|integer|unique:users',
+            'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
             'country_id' => 'required|exists:countries,id',
         ]);
         if($validator->fails()){
@@ -144,7 +144,7 @@ class UserController extends Controller {
                 'password' => 'required|alpha_num',
                 'retype-password' => 'required|same:password',
                 'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
-                'country_id' => 'required',
+                'country_id' => 'required|exists:countries,id',
                 'ext_phone' => 'required|unique:users,phone_number|regex:/^[0-9]{6,}$/',
             ], [
                 'country_id.required' => 'You must define your country',
