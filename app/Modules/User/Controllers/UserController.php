@@ -60,8 +60,8 @@ class UserController extends Controller {
         {
             return response()->json(array(
                     'status'=>404,
-                    'message'=>'not found'
-            ));
+                    'message'=>'Data Not Found'
+            ),404);
         }else{
             $datauser = [
                 'id'=>$user['id'],
@@ -77,9 +77,9 @@ class UserController extends Controller {
 
             return response()->json(array(
                 'status'=>200,
-                'message'=>'success retrieve',
+                'message'=>'Success Retrieve Data',
                 'data'=>$datauser
-            ));
+            ),200);
         }
     }
 
