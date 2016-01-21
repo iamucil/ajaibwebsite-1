@@ -34,6 +34,10 @@ class ComposerServiceProvider extends ServiceProvider
                     $user->photo = '/profile/photo/'.$id;
                 }
             }
+
+            // PAM_PUBNUB_KEY -> using pubnub access manager
+            // PUBNUB_KEY -> without access manager
+
             JavaScript::put([
                 'authUser' => $user,
                 'authRoles' => $user->roles,
