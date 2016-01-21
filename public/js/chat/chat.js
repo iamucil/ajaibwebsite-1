@@ -251,11 +251,13 @@ function SubscribeChat() {
                     if ($('#cn_' + m.user_name) !== 0) {
                         $('#cn_' + m.user_name).remove();
                     }
+
                     // create new notification
-                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + times + '</p></a></li>');
+                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + times + '</p></a></li>');
 
                     // append chat to chat-conversation div
-                    $('.chat-conversation').append(m.text + '<br />');
+                    var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.text+'</p>';
+                    $('.chat-conversation#cc_'+m.user_name).append(appendElm);
 
                     // $('.chat-logs').append(m.command+'<br />');
                     //console.log(m);
@@ -299,7 +301,7 @@ function AppendChat(senderId,serviced) {
     var obj = GetParam(senderId);
 
     // move to div slim scroll
-    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user_name + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
+    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
 
     // remove old notification
     $('#cn_' + obj.user_name).remove();
@@ -308,10 +310,10 @@ function AppendChat(senderId,serviced) {
     //if ($('div#cb_' + obj.sender_id).length === 0) {
     if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
         $('.chat-bottom').append('<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' +
-            '<a class="chat-pop-over" data-title="' + obj.user_name + '" href="#">' + obj.user_name + '</a>' +
+            '<a class="chat-pop-over" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
-            '<div class="chat-conversation">' +
-            '<p>' + obj.text + '</p>' +
+            '<div class="chat-conversation" id="cc_'+obj.user_name+'">' +
+            '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+obj.text+'</p>' +
             '</div>' +
             '<div class="textarea-nest">' +
             '<div class="form-group">' +
@@ -319,7 +321,7 @@ function AppendChat(senderId,serviced) {
             '<span class="fontello-camera"></span>' +
             '</div>' +
             '<div class="form-group">' +
-            '<textarea class="form-control chat-text" onkeyup="" rows="3"></textarea>' +
+            '<textarea class="form-control chat-text" id="ct_'+obj.user_name+'" onkeyup="" rows="3"></textarea>' +
             '</div>' +
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + obj.sender_id + '\')">Submit</button>' +
             '</div>' +
@@ -369,7 +371,7 @@ function publish(senderId) {
     var obj=GetParam(senderId);
 
     // get message to publish
-    var text = $('.chat-text').val();
+    var text = $('.chat-text#ct_'+obj.user_name).val();
     var geoip   = JSON.parse(Cookies.get('geoip'));
     var param = {
         sender_id: authUser.id,
@@ -406,10 +408,11 @@ function publish(senderId) {
             });
 
             // append the text to conversation area
-            $('.chat-conversation').append('<p>'+text+'</p>');
+            var appendElm = '<p class="ajaib-operator"><small>Sat 7:19 PM</small>'+text+'</p>';
+            $('.chat-conversation#cc_'+obj.user_name).append(appendElm);
 
             // set chat text to null
-            $('.chat-text').val('')
+            $('.chat-text#ct_'+obj.user_name).val('')
         } else {
             // fail
             alertify.error("Gagal insert log chat. Periksa koneksi database!");
