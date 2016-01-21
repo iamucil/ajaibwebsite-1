@@ -233,15 +233,16 @@ class UserController extends Controller {
      */
     public function update(Request $request)
     {
-        $ownerId =  Authorizer::getResourceOwnerId();
+        //$ownerId =  Authorizer::getResourceOwnerId();
+        $ownerId =  5;
         $user=User::find($ownerId);
 
         if(is_null($user))
         {
             return response()->json(array(
                 'status'=>404,
-                'message'=>'not found'
-            ));
+                'message'=>'Data Not Found'
+            ),404);
         }
 
         if(!is_null($request->firstname))
@@ -269,8 +270,8 @@ class UserController extends Controller {
             {
                 return response()->json(array(
                     'status'=>500,
-                    'message'=>'error upload photo'
-                ));
+                    'message'=>'Error Upload Photo'
+                ),500);
             }
         }
 
@@ -279,13 +280,13 @@ class UserController extends Controller {
         {
             return response()->json(array(
                     'status'=>500,
-                    'message'=>'error updating'
-            ));
+                    'message'=>'Error Updating'
+            ),500);
         }
         return response()->json(array(
                 'status'=>201,
-                'message'=>'success updating'
-        ));
+                'message'=>'Success Updating'
+        ),201);
     }
 
     /**
