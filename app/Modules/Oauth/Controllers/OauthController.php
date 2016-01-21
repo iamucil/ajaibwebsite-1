@@ -197,8 +197,7 @@ class OauthController extends Controller {
             $return['message']  = 'Not Found';
         }
 
-
-        return response()->json($return,$return['status']);
+        return response()->json($return);
     }
 
     public function refreshToken(Request $request)
