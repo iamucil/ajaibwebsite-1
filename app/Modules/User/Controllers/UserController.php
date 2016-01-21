@@ -62,12 +62,25 @@ class UserController extends Controller {
                     'status'=>404,
                     'message'=>'not found'
             ));
-        }
-        return response()->json(array(
+        }else{
+            $datauser = [
+                'id'=>$user['id'],
+                'firstname'=>$user['firstname'],
+                'lastname'=>$user['lastname'],
+                'address'=>$user['address'],
+                'gender'=>$user['gender'],
+                'phone_number'=>$user['phone_number'],
+                'email'=>$user['email'],
+                'photo'=>$user['photo'],
+                'channel'=>$user['channel']
+            ];
+
+            return response()->json(array(
                 'status'=>200,
                 'message'=>'success retrieve',
-                'data'=>$user
-        ));
+                'data'=>$datauser
+            ));
+        }
     }
 
     /**
