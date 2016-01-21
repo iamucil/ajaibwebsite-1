@@ -16,6 +16,7 @@ class UserRepository
     public function createOrUpdateUser(array $data)
     {
         $role           = Role::where('name', '=', 'users');
+        $verification_code      = $this->generateVerificationCode();
         if($role->exists()){
             $country            = Country::find($data['country_id']);
             $calling_code       = $country->calling_code;
@@ -49,15 +50,29 @@ class UserRepository
              // dd(request()->all());
             if ($query->exists()) {
                 $query->update([
-                    'verification_code' => str_repeat('*', 6),
+                    'verification_code' => $verification_code,
                     'status' => false
                 ]);
                 $user   = $query->first();
                 $exists = true;
+                /**
+                 * And finnaly send email greeting to registered user
+                 */
+                Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
+                    $mail->from('noreply@getajaib.com', 'Ajaib');
+                    $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
+                });
             } else {
                 $exists = false;
                 $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
                 $user = User::firstOrCreate($input);
+                /**
+                 * And finnaly send email greeting to registered user
+                 */
+                Mail::send('emails.greeting', ['user' => $user], function ($mail) use ($user) {
+                    $mail->from('noreply@getajaib.com', 'Ajaib');
+                    $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
+                });
             }
 
             /**
@@ -69,13 +84,6 @@ class UserRepository
                 $user->roles()->attach($role_user->id);
             }
 
-            /**
-             * And finnaly send email greeting to registered user
-             */
-            Mail::send('emails.greeting', ['user' => $user], function ($mail) use ($user) {
-                $mail->from('noreply@getajaib.com', 'Ajaib');
-                $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
-            });
             return compact('user', 'exists');
         }else{
             return null;
