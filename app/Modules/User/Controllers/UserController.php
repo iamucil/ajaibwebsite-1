@@ -65,6 +65,7 @@ class UserController extends Controller {
         }else{
             $datauser = [
                 'id'=>$user['id'],
+                'name'=>$user['name'],
                 'firstname'=>$user['firstname'],
                 'lastname'=>$user['lastname'],
                 'address'=>$user['address'],
