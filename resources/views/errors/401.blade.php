@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
 <html>
     <head>
-    <title>SQL Sate [{!! $exception->getCode() !!}]</title>
+    <title>Page Un Authorized</title>
     <link rel="stylesheet" type="text/css" href="{{asset('/css/dripicon.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/not-found.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
+
 
     <body>
 
@@ -52,20 +51,16 @@
 
 
 
-  <p class="shadowFrame"><svg version="1.1" class="shadow" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="61px" y="20px"
-     width="122.436px" height="39.744px" viewBox="0 0 122.436 39.744" enable-background="new 0 0 122.436 39.744"
-     xml:space="preserve">
-<ellipse fill="#EF3D23" cx="61.128" cy="19.872" rx="49.25" ry="8.916"/>
-    </svg></p>
+                          <p class="shadowFrame"><svg version="1.1" class="shadow" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="61px" y="20px"
+                             width="122.436px" height="39.744px" viewBox="0 0 122.436 39.744" enable-background="new 0 0 122.436 39.744"
+                             xml:space="preserve">
+                        <ellipse fill="#EF3D23" cx="61.128" cy="19.872" rx="49.25" ry="8.916"/>
+                            </svg></p>
 
 
 
-                    <h1>SQL [{!! $exception->getCode() !!}]</h1>
-                    <p><div class="bg-danger">
-                        <code>
-                           {!! $exception->getSql() !!}
-                        </code>
-                    </div></p>
+                    <h1 style="font-size:3.5em">ERROR 401 <br>Unauthorized</h1>
+                    <p><strong>Access is denied due to invalid credentials!!!</strong> Credentials yang Anda miliki tidak memiliki hak untuk mengakses halaman kami. Ada kemungkan Credentials yang Anda miliki belum sesuai dengan Aturan di website kami. Silahkan hubungi admin system untuk info lebih lanjut. </p>
                     <ul>
                         <li><a href="#"><i class="icon-home"></i> Home</a></li>
                         <li><a href="#"><i class="icon-mail"></i> Contact Us</a></li>

@@ -126,7 +126,6 @@
     {{-- script bottom: additional script js --}}
     <script>
         // init user properties
-        var user    = {!! Auth::user() !!};
         if(Cookies.get('geoip') === undefined) {
             var url     = '{!! url("/geo-ip") !!}';
             $.getJSON( url, function( data ) {
@@ -136,21 +135,19 @@
 
         // console.log(geo());
         // init pubnub key
-        var pubkey='{!! env("PUBNUB_KEY") !!}';
-        var subkey='{!! env("SUBNUB_KEY") !!}';
         jQuery(function() {
             //$('.chat-pop-over').popover();
             $('.chat-pop-over').webuiPopover({
                 placement:'auto',
-                 padding:false,
+                padding:false,
                 width:'300',//can be set with  number
                 //height:'300',//can be set with  number
                 height:'400',//can be set with  number
                 animation:'',
-                 offsetTop:-18,  // offset the top of the popover
+                offsetTop:-18,  // offset the top of the popover
                 multi:true,//allow other popovers in page at same time
-                 dismissible:false, // if popover can be dismissed by  outside click or escape key
-                 closeable:true//display close button or not
+                dismissible:false, // if popover can be dismissed by  outside click or escape key
+                closeable:true//display close button or not
             });
 
                 menu2 = new sidetogglemenu({ // initialize second menu example
@@ -166,8 +163,8 @@
             },1500);
 
         });
-
     </script>
+
 @show
 </body>
 </html>

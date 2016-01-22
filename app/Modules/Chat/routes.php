@@ -12,5 +12,14 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
 
     });
 
+    Route::group(['prefix' => 'dashboard'], function () {
+        // logging chat from backend
+        Route::post('chat/insertlog', ['as'=>'dashboard.chat.insertlog','uses' => 'ChatController@insertLog']);
+        Route::resource('chat', 'ChatController',[
+            'names' => [
+                'insertlog'    => 'dashboard.chat.insertlog',
+            ]
+        ]);
+    });
 });
 

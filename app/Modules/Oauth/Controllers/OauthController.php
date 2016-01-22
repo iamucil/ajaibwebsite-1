@@ -1,6 +1,7 @@
 <?php namespace App\Modules\Oauth\Controllers;
 use Hash;
 use App\User;
+use App\Country;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class OauthController extends Controller {
     public function __construct(User $user)
     {
         $this->User         = $user;
-        $this->middleware('auth', ['except' => ['grantAccess']]);
+        $this->middleware('auth', ['except' => ['grantAccess', 'refreshToken']]);
     }
     /**
      * Display a listing of the resource.
@@ -130,30 +131,94 @@ class OauthController extends Controller {
         $grant_type         = 'password';
         $client_id          = $request->id;
         $client_secret      = $request->secret;
-        $verification_code  = $request->code;
+        $verification_code  = preg_replace('/\s[\s]+/', '', $request->code);
+        $verification_code  = preg_replace('/[\s\W]+/', '', $request->code);
+
         $email              = '';
         $phone_number       = '';
         $password           = '';
-        $query              = User::where('verification_code', $verification_code);
+        $query              = User::where('verification_code', '=', ($verification_code == '') ? NULL : $verification_code);
         $user               = [];
         $return             = [];
         if($query->exists()){
+            // return $query->first();
             // Update data users
-            $query->update([
-                'status' => true
-            ]);
             $user           = $query->first();
-            $email          = $user->email;
-            $phone_number   = $user->phone_number;
-            $password       = $user->phone_number;
-            $username       = $user->email;
+            if(is_null($user->roles) OR !$user->hasRole('users')){
+                $return['status']   = 404;
+                $return['message']  = 'Not Found';
+            }else{
+                $query->update([
+                    'status' => true,
+                    'verification_code' => str_repeat('*', 6)
+                ]);
+                $country_id     = $user->country_id;
+                $country        = Country::find($country_id);
+                $calling_code   = $country->calling_code;
+                $email          = $user->email;
+                $phone_number   = $user->phone_number;
+                $phone_number   = preg_replace('/\s[\s]+/', '', $phone_number);
+                $phone_number   = preg_replace('/[\s\W]+/', '', $phone_number);
+                $phone_number   = preg_replace('/^[\+]+/', '', $phone_number);
+                $phone_number   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $phone_number);
+                $regexp         = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+                $regex          = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+                $phone_number   = preg_replace($regexp, '${2}', $phone_number);
+                $username       = preg_replace($regexp, '${2}', $phone_number);
+                $password       = '+'.$phone_number;
+                $username       = $user->email;
+                // return compact('username', 'password', 'phone_number');
+                $oauth              = OauthClient::where('id', $client_id)
+                    ->where('secret', $client_secret);
+
+                if($oauth->exists()){
+                    $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
+                    $response           = $client->request('POST', 'api/v1/oauth/access_token', [
+                        'form_params' => $params,
+                        'header' => [
+                            'Content-Type' => 'application/json'
+                        ], 'Accept'     => 'application/json',
+                    ]);
+
+                    $code               = $response->getStatusCode(); // 200
+                    $reason             = $response->getReasonPhrase(); // OK
+                    $body               = $response->getBody();
+                    $result             = $body->getContents();
+                    $result             = json_decode($result);
+                    $return['access_token']     = $result->access_token;
+                    $return['refresh_token']    = $result->refresh_token;
+                    $return['email']            = $email;
+                    $return['phone_number']     = $phone_number;
+                    $return['expires']          = $result->expires_in;
+                }
+            }
+        }else{
+            $return['status']   = 404;
+            $return['message']  = 'Not Found';
         }
 
+        return response()->json($return);
+    }
+
+    public function refreshToken(Request $request)
+    {
+        // setting oauth client
+        $base_uri       = secure_url('/');
+        $client = new Client([
+            'base_uri' => $base_uri,
+            'verify' => false
+        ]);
+        $return             = [];
+        $grant_type         = 'refresh_token';
+        $client_id          = $request->id;
+        $client_secret      = $request->secret;
+        $refresh_token      = $request->token;
         $oauth              = OauthClient::where('id', $client_id)
             ->where('secret', $client_secret);
+            // return $request->all();
 
         if($oauth->exists()){
-            $params             = compact('grant_type', 'client_id', 'client_secret', 'username', 'password');
+            $params             = compact('grant_type', 'client_id', 'client_secret', 'refresh_token');
             $response           = $client->request('POST', 'api/v1/oauth/access_token', [
                 'form_params' => $params,
                 'header' => [
@@ -168,8 +233,6 @@ class OauthController extends Controller {
             $result             = json_decode($result);
             $return['access_token']     = $result->access_token;
             $return['refresh_token']    = $result->refresh_token;
-            $return['email']            = $email;
-            $return['phone_number']     = $phone_number;
             $return['expires']          = $result->expires_in;
         }
 

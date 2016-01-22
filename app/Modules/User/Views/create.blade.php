@@ -63,23 +63,24 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="input-phone_number" class="col-sm-2 control-label">Nomor Telepon</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" id="input-retype-password" placeholder="" name="phone_number">
-                    </div>
-                </div>
-                <div class="form-group">
                     <label for="input-address" class="col-sm-2 control-label">Kota</label>
                     <div class="col-sm-4">
                         <input type="hidden" name="country_id" value="{{ old('country_id') }}" />
                         <input type="hidden" name="country_name" value="{{ old('country_name') }}" />
-                        <input type="text" class="typehead" id="country" value="{{ old('country_name') }}" />
+                        <input type="text" class="typehead" id="country" value="{{ old('country_name') }}" autocomplete="off" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="input-address" class="col-sm-2 control-label">Alamat</label>
                     <div class="col-sm-4">
-                        <textarea class="form-control" id="input-address" name="address" rows="4"></textarea>
+                        <textarea class="form-control" id="input-address" name="address" rows="4">{{ old('address') }}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-phone_number" class="col-sm-2 control-label">Nomor Telepon</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="input-retype-password" placeholder="" name="phone_number" value="{{ old('phone_number') }}">
+                        <span id="helpBlock" class="help-block">ex: 85600000000.</span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -87,10 +88,10 @@
                     <div class="col-sm-4">
                         <div class="radio">
                             <label>
-                                <input type="radio" name="gender" value="male"> Laki-laki
+                                <input type="radio" name="gender" value="male" {{ request()->old('gender', $user['gender']) == 'male' ? 'checked' : '' }}> Laki-laki
                             </label>
                             <label>
-                                <input type="radio" name="gender" value="female"> Perempuan
+                                <input type="radio" name="gender" value="female" {{ request()->old('gender', $user['gender']) == 'female' ? 'checked' : '' }}> Perempuan
                             </label>
                         </div>
                     </div>

@@ -62,7 +62,7 @@
                             {{ $nomor }}
                         </td>
                         <td>
-                            {{ $user->name }}
+                            {{ $user->username }}
                         </td>
                         <td>
                             {{ $user->email }}
@@ -97,7 +97,7 @@
                                     {{ csrf_field() }}
                                     {{ method_field('DELETE') }}
 
-                                    <button class="btn btn-danger" id="btn-delete">
+                                    <button class="btn btn-danger" id="btn-delete" type="submit">
                                         <i class="glyphicon glyphicon-trash"></i>
                                     </button>
                                 </form>
@@ -116,7 +116,9 @@
             </table>
         </div>
     </div>
-    {!! $users !!}
+    <nav class="pagination">
+        {!! $users !!}
+    </nav>
 </div>
 @stop
 
@@ -124,11 +126,18 @@
     @parent
     <script type="text/javascript">
         $('button#btn-delete').bind('click', function (event){
+            var $form   = this.form;
             event.preventDefault();
             // return confirm(
             //     'Are you sure you wish to delete this recipe?'
             // );
-            return alertify.confirm("Are you sure you wish to delete this recipe?");
+            return alertify.confirm("Are you sure you wish to delete this recipe?", function (e) {
+                if (e) {
+                    $form.submit();
+                } else {
+                    // nothing happend
+                }
+            });
         })
     </script>
 @stop

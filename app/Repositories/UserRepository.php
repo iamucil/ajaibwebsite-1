@@ -4,6 +4,8 @@ namespace App\Repositories;
 use Mail;
 use App\User;
 use App\Role;
+use App\Country;
+use App\Http\Requests;
 
 /**
  * FILENAME     : UserRepository.php
@@ -14,36 +16,74 @@ class UserRepository
     public function createOrUpdateUser(array $data)
     {
         $role           = Role::where('name', '=', 'users');
+        $verification_code      = $this->generateVerificationCode();
         if($role->exists()){
-            $query = User::where('email', $data['email'])
-                ->orWhere('phone_number', $data['phone_number']);
+            $country            = Country::find($data['country_id']);
+            $calling_code       = $country->calling_code;
+            $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+            $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+            $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
+            $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
+            $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
+            $data['channel']        = hash('crc32b', bcrypt(uniqid(rand()*time())));
+            $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
+            $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
+            $data['channel']    = preg_replace($regexp, '${2}', $data['phone_number']);
+            $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
+            $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
+            $data['status']     = false;
+            $data['name']       = preg_replace($regexp, '${2}', $data['phone_number']);
+            $data['verification_code']  = $this->generateVerificationCode();
+            $data['verification_code']  = str_repeat('*', 6);
+            $data['password']           = bcrypt('+'.$data['phone_number']);
+            // merge all request input
+            request()->merge($data);
 
-            $verificationCode = $this->generateVerificationCode();
+            // check whether data user is exists
+            $query = User::where('email', request()->email)
+                ->orWhere('phone_number', request()->phone_number);
 
+            /**
+             * if user is exists reset verification data to default and status to false
+             * otherwise insert new data into table users
+             */
+             // dd(request()->all());
             if ($query->exists()) {
                 $query->update([
-                    'verification_code' => '******',
+                    'verification_code' => $verification_code,
                     'status' => false
                 ]);
                 $user   = $query->first();
                 $exists = true;
+                /**
+                 * And finnaly send email greeting to registered user
+                 */
+                Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
+                    $mail->from('noreply@getajaib.com', 'Ajaib');
+                    $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
+                });
             } else {
                 $exists = false;
-                $user = User::firstOrCreate([
-                    'name' => $data['phone_number'],
-                    'email' => $data['email'],
-                    'password' => bcrypt($data['phone_number']),
-                    'phone_number' => $data['phone_number'],
-                    'channel' => 1,
-                    'verification_code' => '******',
-                    'country_id' => $data['country_id'],
-                ]);
+                $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                $user = User::firstOrCreate($input);
+                /**
+                 * And finnaly send email greeting to registered user
+                 */
+                Mail::send('emails.greeting', ['user' => $user], function ($mail) use ($user) {
+                    $mail->from('noreply@getajaib.com', 'Ajaib');
+                    $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
+                });
             }
 
-            Mail::send('emails.greeting', ['user' => $user], function ($mail) use ($user) {
-                $mail->from('noreply@getajaib.com', 'Ajaib');
-                $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
-            });
+            /**
+             * After action users succeed assign registered user into role user
+             * set role to end user
+             */
+            $role_user  = $role->first();
+            if(!$user->hasRole($role_user->name)){
+                $user->roles()->attach($role_user->id);
+            }
+
             return compact('user', 'exists');
         }else{
             return null;

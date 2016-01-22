@@ -3,6 +3,7 @@
 namespace App\Policies;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+// use Illuminate\Support\Facades\Auth;
 
 class UserPolicy
 {
@@ -21,5 +22,10 @@ class UserPolicy
     public function setStatus(User $user)
     {
         return $user->hasRole(['admin', 'root']);
+    }
+
+    public function showProfile(User $user)
+    {
+        return $user->hasRole('admin', 'root') OR $user->id === Auth::user()->id;
     }
 }

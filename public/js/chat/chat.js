@@ -6,6 +6,7 @@
 <!-- Include the PubNub Library -->
 var chatParameter = [];
 var senderId = '';
+var receiverId = '';
 var chatFeature;
 
 // user properties
@@ -17,24 +18,38 @@ var channel='';
 var phone='';
 var status='';
 
+// model/service properties
+var sharedProperties={};
+var logResponse='';
+
+// pubnub init properties
+var authk = $('meta[name="csrf-token"]').attr('content');
 
 $(function () {
     // check if user has assigned to roles ??
-    if(user.roles === undefined || user.roles.length == 0){
+    if(authRoles === undefined || authRoles.length == 0){
         alertify.set({ delay: 10000 });
         alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     }else{
         // initialize user properties
-        name        = user.name;
-        firstname   = user.firstname;
-        lastname    = user.lastname;
-        roles       = user.roles[0].name;
-        channel     = 'op-'+user.channel;
-        phone       = user.phone_number;
-        status      = user.status;
+        name        = authUser.name;
+        firstname   = authUser.firstname;
+        lastname    = authUser.lastname;
+        roles       = authUser.roles[0].name;
+        channel     = authUser.channel;
+        phone       = authUser.phone_number;
+        status      = authUser.status;
 
         // initialize chat featre using PubNub
         InitChat();
+
+        // operator grant access
+        // grant global channel (without auth)
+        GrantChat(roles,'',true,true,0);
+        // grant operator private channel
+        GrantChat(channel,authk,true,true,0);
+        // grant global access to users
+        GrantChat("","",true,true,0);
 
         // listening to 'OPERATOR' channel for group and 'OP-USERNAME' channel for private
         SubscribeChat();
@@ -48,11 +63,142 @@ $(function () {
  */
 function InitChat() {
     chatFeature = PUBNUB.init({
-        publish_key: pubkey,
-        subscribe_key: subkey,
+        publish_key: pubnub_key,
+        subscribe_key: subnub_key,
+        secret_key: skey,
+        auth_key: authk,
         ssl : (('https:' == document.location.protocol) ? true : false),
-        uuid: 'op-'+name
+        uuid: name
     });
+}
+
+/**
+ * Function to granting user using Pubnub Access Manager
+ * @param channel, specified channel to grant
+ * @param auth, specified auth to grant
+ * @param read, subscribe access
+ * @param write, publish access
+ * @param ttl, time to live => 0, forefer / without limit
+ */
+function GrantChat(channel, auth, read, write, ttl) {
+    // channel-pnpres used because we are using pubnub presence
+    // grant pubnub access on global channel and private channel
+    if(channel === '') {
+        chatFeature.grant({
+            read: read,
+            write: write,
+            ttl: ttl,
+            callback: function(m){
+                //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                logging('grant chat on subsribe key level ');
+                logging(m);
+            },
+            error: function(m){console.error(m)}
+        });
+    }  else if (auth === '') {
+        // no need authentication
+        chatFeature.grant({
+            channel: channel+','+channel+'-pnpres',
+            read: read,
+            write: write,
+            ttl: ttl,
+            callback: function(m){
+                //TODO: grant chat on channel level (without authentication) level -> don't forget to disable this debug when it goes online
+                logging('grant chat on channel level (without authentication) ');
+                logging(m);
+            }
+        });
+    } else {
+        // need authentication
+        chatFeature.grant({
+            channel: channel+','+channel+'-pnpres',
+            auth_key: auth,
+            read: read,
+            write: write,
+            ttl: ttl,
+            callback: function(m){
+                //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                logging('grant chat on user level (with authentication) ');
+                logging(m);
+            }
+        });
+    }
+}
+
+function RevokeChat(channel, auth) {
+    pubnub.revoke({
+        channel: channel,
+        auth_key: auth,
+        //callback: function(m){
+        //    console.log(m);
+        //}
+    });
+}
+
+function getDate() {
+    var d = new Date();
+
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var hour = d.getHours();
+    var minute = d.getMinutes();
+    var second = d.getSeconds();
+
+    var output = d.getFullYear() + '-' +
+        ((''+month).length<2 ? '0' : '') + month + '-' +
+        ((''+day).length<2 ? '0' : '') + day + ' ' +
+        ((''+hour).length<2 ? '0' :'') + hour + ':' +
+        ((''+minute).length<2 ? '0' :'') + minute + ':' +
+        ((''+second).length<2 ? '0' :'') + second;
+    return output;
+}
+
+
+function InsertLogChat(param) {
+    var datetime=getDate();
+    if (param.receiver_id==='') {
+        param.receiver_id = authUser.id;
+    }
+
+    var domain = window.location.hostname;
+    if (domain === 'localhost') {
+        domain = 'ajaib-local';
+    }
+
+
+    // Send to API chat
+    var ajaxResponse = $.ajax({
+        type: "POST",
+        url: "https://"+domain+"/dashboard/chat/insertlog",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify({
+            sender_id: param.sender_id,
+            receiver_id: param.receiver_id,
+            message: param.text,
+            ip_address: param.ip,
+            useragent: param.useragent,
+            read: datetime
+        }),
+        beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader("Authorization", 'Bearer ' + param['sender_auth']);
+        }
+    });
+
+    //TODO: logresponse from insert chat  -> don't forget to disable this debug when it goes online
+    logging('logresponse from insert chat ');
+    logging(ajaxResponse);
+
+    return ajaxResponse;
+}
+
+function SetSharedProperties(key,value) {
+    sharedProperties[key] = value;
+}
+
+function GetSharedProperties(key) {
+    return sharedProperties[key];
 }
 
 /**
@@ -63,58 +209,78 @@ function SubscribeChat() {
     // Subscribe/listen to the OPERATOR channel
     chatFeature.subscribe({
         channel: [roles,channel],
-        presence: function(m){console.log(m)},
+        //presence: function(m){console.log(m)},
         message: function (m) {
-            // handle times
-            var times = moment(m.time,"DD/MM/YYYY HH:mm:ss").fromNow();
+            //TODO: subscribe chat -> don't forget to disable this debug when it goes online
+            logging('subscribe chat '+m);
+            logging(m);
 
-            // user notification should be here
-            if (!m.receiver_id || 0 === m.receiver_id.length) {
-                // it means users are not serviced yet.
-                // then push notifications to all operator
-                // if notification with this id not exist then create it
-                if ($('#cn_' + m.sender_id).length === 0) {
-                    //console.log(m);
+            // cek valid user based on insert log proses
+            var logResponse = InsertLogChat(m);
 
+            // valid user permit to chat
+            logResponse.success(function(data){
+
+                if (data.status===201) {
+                    // Grant user access
+                    GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
+
+                    // handle times
+                    var times = moment(m.time, "DD/MM/YYYY HH:mm:ss").fromNow();
+
+                    // user notification should be here
+                    if (!m.user_name || 0 === m.user_name.length) {
+                        // it means users are not serviced yet.
+                        // then push notifications to all operator
+                        // if notification with this id doesn't exist then create it
+                        //if ($('#cn_' + m.sender_id).length === 0) {
+                        //console.log(m);
+
+                        // Set parameter for the next usage of AppendChat function
+
+
+                        // debugging to see the data
+                        // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
+                        //}
+                        var serviced = false;
+                    } else {
+                        var serviced = true;
+                        // users has been serviced
+                        // if users have been chat with this operator, then just change the style
+                        if ($('#ss_' + m.user_name).length !== 0) {
+                            // users has old notification then remove it
+                            // alert($('#ss_'+ m.sender_id).length);
+                            $('div#ss_' + m.user_name).remove();
+
+                            //ChatBoxToggle($('#cb_'+ m.sender_id));
+
+                            //$('#cb_'+ m.sender_id).click(function(){
+                            //    alert($(this).attr('class'));
+                            //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
+                            //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
+                            //    }
+                            //});
+                        }
+                    }
                     // Set parameter for the next usage of AppendChat function
+                    SetParam(m.sender_id, m);
+                    if ($('#cn_' + m.user_name) !== 0) {
+                        $('#cn_' + m.user_name).remove();
+                    }
 
+                    // create new notification
+                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + times + '</p></a></li>');
 
-                    // debugging to see the data
-                    // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
+                    // append chat to chat-conversation div
+                    var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.text+'</p><br />';
+                    $('.chat-conversation#cc_'+m.user_name).append(appendElm);
+
+                    // $('.chat-logs').append(m.command+'<br />');
+                    //console.log(m);
+                } else {
+                    logging("There are unauthonticated user's coming");
                 }
-                var serviced = false;
-            } else {
-                var serviced = true;
-                // users has been serviced
-                // if users have been chat with this operator, then just change the style
-                if ($('#ss_'+ m.sender_id).length !== 0) {
-                    // users has old notification then remove it
-                    // alert($('#ss_'+ m.sender_id).length);
-                    $('div#ss_'+ m.sender_id).remove();
-
-                    //ChatBoxToggle($('#cb_'+ m.sender_id));
-
-                    //$('#cb_'+ m.sender_id).click(function(){
-                    //    alert($(this).attr('class'));
-                    //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
-                    //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
-                    //    }
-                    //});
-                }
-            }
-            // Set parameter for the next usage of AppendChat function
-            SetParam(m.sender_id, m);
-            if ($('#cn_' + m.sender_id)!==0) {
-                $('#cn_' + m.sender_id).remove();
-            }
-            // create new notification
-            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.sender_id + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\','+serviced+')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+times+'</p></a></li>');
-
-            // append chat to chat-conversation div
-            $('.chat-conversation').append(m.text+'<br />');
-
-            // $('.chat-logs').append(m.command+'<br />');
-            //console.log(m);
+            });
         },
         /**
          * using callback
@@ -151,19 +317,19 @@ function AppendChat(senderId,serviced) {
     var obj = GetParam(senderId);
 
     // move to div slim scroll
-    $('.slim-scroll').prepend('<div id="ss_' + obj.sender_id + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user_name + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
+    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
 
     // remove old notification
-    $('#cn_' + obj.sender_id).remove();
+    $('#cn_' + obj.user_name).remove();
 
     //alert($('.chat-bottom').find('div').attr('id',senderId).attr('id'));
     //if ($('div#cb_' + obj.sender_id).length === 0) {
-    if (!serviced) {
-        $('.chat-bottom').append('<div id=\"cb_'+ obj.sender_id + '\"class="chat-list chat-active">' +
-            '<a class="chat-pop-over" data-title="' + obj.user_name + '" href="#">' + obj.user_name + '</a>' +
+    if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
+        $('.chat-bottom').append('<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' +
+            '<a class="chat-pop-over" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
-            '<div class="chat-conversation">' +
-            '<p>' + obj.text + '</p>' +
+            '<div class="chat-conversation" id="cc_'+obj.user_name+'">' +
+            '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+obj.text+'</p>' +
             '</div>' +
             '<div class="textarea-nest">' +
             '<div class="form-group">' +
@@ -171,7 +337,7 @@ function AppendChat(senderId,serviced) {
             '<span class="fontello-camera"></span>' +
             '</div>' +
             '<div class="form-group">' +
-            '<textarea class="form-control chat-text" onkeyup="" rows="3"></textarea>' +
+            '<textarea class="form-control chat-text" id="ct_'+obj.user_name+'" onkeyup="" rows="3"></textarea>' +
             '</div>' +
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + obj.sender_id + '\')">Submit</button>' +
             '</div>' +
@@ -184,6 +350,7 @@ function AppendChat(senderId,serviced) {
         //$('#cb_'+obj.sender_id);
 
         // blinking chat bottom
+        $('#cb_'+ obj.user_name).addClass('');
     }
 }
 
@@ -216,31 +383,67 @@ function load_js() {
  * @param senderId
  */
 function publish(senderId) {
-    // decrypt sender id
-    var geoip   = Cookies.get('geoip');
-    // get detail message from sender id decrypted
+    // get user chat object
     var obj=GetParam(senderId);
-    var text = $('.chat-text').val();
-    var datetime = "LastSync: " + new Date().today() + " @ " + new Date().timeNow();
-    chatFeature.publish({
-        channel: 'ch-'+obj.sender_id,
-        message: {
-            "token": 'token value',
-            "user_channel": channel,
-            "user_name": roles+'-'+firstname,
-            "text": text,
-            "ip": geoip.ip_address,
-            "sender_id": channel.split('-')[1],
-            "receiver_id": '085432123456',
-            "time": datetime
+
+    //TODO: sender object -> don't forget to disable this debug when it goes online
+    logging('sender object '+obj);
+    logging(obj);
+
+    // get message to publish
+    var text = $('.chat-text#ct_'+obj.user_name).val();
+    var geoip   = JSON.parse(Cookies.get('geoip'));
+    var param = {
+        sender_id: authUser.id,
+        receiver_id: obj.sender_id,
+        text: text,
+        ip: geoip.ip_address,
+        useragent: navigator.userAgent,
+        read: getDate(),
+        sender_auth: obj.sender_auth
+    };
+
+    //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
+    logging('parameter to insert chat log '+param);
+    logging(param);
+
+    var logResponse = InsertLogChat(param);
+
+    // valid user permit to chat
+    logResponse.success(function(data) {
+
+        if (data.status=='201') {
+            // success then publish message
+            var datetime = getDate();
+            chatFeature.publish({
+                channel: obj.sender_channel,
+                message: {
+                    "user_name": firstname,
+                    "text": text,
+                    "ip": geoip.ip_address,
+                    "sender_id": authUser.id,
+                    "sender_channel": channel,
+                    "receiver_id": obj.sender_id,
+                    "time": datetime
+                },
+                callback: function(m) {
+                    //TODO: publish event -> don't forget to disable this debug when it goes online
+                    logging('publish event '+m);
+                    logging(m);
+                }
+            });
+
+            // append the text to conversation area
+            var appendElm = '<p class="ajaib-operator"><small>Sat 7:19 PM</small>'+text+'</p><br />';
+            $('.chat-conversation#cc_'+obj.user_name).append(appendElm);
+
+            // set chat text to null
+            $('.chat-text#ct_'+obj.user_name).val('')
+        } else {
+            // fail
+            alertify.error("Gagal insert log chat. Periksa koneksi database!");
         }
     });
-
-    // append the text to conversation area
-    $('.chat-conversation').append('<p>'+text+'</p>');
-
-    // set chat text to null
-    $('.chat-text').val('')
 }
 
 function whileTyping() {
@@ -272,4 +475,8 @@ function DiffTheTimes() {
     var ms = moment(now,"DD/MM/YYYY HH:mm:ss").diff(moment(then,"DD/MM/YYYY HH:mm:ss"));
     var d = moment.duration(ms);
     var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+}
+
+function logging(m) {
+    console.log(m);
 }
