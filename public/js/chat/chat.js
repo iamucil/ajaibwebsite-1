@@ -32,8 +32,6 @@ $(function () {
         alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     }else{
         // initialize user properties
-        // console.log(authUser.roles);
-        // console.log(authRoles)
         name        = authUser.name;
         firstname   = authUser.firstname;
         lastname    = authUser.lastname;
@@ -91,25 +89,27 @@ function GrantChat(channel, auth, read, write, ttl) {
             write: write,
             ttl: ttl,
             callback: function(m){
-                //console.log(m)
+                //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                logging('grant chat on subsribe key level ');
+                logging(m);
             },
             error: function(m){console.error(m)}
         });
     }  else if (auth === '') {
         // no need authentication
-        //console.log('granting server access without authentication #'+auth);
         chatFeature.grant({
             channel: channel+','+channel+'-pnpres',
             read: read,
             write: write,
             ttl: ttl,
             callback: function(m){
-                //console.log(m);
+                //TODO: grant chat on channel level (without authentication) level -> don't forget to disable this debug when it goes online
+                logging('grant chat on channel level (without authentication) ');
+                logging(m);
             }
         });
     } else {
         // need authentication
-        //console.log('granting server access with authentication #'+auth);
         chatFeature.grant({
             channel: channel+','+channel+'-pnpres',
             auth_key: auth,
@@ -117,7 +117,9 @@ function GrantChat(channel, auth, read, write, ttl) {
             write: write,
             ttl: ttl,
             callback: function(m){
-                //console.log(m);
+                //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                logging('grant chat on user level (with authentication) ');
+                logging(m);
             }
         });
     }
@@ -158,10 +160,16 @@ function InsertLogChat(param) {
         param.receiver_id = authUser.id;
     }
 
+    var domain = window.location.hostname;
+    if (domain === 'localhost') {
+        domain = 'ajaib-local';
+    }
+
+
     // Send to API chat
     var ajaxResponse = $.ajax({
         type: "POST",
-        url: "https://ajaib-local/dashboard/chat/insertlog",
+        url: "https://"+domain+"/dashboard/chat/insertlog",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         data: JSON.stringify({
@@ -177,6 +185,10 @@ function InsertLogChat(param) {
             xhr.setRequestHeader("Authorization", 'Bearer ' + param['sender_auth']);
         }
     });
+
+    //TODO: logresponse from insert chat  -> don't forget to disable this debug when it goes online
+    logging('logresponse from insert chat ');
+    logging(ajaxResponse);
 
     return ajaxResponse;
 }
@@ -199,9 +211,13 @@ function SubscribeChat() {
         channel: [roles,channel],
         //presence: function(m){console.log(m)},
         message: function (m) {
+            //TODO: subscribe chat -> don't forget to disable this debug when it goes online
+            logging('subscribe chat '+m);
+            logging(m);
+
             // cek valid user based on insert log proses
             var logResponse = InsertLogChat(m);
-            //console.log(m);
+
             // valid user permit to chat
             logResponse.success(function(data){
 
@@ -262,7 +278,7 @@ function SubscribeChat() {
                     // $('.chat-logs').append(m.command+'<br />');
                     //console.log(m);
                 } else {
-                    console.log("There are unauthonticated user's coming");
+                    logging("There are unauthonticated user's coming");
                 }
             });
         },
@@ -370,6 +386,10 @@ function publish(senderId) {
     // get user chat object
     var obj=GetParam(senderId);
 
+    //TODO: sender object -> don't forget to disable this debug when it goes online
+    logging('sender object '+obj);
+    logging(obj);
+
     // get message to publish
     var text = $('.chat-text#ct_'+obj.user_name).val();
     var geoip   = JSON.parse(Cookies.get('geoip'));
@@ -382,6 +402,10 @@ function publish(senderId) {
         read: getDate(),
         sender_auth: obj.sender_auth
     };
+
+    //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
+    logging('parameter to insert chat log '+param);
+    logging(param);
 
     var logResponse = InsertLogChat(param);
 
@@ -403,7 +427,9 @@ function publish(senderId) {
                     "time": datetime
                 },
                 callback: function(m) {
-                    //console.log(m);
+                    //TODO: publish event -> don't forget to disable this debug when it goes online
+                    logging('publish event '+m);
+                    logging(m);
                 }
             });
 
@@ -449,4 +475,8 @@ function DiffTheTimes() {
     var ms = moment(now,"DD/MM/YYYY HH:mm:ss").diff(moment(then,"DD/MM/YYYY HH:mm:ss"));
     var d = moment.duration(ms);
     var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+}
+
+function logging(m) {
+    console.log(m);
 }
