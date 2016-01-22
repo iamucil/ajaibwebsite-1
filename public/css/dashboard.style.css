@@ -162,6 +162,7 @@ Buttons
     border: 1px solid transparent;
     font-size: 13px;
     padding: 7px 10px;
+    border-radius: 25px;
 }
 
 .dropdown-menu>li>a {
@@ -1082,21 +1083,22 @@ ALERT
     background-color: #fff;
     border-top: 1px solid #ddd;
 }
-.close-box{
-   position: absolute;
+
+.close-box {
+    position: absolute;
     top: 2px;
     right: 2px;
     cursor: pointer;
     width: 15px;
     height: 15px;
-    background:#FF4800;
+    background: #FF4800;
     font-size: 8px;
     text-align: center;
     line-height: 15px;
     color: #fff;
     border-radius: 3px;
-
 }
+
 .chat-list {
     border-right: 1px solid #ccc;
     /* display: table-cell;*/
@@ -1139,41 +1141,50 @@ ALERT
 }
 
 .chat-conversation .ajaib-client {
- background: #fff;
-    display: table;
+    background: #fff;
+    display: list-item;
     padding: 5px 10px;
     border-radius: 4px;
     text-align: left;
     border: 1px solid #ddd;
     position: relative;
     z-index: 0;
-    margin: 20px 0 10px 0;
+    margin: 15px 0;
+    min-width: 90px;
+    clear: both;
+    float: left;
+    list-style: none;
 }
-.chat-conversation .ajaib-client small{
-        position: absolute;
+
+.chat-conversation .ajaib-client small {
+    position: absolute;
     top: -16px;
     font-size: 10px;
 }
+
 .chat-conversation .ajaib-operator {
     background: #FF6600;
-    display: flex;
+    display: list-item;
     padding: 5px 10px;
     border-radius: 4px;
     text-align: left;
     color: #fff;
-    justify-content: flex-end;
-    align-items: flex-end;
     float: right;
     position: relative;
-    margin: 20px 0 30px;
+    margin: 0;
+    min-width: 60px;
+    clear: both;
+     margin: 15px 0;
 }
-.chat-conversation .ajaib-operator small{
-        position: absolute;
+
+.chat-conversation .ajaib-operator small {
+    position: absolute;
     top: -16px;
     font-size: 10px;
     color: #666;
-        right: 0;
+    right: 0;
 }
+
 .chat-conversation .ajaib-operator:after {
     content: "";
     display: block;
@@ -1262,4 +1273,13 @@ ALERT
 
 .chat-active a {
     color: #fff;
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+    color: #fff;
+    text-decoration: none;
+    background-color: #ff6600;
+    outline: 0;
 }
