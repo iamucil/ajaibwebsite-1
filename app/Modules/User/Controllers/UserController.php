@@ -222,8 +222,7 @@ class UserController extends Controller {
      */
     public function update(Request $request)
     {
-        //$ownerId =  Authorizer::getResourceOwnerId();
-        $ownerId =  5;
+        $ownerId =  Authorizer::getResourceOwnerId();
         $user=User::find($ownerId);
 
         if(is_null($user))
