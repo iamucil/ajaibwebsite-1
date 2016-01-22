@@ -307,6 +307,15 @@ class UserController extends Controller {
 
     public function getListUsers(Request $request)
     {
+        $data_user  = User::all();
+        // dd($data_user);
+        foreach ($data_user as $usr) {
+            echo '<pre>';
+            print_r($usr->roles);
+            echo '</pre>';
+        }
+
+        die();
         $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereNotIn('roles.name', ['root'])
