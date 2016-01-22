@@ -272,7 +272,7 @@ function SubscribeChat() {
                     $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + times + '</p></a></li>');
 
                     // append chat to chat-conversation div
-                    var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.text+'</p>';
+                    var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.text+'</p><br />';
                     $('.chat-conversation#cc_'+m.user_name).append(appendElm);
 
                     // $('.chat-logs').append(m.command+'<br />');
@@ -434,7 +434,7 @@ function publish(senderId) {
             });
 
             // append the text to conversation area
-            var appendElm = '<p class="ajaib-operator"><small>Sat 7:19 PM</small>'+text+'</p>';
+            var appendElm = '<p class="ajaib-operator"><small>Sat 7:19 PM</small>'+text+'</p><br />';
             $('.chat-conversation#cc_'+obj.user_name).append(appendElm);
 
             // set chat text to null
