@@ -104,21 +104,7 @@ class AuthController extends Controller
 
     public function doRegister(Request $request)
     {
-        // $data               = $request->all();
-        // $country            = Country::find($data['country_id']);
-        // $calling_code       = $country->calling_code;
-        // $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
-        // $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
-        // $phone_number       = $data['phone_number'];
-        // $data['phone_number']   = preg_replace('/\s[\s]+/', '', $phone_number);
-        // $data['phone_number']   = preg_replace('/[\s\W]+/', '', $phone_number);
-        // $data['phone_number']   = preg_replace('/^[\+]+/', '', $phone_number);
-        // $data['phone_number']   = preg_replace($regexp, '', $phone_number);
-        // $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $phone_number);
-        // $request->merge($data);
-        // dd($request->all());
-        // die();
-        $validator          = $this->validator($request->all());
+        /*$validator          = $this->validator($request->all());
 
         if ($validator->fails()) {
             if(request()->ajax()){
@@ -136,7 +122,7 @@ class AuthController extends Controller
                     ->withInput()
                     ->with('errors', $validator->errors());
             }
-        }
+        }*/
 
         if(request()->ajax()){
             return response()->json(['status' => [

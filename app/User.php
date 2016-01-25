@@ -41,8 +41,23 @@ class User extends Model implements AuthenticatableContract,
      */
     protected $hidden = ['password', 'remember_token'];
     protected $maps     = ['name' => 'myname'];
-    public function countries()
+    public function country()
     {
-        return $this->hasOne('App\Country');
+        return $this->belongsTo('App\Country', 'country_id', 'id');
     }
+
+    public function senders()
+    {
+        return $this->hasMany('App\Modules\Chat\Models\Chat', 'sender_id', 'id');
+    }
+
+    public function receivers()
+    {
+        return $this->hasMany('App\Modules\Chat\Models\Chat', 'receiver_id', 'id');
+    }
+
+    // public function roles()
+    // {
+    //     return $this->hasMany('App\RoleUser', 'user_id', 'id');
+    // }
 }

@@ -286,29 +286,41 @@ class UserController extends Controller {
     public function destroy($id, Request $request, User $user)
     {
         $this->authorize('destroy', $user);
-        // $response = $this->call('DELETE', '/users/'.$id, ['_token' => csrf_token()]);
         if(!$request->has('_method') OR $request->_method !== 'DELETE'){
             App::abort(403, 'Unauthorized action.');
         }
-        $result         = DB::transaction(function ($id) use ($id) {
-            $result     = true;
-            $result     &= DB::table('users')->where('id', '=', $id)->delete();
-            $result     &= DB::table('role_user')->where('user_id', '=', $id)->delete();
+        $result         = $user->where('id', '=', $id)->update(['stats' => false]);
+        flash()->success('Your data has been deleted');
 
-            return $result;
-        });
+        // $result         = DB::transaction(function ($id) use ($id) {
+        //     $result     = true;
+        //     $result     &= DB::table('users')->where('id', '=', $id)->update([
+        //         'sttaus' => false
+        //     ]);
+        //     // $result     &= DB::table('role_user')->where('user_id', '=', $id)->delete();
 
-        if((bool)$result === true){
-            flash()->success('Your data has been deleted');
-        }else{
-            flash()->error('Unable to delete data user');
-        }
+        //     return $result;
+        // });
+
+        // if((bool)$result === true){
+        // }else{
+        //     flash()->error('Unable to delete data user');
+        // }
 
         return redirect()->route('user.list');
     }
 
     public function getListUsers(Request $request)
     {
+        // $data_user  = User::all();
+        // dd($data_user);
+        // foreach ($data_user as $usr) {
+        //     echo '<pre>';
+        //     print_r($usr->roles);
+        //     echo '</pre>';
+        // }
+
+        // die();
         $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereNotIn('roles.name', ['root'])
