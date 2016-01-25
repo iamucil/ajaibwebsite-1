@@ -15,9 +15,9 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
 
     Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:admin|root']], function() {
         Route::get('/users', ['as' => 'user.list', 'uses' => 'UserController@getListUsers']);
-        Route::post('/users/{user}/setactive', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
+        Route::put('/users/{user}/setactive', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
         Route::delete('/users/{user}', ['as' => 'user.destroy', 'uses' => 'UserController@destroy']);
-        Route::put('/users/{user}', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
+        // Route::put('/users/{user}', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
         Route::get('/users/create', ['as' => 'user.add', 'uses' => 'UserController@create']);
         Route::post('/users/store', ['as' => 'user.store', 'uses' => 'UserController@storeLocal']);
         Route::get('/users/{user}/edit', ['as' => 'user.edit', 'uses' => 'UserController@edit']);
