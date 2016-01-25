@@ -289,7 +289,7 @@ class UserController extends Controller {
         if(!$request->has('_method') OR $request->_method !== 'DELETE'){
             App::abort(403, 'Unauthorized action.');
         }
-        $result         = $user->where('id', '=', $id)->update(['stats' => false]);
+        $result         = $user->where('id', '=', $id)->update(['status' => false]);
         flash()->success('Your data has been deleted');
 
         // $result         = DB::transaction(function ($id) use ($id) {
