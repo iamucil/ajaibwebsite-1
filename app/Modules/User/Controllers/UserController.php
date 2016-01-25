@@ -103,9 +103,9 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
-        /*$validator      = Validator::make($request->all(), [
-            'email' => 'required|email|max:255|unique:users',
-            'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
+        $validator      = Validator::make($request->all(), [
+            'phone_number' => 'required|regex:/^[0-9]{6,}$/',
+            'email' => 'required|email|max:255',
             'country_id' => 'required|exists:countries,id',
         ]);
         if($validator->fails()){
@@ -113,7 +113,7 @@ class UserController extends Controller {
                 'status' => 500,
                 'message' => $validator->errors()->first()
             ),500);
-        }else {*/
+        }else {
             $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
             // $input['phone_number']  = $request->ext_phone;
             array_set($input, 'phone_number', $request->ext_phone);
@@ -129,7 +129,7 @@ class UserController extends Controller {
                     'message' => 'Error Saving'
                 ),500);
             }
-        //}
+        }
     }
 
     public function storeLocal(Request $request)
