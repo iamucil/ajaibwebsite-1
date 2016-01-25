@@ -353,6 +353,7 @@ class UserController extends Controller {
 
     public function setActive($id, Request $request, User $user)
     {
+        // dd($user->roles());
         $this->authorize('setStatus', $user);
 
         if($this->User->setActive($id)){
