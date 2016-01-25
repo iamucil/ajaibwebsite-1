@@ -159,10 +159,6 @@ class UserController extends Controller {
                 flash()->error($validator->errors()->first());
                 return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
             }else{
-                // $countries      = Country::where('id', '=', ($data['country_id'] == '') ? NULL : $data['country_id']);
-                // $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
-                // $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
-                // $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
                 $data['channel']    = hash('crc32b', bcrypt(uniqid(rand()*time())));
                 $calling_code       = $data['calling_code'];
                 $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
@@ -170,18 +166,11 @@ class UserController extends Controller {
                 $data['channel']    = preg_replace($regexp, '${2}', $data['ext_phone']);
                 $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
                 $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
-
-                // if($countries->exists()){
-                //     $country            = $countries->first();
-                //     $calling_code       = $country->calling_code;
-                //     $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
-                // }
                 $data['status']         = true;
                 $data['password']       = bcrypt($data['password']);
                 $data['verification_code']  = '******';
                 $request->merge($data);
                 $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
-                // $input['phone_number']  = $request->ext_phone;
                 array_set($input, 'phone_number', $request->ext_phone);
                 $user           = User::firstOrCreate($input);
                 $user->roles()->attach($request->role_id);
@@ -209,9 +198,16 @@ class UserController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit($id, Request $request, User $User)
     {
-        //
+        if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
+            App::abort(403, 'Unauthorized action.');
+        }
+
+        $user       = User::findOrFail($id);
+        $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');
+        $this->authorize('showProfile', $User);
+        return view('User::edit', compact('user', 'url', 'roles'));
     }
 
     /**
@@ -222,8 +218,8 @@ class UserController extends Controller {
      */
     public function update(Request $request)
     {
-        $ownerId =  Authorizer::getResourceOwnerId();
-        $user=User::find($ownerId);
+        $ownerId    = Authorizer::getResourceOwnerId();
+        $user       = User::find($ownerId);
 
         if(is_null($user))
         {
@@ -385,6 +381,31 @@ class UserController extends Controller {
         $pathPhoto  = storage_path() . '/' . $user->photo;
 
         return $this->Asset->downloadFile($pathPhoto);
+    }
+
+    public function updateProfile($id, Request $request, User $User)
+    {
+        if(!$request->has('_method') OR $request->_method !== 'PUT'){
+            App::abort(403, 'Unauthorized action.');
+        }
+
+        if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
+            App::abort(403, 'Unauthorized action.');
+        }
+
+        $this->authorize('showProfile', $User);
+        $user       = $User->find($id);
+        $user->firstname    = $request->firstname;
+        $user->lastname     = $request->lastname;
+        $user->country_id   = $request->country_id;
+        $user->address      = $request->address;
+        $user->gender       = $request->gender;
+
+        $user->save();
+
+        flash()->success('Your data has been updated');
+
+        return redirect()->route('user.profile', $id);
     }
 
 }

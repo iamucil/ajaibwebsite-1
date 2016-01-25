@@ -74,14 +74,13 @@ class AuthController extends Controller
          */
 
         return Validator::make($data, [
-            'email' => 'required|email|max:255|unique:users',
-            'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
-            'ext_phone' => 'required|unique:users,phone_number|regex:/^[0-9]{6,}$/',
+            'email' => 'required|email|max:255',
+            'phone_number' => 'required|regex:/^[0-9]{6,}$/',
+            'ext_phone' => 'required|regex:/^[0-9]{6,}$/',
             'country_id' => 'required|exists:countries,id',
         ], [
             'ext_phone.required' => 'Please fill your phone number',
             'ext_phone.integer' => 'Phone number must be integer',
-            'ext_phone.unique' => 'Phone number already been taken'
         ]);
     }
 
@@ -104,7 +103,7 @@ class AuthController extends Controller
 
     public function doRegister(Request $request)
     {
-        /*$validator          = $this->validator($request->all());
+        $validator          = $this->validator($request->all());
 
         if ($validator->fails()) {
             if(request()->ajax()){
@@ -122,7 +121,7 @@ class AuthController extends Controller
                     ->withInput()
                     ->with('errors', $validator->errors());
             }
-        }*/
+        }
 
         if(request()->ajax()){
             return response()->json(['status' => [
