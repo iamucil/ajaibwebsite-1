@@ -20,6 +20,8 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::put('/users/{user}', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
         Route::get('/users/create', ['as' => 'user.add', 'uses' => 'UserController@create']);
         Route::post('/users/store', ['as' => 'user.store', 'uses' => 'UserController@storeLocal']);
+        Route::get('/users/{user}/edit', ['as' => 'user.edit', 'uses' => 'UserController@edit']);
+        Route::PUT('/users/{user}', ['as' => 'user.update', 'uses' => 'UserController@updateProfile']);
     });
 
     Route::group(['prefix'=>'/profile', 'middleware' => 'auth'], function(){
