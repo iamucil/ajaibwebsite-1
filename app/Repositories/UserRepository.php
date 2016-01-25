@@ -57,6 +57,7 @@ class UserRepository
                         // 'status' => false
                     ]);
                     $mail_template  = 'emails.authentication';
+                    $user           = $query->first();
                 }else{
                     $mail_template  = 'emails.greeting';
                 }
