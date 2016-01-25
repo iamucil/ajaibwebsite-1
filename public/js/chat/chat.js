@@ -32,8 +32,6 @@ $(function () {
         alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     }else{
         // initialize user properties
-        // console.log(authUser.roles);
-        // console.log(authRoles)
         name        = authUser.name;
         firstname   = authUser.firstname;
         lastname    = authUser.lastname;
@@ -91,25 +89,27 @@ function GrantChat(channel, auth, read, write, ttl) {
             write: write,
             ttl: ttl,
             callback: function(m){
-                //console.log(m)
+                //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                logging('grant chat on subsribe key level ');
+                logging(m);
             },
             error: function(m){console.error(m)}
         });
     }  else if (auth === '') {
         // no need authentication
-        //console.log('granting server access without authentication #'+auth);
         chatFeature.grant({
             channel: channel+','+channel+'-pnpres',
             read: read,
             write: write,
             ttl: ttl,
             callback: function(m){
-                //console.log(m);
+                //TODO: grant chat on channel level (without authentication) level -> don't forget to disable this debug when it goes online
+                logging('grant chat on channel level (without authentication) ');
+                logging(m);
             }
         });
     } else {
         // need authentication
-        //console.log('granting server access with authentication #'+auth);
         chatFeature.grant({
             channel: channel+','+channel+'-pnpres',
             auth_key: auth,
@@ -117,7 +117,9 @@ function GrantChat(channel, auth, read, write, ttl) {
             write: write,
             ttl: ttl,
             callback: function(m){
-                //console.log(m);
+                //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                logging('grant chat on user level (with authentication) ');
+                logging(m);
             }
         });
     }
@@ -158,10 +160,16 @@ function InsertLogChat(param) {
         param.receiver_id = authUser.id;
     }
 
+    var domain = window.location.hostname;
+    if (domain === 'localhost') {
+        domain = 'ajaib-local';
+    }
+
+
     // Send to API chat
     var ajaxResponse = $.ajax({
         type: "POST",
-        url: "https://ajaib-local/dashboard/chat/insertlog",
+        url: "https://"+domain+"/dashboard/chat/insertlog",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         data: JSON.stringify({
@@ -177,6 +185,10 @@ function InsertLogChat(param) {
             xhr.setRequestHeader("Authorization", 'Bearer ' + param['sender_auth']);
         }
     });
+
+    //TODO: logresponse from insert chat  -> don't forget to disable this debug when it goes online
+    logging('logresponse from insert chat ');
+    logging(ajaxResponse);
 
     return ajaxResponse;
 }
@@ -199,9 +211,13 @@ function SubscribeChat() {
         channel: [roles,channel],
         //presence: function(m){console.log(m)},
         message: function (m) {
+            //TODO: subscribe chat -> don't forget to disable this debug when it goes online
+            logging('subscribe chat '+m);
+            logging(m);
+
             // cek valid user based on insert log proses
             var logResponse = InsertLogChat(m);
-            //console.log(m);
+
             // valid user permit to chat
             logResponse.success(function(data){
 
@@ -251,16 +267,18 @@ function SubscribeChat() {
                     if ($('#cn_' + m.user_name) !== 0) {
                         $('#cn_' + m.user_name).remove();
                     }
+
                     // create new notification
-                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user_name + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + times + '</p></a></li>');
+                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + times + '</p></a></li>');
 
                     // append chat to chat-conversation div
-                    $('.chat-conversation').append(m.text + '<br />');
+                    var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.text+'</p><br />';
+                    $('.chat-conversation#cc_'+m.user_name).append(appendElm);
 
                     // $('.chat-logs').append(m.command+'<br />');
                     //console.log(m);
                 } else {
-                    console.log("There are unauthonticated user's coming");
+                    logging("There are unauthonticated user's coming");
                 }
             });
         },
@@ -299,7 +317,7 @@ function AppendChat(senderId,serviced) {
     var obj = GetParam(senderId);
 
     // move to div slim scroll
-    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user_name + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
+    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
 
     // remove old notification
     $('#cn_' + obj.user_name).remove();
@@ -308,10 +326,10 @@ function AppendChat(senderId,serviced) {
     //if ($('div#cb_' + obj.sender_id).length === 0) {
     if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
         $('.chat-bottom').append('<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' +
-            '<a class="chat-pop-over" data-title="' + obj.user_name + '" href="#">' + obj.user_name + '</a>' +
+            '<a class="chat-pop-over" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
-            '<div class="chat-conversation">' +
-            '<p>' + obj.text + '</p>' +
+            '<div class="chat-conversation" id="cc_'+obj.user_name+'">' +
+            '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+obj.text+'</p>' +
             '</div>' +
             '<div class="textarea-nest">' +
             '<div class="form-group">' +
@@ -319,7 +337,7 @@ function AppendChat(senderId,serviced) {
             '<span class="fontello-camera"></span>' +
             '</div>' +
             '<div class="form-group">' +
-            '<textarea class="form-control chat-text" onkeyup="" rows="3"></textarea>' +
+            '<textarea class="form-control chat-text" id="ct_'+obj.user_name+'" onkeyup="" rows="3"></textarea>' +
             '</div>' +
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + obj.sender_id + '\')">Submit</button>' +
             '</div>' +
@@ -368,8 +386,12 @@ function publish(senderId) {
     // get user chat object
     var obj=GetParam(senderId);
 
+    //TODO: sender object -> don't forget to disable this debug when it goes online
+    logging('sender object '+obj);
+    logging(obj);
+
     // get message to publish
-    var text = $('.chat-text').val();
+    var text = $('.chat-text#ct_'+obj.user_name).val();
     var geoip   = JSON.parse(Cookies.get('geoip'));
     var param = {
         sender_id: authUser.id,
@@ -380,6 +402,10 @@ function publish(senderId) {
         read: getDate(),
         sender_auth: obj.sender_auth
     };
+
+    //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
+    logging('parameter to insert chat log '+param);
+    logging(param);
 
     var logResponse = InsertLogChat(param);
 
@@ -401,15 +427,18 @@ function publish(senderId) {
                     "time": datetime
                 },
                 callback: function(m) {
-                    //console.log(m);
+                    //TODO: publish event -> don't forget to disable this debug when it goes online
+                    logging('publish event '+m);
+                    logging(m);
                 }
             });
 
             // append the text to conversation area
-            $('.chat-conversation').append('<p>'+text+'</p>');
+            var appendElm = '<p class="ajaib-operator"><small>Sat 7:19 PM</small>'+text+'</p><br />';
+            $('.chat-conversation#cc_'+obj.user_name).append(appendElm);
 
             // set chat text to null
-            $('.chat-text').val('')
+            $('.chat-text#ct_'+obj.user_name).val('')
         } else {
             // fail
             alertify.error("Gagal insert log chat. Periksa koneksi database!");
@@ -446,4 +475,8 @@ function DiffTheTimes() {
     var ms = moment(now,"DD/MM/YYYY HH:mm:ss").diff(moment(then,"DD/MM/YYYY HH:mm:ss"));
     var d = moment.duration(ms);
     var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+}
+
+function logging(m) {
+    console.log(m);
 }

@@ -30,7 +30,7 @@
                     @if (Auth::user()->hasRole(['root', 'admin']))
                         <li>
                             <a class="tooltip-tip" href="#" title="Mail">
-                                <i class=" icon-mail"></i>
+                                <i class="icon-user-group"></i>
                                 <span>User Management</span>
 
                             </a>
@@ -45,7 +45,7 @@
 
                         <li>
                             <a class="tooltip-tip" href="#" title="Mail">
-                                <i class=" icon-mail"></i>
+                                <i class="fontello-chat-alt"></i>
                                 <span>Chat</span>
 
                             </a>
@@ -63,7 +63,7 @@
                         </li>
                         <li>
                             <a class="tooltip-tip" href="#" title="Mail">
-                                <i class=" icon-mail"></i>
+                                <i class="fontello-users-outline"></i>
                                 <span>Partners</span>
 
                             </a>
@@ -82,7 +82,7 @@
 
                         <li>
                             <a class="tooltip-tip" href="#" title="Mail">
-                                <i class=" icon-mail"></i>
+                                <i class="fontello-vcard"></i>
                                 <span>KPI Management</span>
 
                             </a>
@@ -101,7 +101,7 @@
 
                         <li>
                             <a class="tooltip-tip" href="#" title="Mail">
-                                <i class=" icon-mail"></i>
+                                <i class="fontello-tag"></i>
                                 <span>Transactions</span>
 
                             </a>

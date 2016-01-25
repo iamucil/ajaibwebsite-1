@@ -197,7 +197,6 @@ class OauthController extends Controller {
             $return['message']  = 'Not Found';
         }
 
-
         return response()->json($return);
     }
 

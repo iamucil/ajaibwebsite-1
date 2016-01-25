@@ -4,7 +4,6 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Modules\Chat\Models\Chat;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
-use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 
@@ -32,7 +31,7 @@ class ChatController extends Controller {
             'status'=>200,
             'message'=>'success retrieve',
             'data'=>$chat
-        ));
+        ),200);
     }
 
     /**
@@ -56,18 +55,21 @@ class ChatController extends Controller {
         $chat=Chat::create([
             'sender_id' => Authorizer::getResourceOwnerId(),
             'message' => $request->message,
-            'ip_address' => $request->ipaddress
+            'ip_address' => $request->ipaddress,
+            'receiver_id' => $request->receiver_id,
+            'useragent' => $request->useragent,
+            'read' => $request->read
         ]);
         if($chat){
             return response()->json(array(
                 'status'=>201,
-                'message'=>'success saving'
-            ));
+                'message'=>'Success Saving'
+            ),201);
         }else{
             return response()->json(array(
                 'status'=>500,
-                'message'=>'error saving'
-            ));
+                'message'=>'Error Saving'
+            ),500);
         }
     }
 

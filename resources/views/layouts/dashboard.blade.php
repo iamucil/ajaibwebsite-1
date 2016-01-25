@@ -87,6 +87,7 @@
             <footer>
                 <div id="footer">Copyright &copy; 2015 <a href="http://ajaib.co">Ajaib</a> Made with <i class="fontello-heart-1 text-green"></i></div>
             </footer>
+            @include('common.dashboard.rightchatbar')
         </div>
 
         <!-- End of Container Begin -->
@@ -96,7 +97,7 @@
     <!-- end paper bg -->
 
 </div>
-@include('common.dashboard.rightchatbar')
+
 <!-- end of off-canvas-wrap -->
 <!-- end of inner-wrap -->
 
@@ -152,7 +153,7 @@
                 menu2 = new sidetogglemenu({ // initialize second menu example
                 id: 'right_chat_menu',
                 position: 'right',
-                pushcontent: true,
+                pushcontent: false,
                 //source: 'togglemenu.txt',
                 revealamt: -5
             });
