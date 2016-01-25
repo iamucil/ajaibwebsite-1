@@ -47,33 +47,33 @@ class UserRepository
              * if user is exists reset verification data to default and status to false
              * otherwise insert new data into table users
              */
-             // dd(request()->all());
+
             if ($query->exists()) {
-                $query->update([
-                    'verification_code' => $verification_code,
-                    'status' => false
-                ]);
                 $user   = $query->first();
                 $exists = true;
-                /**
-                 * And finnaly send email greeting to registered user
-                 */
-                Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
-                    $mail->from('noreply@getajaib.com', 'Ajaib');
-                    $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
-                });
+                if((bool)$user->status === true){
+                    $query->update([
+                        'verification_code' => $verification_code,
+                        // 'status' => false
+                    ]);
+                    $mail_template  = 'emails.authentication';
+                }else{
+                    $mail_template  = 'emails.greeting';
+                }
             } else {
                 $exists = false;
                 $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
                 $user = User::firstOrCreate($input);
-                /**
-                 * And finnaly send email greeting to registered user
-                 */
-                Mail::send('emails.greeting', ['user' => $user], function ($mail) use ($user) {
-                    $mail->from('noreply@getajaib.com', 'Ajaib');
-                    $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
-                });
+                $mail_template  = 'emails.greeting';
             }
+
+            /**
+             * And finnaly send email greeting to registered user
+             */
+            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user) {
+                $mail->from('noreply@getajaib.com', 'Ajaib');
+                $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
+            });
 
             /**
              * After action users succeed assign registered user into role user
