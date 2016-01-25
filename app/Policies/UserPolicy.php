@@ -26,6 +26,6 @@ class UserPolicy
 
     public function showProfile(User $user)
     {
-        return $user->hasRole('admin', 'root') OR $user->id === Auth::user()->id;
+        return $user->hasRole('admin', 'root') OR $user->id === auth()->user()->id;
     }
 }
