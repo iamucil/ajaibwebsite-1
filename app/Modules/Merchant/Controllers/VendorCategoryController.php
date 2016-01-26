@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Modules\Merchant\Models\VendorCategory as Category;
 
 class VendorCategoryController extends Controller
 {
@@ -16,7 +17,8 @@ class VendorCategoryController extends Controller
      */
     public function index()
     {
-        return view('Merchant::Categories.index');
+        $categories     = Category::paginate(15);
+        return view('Merchant::Categories.index', compact('categories'));
     }
 
     /**
@@ -26,7 +28,7 @@ class VendorCategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('Merchant::Categories.create');
     }
 
     /**
