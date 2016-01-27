@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Modules\Merchant\Models\VendorCategory as Category;
-
+use Validator;
 class VendorCategoryController extends Controller
 {
     /**
@@ -39,7 +39,27 @@ class VendorCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate   = Validator::make($request->all(), [
+            'name' => 'required|unique:vendor_categories,name',
+        ]);
+
+        if($validate->fails()){
+            flash()->error($validate->errors()->first());
+
+            return redirect()->route('vendor.category.create')->withInput($request->except(['_token']))->withErrors($validate);
+        }else{
+            $category   = new Category;
+            $category->name     = $request->name;
+            $category->description  = $request->description;
+
+            if($category->save()){
+                flash()->success('Penyimpanan data berhasil');
+                return redirect()->route('vendor.category.index');
+            }else{
+                flash()->warning('Penyimpanan data gagal');
+                return redirect()->route('vendor.category.create');
+            }
+        }
     }
 
     /**
@@ -50,7 +70,8 @@ class VendorCategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category       = Category::findOrFail($id);
+        return view('Merchant::Categories.show', compact('category'));
     }
 
     /**
@@ -61,7 +82,9 @@ class VendorCategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $category       = Category::findOrFail($id);
+
+        return view('Merchant::Categories.edit', compact('category'));
     }
 
     /**
@@ -73,7 +96,30 @@ class VendorCategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if(!$request->isMethod('put')){
+            app::abort('403', 'unauthorized');
+        }
+
+        $category       = Category::find($id);
+        $validate       = Validator::make($request->all(), [
+            'name' => 'required|unique:vendor_categories,name,'.$category->id.',id',
+        ]);
+
+        if($validate->fails()){
+            flash()->error($validate->errors()->first());
+            return redirect()->route('vendor.category.edit', $id)->withInput($request->except(['_token']))->withErrors($validate);
+        }else{
+            $category->name         = $request->name;
+            $category->description  = $request->description;
+            if($category->save()){
+                flash()->success('Penyimpanan data berhasil');
+                return redirect()->route('vendor.category.index');
+            }else{
+                flash()->warning('Penyimpanan data gagal');
+                return redirect()->route('vendor.category.edit', $id);
+            }
+        }
+        dd($request->all());
     }
 
     /**
@@ -84,6 +130,11 @@ class VendorCategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $category       = Category::findOrFail($id);
+        $category->delete();
+
+        flash()->success('Data terhapus');
+
+        return redirect()->route('vendor.category.index');
     }
 }
