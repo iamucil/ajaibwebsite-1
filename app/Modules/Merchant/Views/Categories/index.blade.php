@@ -12,7 +12,7 @@
                 <a href="{{ route('vendor.category.create') }}" class="btn btn-default" role="button">
                     Tambah Kategori
                 </a>
-                <a href="#" class="btn btn-default" role="button" href="{{ route('vendor.index') }}">
+                <a class="btn btn-default" role="button" href="{{ route('vendor.index') }}">
                     Daftar Vendor
                 </a>
                 {{-- <button type="button" class="btn btn-default">Tambah Kategory</button>

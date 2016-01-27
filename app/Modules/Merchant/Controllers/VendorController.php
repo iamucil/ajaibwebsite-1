@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Modules\Merchant\Models\Vendor;
+use App\Modules\Merchant\Models\VendorCategory as Category;
 
 class VendorController extends Controller
 {
@@ -16,7 +18,10 @@ class VendorController extends Controller
      */
     public function index()
     {
-        return view('Merchant::index');
+        $vendors    = Vendor::orderBy('vendor_category_id', 'ASC')
+            ->orderBy('created_at', 'DESC')
+            ->paginate(15);
+        return view('Merchant::index', compact('vendors'));
     }
 
     /**
@@ -26,7 +31,15 @@ class VendorController extends Controller
      */
     public function create()
     {
-        //
+        $categories     = Category::orderBy('name', 'ASC')->lists('name', 'id');
+        $methods        = [
+            'POST' => 'POST',
+            'GET' => 'GET',
+            'PUT' => 'PUT',
+            'DELETE' => 'DELETE'
+        ];
+        // dd($categories);
+        return view('Merchant::create', compact('categories', 'methods'));
     }
 
     /**

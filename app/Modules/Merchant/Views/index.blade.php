@@ -26,5 +26,92 @@
             <span>Vendor</span>
         </h3>
     </div>
+    <div class="box-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 30px;">
+                        #
+                    </th>
+                    <th style="width: 115px;">
+                        Nama
+                    </th>
+                    <th style="width: 95px;">
+                        Kategori
+                    </th>
+                    <th>
+                        Deskripsi
+                    </th>
+                    <th style="width: 135px;">
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {{--*/ $nomor   = $vendors->currentPage() /*--}}
+                @forelse ($vendors as $vendor)
+                    <tr>
+                        <td>
+                            {{ $nomor }}
+                        </td>
+                        <td>
+                            {{ $vendor->name }}
+                        </td>
+                        <td>
+                            <a href="{{ route('vendor.category.show', $vendor->category->id) }}">
+                                {{ $vendor->category->name }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ $vendor->description }}
+                        </td>
+                        <td>
+                            <a href="{{ route('vendor.edit', $vendor->id) }}" class="btn btn-default">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </a>
+                            <a href="{{ route('vendor.show', $vendor->id) }}" class="btn btn-default">
+                                <i class="glyphicon glyphicon-list-alt"></i>
+                            </a>
+                            <form action="{{ route('vendor.destroy', $vendor->id) }}" method="POST" class="inline">
+                                {{ csrf_field() }}
+                                {{ method_field('DELETE') }}
+
+                                <button class="btn btn-danger" id="btn-delete" type="submit">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php $nomor++; ?>
+                @empty
+                    <tr>
+                        <td colspan="5">
+                            Data Kosong
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
+@stop
+
+@section('script-bottom')
+    @parent
+    <script type="text/javascript">
+        $('button#btn-delete').bind('click', function (event){
+            var $form   = this.form;
+            event.preventDefault();
+            // return confirm(
+            //     'Are you sure you wish to delete this recipe?'
+            // );
+            return alertify.confirm("Are you sure you wish to delete this recipe?", function (e) {
+                if (e) {
+                    $form.submit();
+                } else {
+                    // nothing happend
+                }
+            });
+        })
+    </script>
 @stop

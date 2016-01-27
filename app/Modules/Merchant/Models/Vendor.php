@@ -8,6 +8,6 @@ class Vendor extends Model
 {
     public function category()
     {
-        return $this->belongsTo('App\Modules\Merchant\Modules\VendorCategory', 'vendor_category_id');
+        return $this->belongsTo('App\Modules\Merchant\Models\VendorCategory', 'vendor_category_id');
     }
 }
