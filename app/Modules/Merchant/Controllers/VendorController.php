@@ -16,7 +16,7 @@ class VendorController extends Controller
      */
     public function index()
     {
-        //
+        return view('Merchant::index');
     }
 
     /**

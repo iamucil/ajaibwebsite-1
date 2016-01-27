@@ -17,7 +17,7 @@ class VendorCategoryController extends Controller
      */
     public function index()
     {
-        $categories     = Category::paginate(15);
+        $categories     = Category::orderBy('created_at', 'DESC')->paginate(15);
         return view('Merchant::Categories.index', compact('categories'));
     }
 
