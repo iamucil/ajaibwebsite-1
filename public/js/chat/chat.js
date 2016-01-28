@@ -175,7 +175,7 @@ function InsertLogChat(param) {
         data: JSON.stringify({
             sender_id: param.sender_id,
             receiver_id: param.receiver_id,
-            message: param.text,
+            message: param.message,
             ip_address: param.ip,
             useragent: param.useragent,
             read: datetime
@@ -272,13 +272,13 @@ function SubscribeChat() {
                     $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + times + '</p></a></li>');
 
                     // append chat to chat-conversation div
-                    var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.text+'</p><br />';
+                    var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.message+'</p><br />';
                     $('.chat-conversation#cc_'+m.user_name).append(appendElm);
 
                     // $('.chat-logs').append(m.command+'<br />');
                     //console.log(m);
                 } else {
-                    logging("There are unauthonticated user's coming");
+                    logging("There are unauthenticated user's coming");
                 }
             });
         },
@@ -329,7 +329,7 @@ function AppendChat(senderId,serviced) {
             '<a class="chat-pop-over" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
             '<div class="chat-conversation" id="cc_'+obj.user_name+'">' +
-            '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+obj.text+'</p>' +
+            '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+obj.message+'</p>' +
             '</div>' +
             '<div class="textarea-nest">' +
             '<div class="form-group">' +
@@ -396,7 +396,7 @@ function publish(senderId) {
     var param = {
         sender_id: authUser.id,
         receiver_id: obj.sender_id,
-        text: text,
+        message: text,
         ip: geoip.ip_address,
         useragent: navigator.userAgent,
         read: getDate(),
@@ -419,7 +419,7 @@ function publish(senderId) {
                 channel: obj.sender_channel,
                 message: {
                     "user_name": firstname,
-                    "text": text,
+                    "message": text,
                     "ip": geoip.ip_address,
                     "sender_id": authUser.id,
                     "sender_channel": channel,
@@ -430,6 +430,13 @@ function publish(senderId) {
                     //TODO: publish event -> don't forget to disable this debug when it goes online
                     logging('publish event '+m);
                     logging(m);
+
+                    // push notification
+                    //var pushParam = {
+                    //    "channel" : obj.sender_channel,
+                    //    "text" : text
+                    //};
+                    //pushNotification(pushParam);
                 }
             });
 
@@ -480,3 +487,29 @@ function DiffTheTimes() {
 function logging(m) {
     console.log(m);
 }
+
+/*
+function pushNotification(obj) {
+    chatFeature.publish({
+        channel: obj.channel,
+        message: {
+            "aps": {
+                "alert": obj.text,
+                "badge": 9,
+                "sound": "bingbong.aiff"
+            },
+            "acme 1": 42
+        }
+    });
+}
+
+function notification(count) {
+    if (count === 0 || !count) {
+        // empty notif
+        $('.edumix-noft').html('');
+    } else {
+        $('.edumix-noft').html(count);
+    }
+
+}
+*/
