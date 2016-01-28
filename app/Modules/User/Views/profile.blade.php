@@ -46,7 +46,9 @@
                             <div class="clearfix"></div>
                             <div class="row">
                                 <div class="col-xs-12 col-sm-3">
-                                    <a class="btn btn-primary btn-block"><span class="fa fa-user"></span> Update Profile </a>
+                                    <a class="btn btn-primary btn-block" href="{{ route('user.edit', $user->id) }}">
+                                        <span class="fa fa-user"></span> Update Profile
+                                    </a>
                                 </div><!--/col-->
                                 <div class="col-xs-12 col-sm-4">
                                     <a class="btn btn-danger btn-block"><span class="fa fa-gear"></span> Change Password </a>

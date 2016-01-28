@@ -87,6 +87,7 @@
             <footer>
                 <div id="footer">Copyright &copy; 2015 <a href="http://ajaib.co">Ajaib</a> Made with <i class="fontello-heart-1 text-green"></i></div>
             </footer>
+            @include('common.dashboard.rightchatbar')
         </div>
 
         <!-- End of Container Begin -->
@@ -96,7 +97,7 @@
     <!-- end paper bg -->
 
 </div>
-@include('common.dashboard.rightchatbar')
+
 <!-- end of off-canvas-wrap -->
 <!-- end of inner-wrap -->
 
@@ -134,28 +135,25 @@
 
         // console.log(geo());
         // init pubnub key
-        var pubkey='{!! env("PAM_PUBNUB_KEY") !!}';
-        var subkey='{!! env("PAM_SUBNUB_KEY") !!}';
-        var skey='{!! env("PAM_SECRET_KEY") !!}';
         jQuery(function() {
             //$('.chat-pop-over').popover();
             $('.chat-pop-over').webuiPopover({
                 placement:'auto',
-                 padding:false,
+                padding:false,
                 width:'300',//can be set with  number
                 //height:'300',//can be set with  number
                 height:'400',//can be set with  number
                 animation:'',
-                 offsetTop:-18,  // offset the top of the popover
+                offsetTop:-18,  // offset the top of the popover
                 multi:true,//allow other popovers in page at same time
-                 dismissible:false, // if popover can be dismissed by  outside click or escape key
-                 closeable:true//display close button or not
+                dismissible:false, // if popover can be dismissed by  outside click or escape key
+                closeable:true//display close button or not
             });
 
                 menu2 = new sidetogglemenu({ // initialize second menu example
                 id: 'right_chat_menu',
                 position: 'right',
-                pushcontent: true,
+                pushcontent: false,
                 //source: 'togglemenu.txt',
                 revealamt: -5
             });

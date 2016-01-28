@@ -1,6 +1,7 @@
 <?php namespace App\Modules\User\Controllers;
 
 use DB;
+use App;
 use App\User;
 use App\Role;
 use App\Country;
@@ -24,6 +25,25 @@ class UserController extends Controller {
         $this->User     = $user;
         $this->Asset    = $asset;
         $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
+        $this->beforeFilter(function() {
+            $country        = Country::where('iso_3166_2', '=', 'ID')
+                ->get(['calling_code', 'id'])
+                ->first();
+            $calling_code   = $country->calling_code;
+            $regexp         = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+            $regex          = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+            $phone_number   = request()->phone_number ?: null;
+            $phone_number   = preg_replace('/\s[\s]+/', '', $phone_number);
+            $phone_number   = preg_replace('/[\s\W]+/', '', $phone_number);
+            $phone_number   = preg_replace('/^[\+]+/', '', $phone_number);
+            $phone_number   = preg_replace($regexp, '', $phone_number);
+            $phone_number   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $phone_number);
+            $data['ext_phone']  = $phone_number;
+            $data['country_id'] = $country->id;
+            $data['calling_code']   = $calling_code;
+            return request()->merge($data);
+
+        }, ['on' => 'post', 'only' => ['store','storeLocal']]);
     }
 
     /**
@@ -40,14 +60,28 @@ class UserController extends Controller {
         {
             return response()->json(array(
                     'status'=>404,
-                    'message'=>'not found'
-            ));
-        }
-        return response()->json(array(
+                    'message'=>'Data Not Found'
+            ),404);
+        }else{
+            $datauser = [
+                'id'=>$user['id'],
+                'name'=>$user['name'],
+                'firstname'=>$user['firstname'],
+                'lastname'=>$user['lastname'],
+                'address'=>$user['address'],
+                'gender'=>$user['gender'],
+                'phone_number'=>$user['phone_number'],
+                'email'=>$user['email'],
+                'photo'=>$user['photo'],
+                'channel'=>$user['channel']
+            ];
+
+            return response()->json(array(
                 'status'=>200,
-                'message'=>'success retrieve',
-                'data'=>$user
-        ));
+                'message'=>'Success Retrieve Data',
+                'data'=>$datauser
+            ),200);
+        }
     }
 
     /**
@@ -69,24 +103,39 @@ class UserController extends Controller {
      */
     public function store(Request $request)
     {
-        $user= $this->User->createOrUpdateUser($request->all());
-        if($user){
+        $validator      = Validator::make($request->all(), [
+            'phone_number' => 'required|regex:/^[0-9]{6,}$/',
+            'email' => 'required|email|max:255',
+            'country_id' => 'required|exists:countries,id',
+        ]);
+        if($validator->fails()){
             return response()->json(array(
-                'status'=>201,
-                'message'=>'success saving'
-            ));
-        }else{
-            return response()->json(array(
-                'status'=>500,
-                'message'=>'error saving'
-            ));
+                'status' => 500,
+                'message' => $validator->errors()->first()
+            ),500);
+        }else {
+            $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+            // $input['phone_number']  = $request->ext_phone;
+            array_set($input, 'phone_number', $request->ext_phone);
+            $user = $this->User->createOrUpdateUser($input);
+            if ($user) {
+                return response()->json(array(
+                    'status' => 201,
+                    'message' => 'Success Saving'
+                ),201);
+            } else {
+                return response()->json(array(
+                    'status' => 500,
+                    'message' => 'Error Saving'
+                ),500);
+            }
         }
     }
 
     public function storeLocal(Request $request)
     {
         if (!$request->isMethod('post')) {
-            \App::abort(403, 'Unauthorized action.');
+            App::abort(403, 'Unauthorized action.');
         }else{
             $data           = $request->all();
             $validator      = Validator::make($data, [
@@ -96,36 +145,33 @@ class UserController extends Controller {
                 'email' => 'required|email|max:255|unique:users',
                 'password' => 'required|alpha_num',
                 'retype-password' => 'required|same:password',
-                'phone_number' => 'required|unique:users|integer|regex:/^[0-9]{6,11}$/',
-                'country_id' => 'required'
+                'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
+                'country_id' => 'required|exists:countries,id',
+                'ext_phone' => 'required|unique:users,phone_number|regex:/^[0-9]{6,}$/',
             ], [
-                'country_id.required' => 'You must define your country'
+                'country_id.required' => 'You must define your country',
+                'ext_phone.required' => 'Please fill your phone number',
+                'ext_phone.integer' => 'Phone number must be integer',
+                'ext_phone.unique' => 'Phone number already been taken',
             ]);
 
             if($validator->fails()){
                 flash()->error($validator->errors()->first());
                 return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
             }else{
-                $countries      = Country::where('id', '=', ($data['country_id'] == '') ? NULL : $data['country_id']);
-                $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
-                $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
-                $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
-                $data['channel']        = hash('crc32b', bcrypt(uniqid(rand()*time())));
-                if($countries->exists()){
-                    $country            = $countries->first();
-                    $calling_code       = $country->calling_code;
-                    $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
-                    $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
-                    $data['channel']            = preg_replace($regexp, '${2}', $data['phone_number']);
-                    $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
-                    $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
-                    $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
-                }
+                $data['channel']    = hash('crc32b', bcrypt(uniqid(rand()*time())));
+                $calling_code       = $data['calling_code'];
+                $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
+                $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
+                $data['channel']    = preg_replace($regexp, '${2}', $data['ext_phone']);
+                $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
+                $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
                 $data['status']         = true;
                 $data['password']       = bcrypt($data['password']);
                 $data['verification_code']  = '******';
                 $request->merge($data);
-                $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name']);
+                $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                array_set($input, 'phone_number', $request->ext_phone);
                 $user           = User::firstOrCreate($input);
                 $user->roles()->attach($request->role_id);
 
@@ -152,9 +198,16 @@ class UserController extends Controller {
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit($id, Request $request, User $User)
     {
-        //
+        if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
+            App::abort(403, 'Unauthorized action.');
+        }
+
+        $user       = User::findOrFail($id);
+        $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');
+        $this->authorize('showProfile', $User);
+        return view('User::edit', compact('user', 'url', 'roles'));
     }
 
     /**
@@ -165,15 +218,15 @@ class UserController extends Controller {
      */
     public function update(Request $request)
     {
-        $ownerId =  Authorizer::getResourceOwnerId();
-        $user=User::find($ownerId);
+        $ownerId    = Authorizer::getResourceOwnerId();
+        $user       = User::find($ownerId);
 
         if(is_null($user))
         {
             return response()->json(array(
                 'status'=>404,
-                'message'=>'not found'
-            ));
+                'message'=>'Data Not Found'
+            ),404);
         }
 
         if(!is_null($request->firstname))
@@ -201,8 +254,8 @@ class UserController extends Controller {
             {
                 return response()->json(array(
                     'status'=>500,
-                    'message'=>'error upload photo'
-                ));
+                    'message'=>'Error Upload Photo'
+                ),500);
             }
         }
 
@@ -211,13 +264,13 @@ class UserController extends Controller {
         {
             return response()->json(array(
                     'status'=>500,
-                    'message'=>'error updating'
-            ));
+                    'message'=>'Error Updating'
+            ),500);
         }
         return response()->json(array(
                 'status'=>201,
-                'message'=>'success updating'
-        ));
+                'message'=>'Success Updating'
+        ),201);
     }
 
     /**
@@ -229,44 +282,61 @@ class UserController extends Controller {
     public function destroy($id, Request $request, User $user)
     {
         $this->authorize('destroy', $user);
-        // $response = $this->call('DELETE', '/users/'.$id, ['_token' => csrf_token()]);
-        echo '<pre>';
         if(!$request->has('_method') OR $request->_method !== 'DELETE'){
-            app::abort(403, 'Unauthorized action.');
+            App::abort(403, 'Unauthorized action.');
         }
-        $result         = DB::transaction(function ($id) use ($id) {
-            $result     = true;
-            $result     &= DB::table('users')->where('id', '=', $id)->delete();
-            $result     &= DB::table('role_user')->where('user_id', '=', $id)->delete();
+        $result         = $user->where('id', '=', $id)->update(['status' => false]);
+        flash()->success('Your data has been deleted');
 
-            return $result;
-        });
+        // $result         = DB::transaction(function ($id) use ($id) {
+        //     $result     = true;
+        //     $result     &= DB::table('users')->where('id', '=', $id)->update([
+        //         'sttaus' => false
+        //     ]);
+        //     // $result     &= DB::table('role_user')->where('user_id', '=', $id)->delete();
 
-        if((bool)$result === true){
-            flash()->success('Your data has been deleted');
-        }else{
-            flash()->error('Unable to delete data user');
-        }
+        //     return $result;
+        // });
+
+        // if((bool)$result === true){
+        // }else{
+        //     flash()->error('Unable to delete data user');
+        // }
 
         return redirect()->route('user.list');
     }
 
     public function getListUsers(Request $request)
     {
-        $users      = User::select(DB::raw('"users".*'))
-            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        // $data_user  = User::all();
+        // dd($data_user);
+        // foreach ($data_user as $usr) {
+        //     echo '<pre>';
+        //     print_r($usr->roles);
+        //     echo '</pre>';
+        // }
+
+        // die();
+        $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereNotIn('roles.name', ['root'])
             ->orderBy('users.name', 'DESC')
             ->orderBy('users.created_at', 'DESC')
             ->orderBy('roles.name', 'ASC')
+            ->selectRaw('users.name as username, roles.id as role_id, users.*')
+            // ->distinct()
             ->paginate(15);
         return view('User::index', compact('users'));
     }
 
-    public function showProfile($id)
+    public function showProfile($id, User $User)
     {
+        if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
+            App::abort(403, 'Unauthorized action.');
+        }
+
         $user       = User::findOrFail($id);
+        $this->authorize('showProfile', $User);
         if(is_null($user->photo))
         {
             if($user->gender == 'female') {
@@ -283,6 +353,7 @@ class UserController extends Controller {
 
     public function setActive($id, Request $request, User $user)
     {
+        // dd($user->roles());
         $this->authorize('setStatus', $user);
 
         if($this->User->setActive($id)){
@@ -311,6 +382,31 @@ class UserController extends Controller {
         $pathPhoto  = storage_path() . '/' . $user->photo;
 
         return $this->Asset->downloadFile($pathPhoto);
+    }
+
+    public function updateProfile($id, Request $request, User $User)
+    {
+        if(!$request->has('_method') OR $request->_method !== 'PUT'){
+            App::abort(403, 'Unauthorized action.');
+        }
+
+        if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
+            App::abort(403, 'Unauthorized action.');
+        }
+
+        $this->authorize('showProfile', $User);
+        $user       = $User->find($id);
+        $user->firstname    = $request->firstname;
+        $user->lastname     = $request->lastname;
+        $user->country_id   = $request->country_id;
+        $user->address      = $request->address;
+        $user->gender       = $request->gender;
+
+        $user->save();
+
+        flash()->success('Your data has been updated');
+
+        return redirect()->route('user.profile', $id);
     }
 
 }

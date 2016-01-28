@@ -477,11 +477,12 @@
                         <div class="webui-popover-content">
                             <div class="chat-conversation">
                             
-                            <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
-                            <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
-                                kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
-                            <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
-                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
+                            <p class="ajaib-client"><small>Sat 7:19 PM</small>ha</p>
+                            <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat .</p>
+                            <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya </p>
+                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
                             </div>
                             <div class="textarea-nest">
                                 <div class="form-group">

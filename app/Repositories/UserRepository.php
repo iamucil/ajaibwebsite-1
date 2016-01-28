@@ -16,17 +16,19 @@ class UserRepository
     public function createOrUpdateUser(array $data)
     {
         $role           = Role::where('name', '=', 'users');
+        $verification_code      = $this->generateVerificationCode();
         if($role->exists()){
             $country            = Country::find($data['country_id']);
             $calling_code       = $country->calling_code;
+            $regexp             = sprintf('/^[(%d)]{%d}+/i', $calling_code, strlen($calling_code));
+            $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
             $data['phone_number']   = preg_replace('/\s[\s]+/', '', $data['phone_number']);
             $data['phone_number']   = preg_replace('/[\s\W]+/', '', $data['phone_number']);
             $data['phone_number']   = preg_replace('/^[\+]+/', '', $data['phone_number']);
             $data['channel']        = hash('crc32b', bcrypt(uniqid(rand()*time())));
+            $data['phone_number']   = preg_replace($regexp, '', $data['phone_number']);
             $data['phone_number']   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $data['phone_number']);
-            $regexp             = sprintf('/^[(%d)]{%d}/i', $calling_code, strlen($calling_code));
             $data['channel']    = preg_replace($regexp, '${2}', $data['phone_number']);
-            $regex              = sprintf('/^[(%s)]{%s}[0-9]{3,}/i', $calling_code, strlen($calling_code));
             $data['channel']    = hash('crc32b', bcrypt(uniqid($data['channel'])));
             $data['channel']    = preg_replace('/(?<=\w)([A-Za-z])/', '-\1', $data['channel']);
             $data['status']     = false;
@@ -36,41 +38,53 @@ class UserRepository
             $data['password']           = bcrypt('+'.$data['phone_number']);
             // merge all request input
             request()->merge($data);
+
             // check whether data user is exists
             $query = User::where('email', request()->email)
                 ->orWhere('phone_number', request()->phone_number);
+
             /**
              * if user is exists reset verification data to default and status to false
              * otherwise insert new data into table users
              */
 
             if ($query->exists()) {
-                $query->update([
-                    'verification_code' => str_repeat('*', 6),
-                    'status' => false
-                ]);
                 $user   = $query->first();
                 $exists = true;
+                if((bool)$user->status === true){
+                    $query->update([
+                        'verification_code' => $verification_code,
+                        // 'status' => false
+                    ]);
+                    $mail_template  = 'emails.authentication';
+                    $user           = $query->first();
+                }else{
+                    $mail_template  = 'emails.greeting';
+                }
             } else {
                 $exists = false;
-                $input  = request()->except(['_token']);
+                $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
                 $user = User::firstOrCreate($input);
+                $mail_template  = 'emails.greeting';
             }
+
+            /**
+             * And finnaly send email greeting to registered user
+             */
+            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user) {
+                $mail->from('noreply@getajaib.com', 'Ajaib');
+                $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
+            });
 
             /**
              * After action users succeed assign registered user into role user
              * set role to end user
              */
             $role_user  = $role->first();
-            $user->roles()->attach($role_user->id);
+            if(!$user->hasRole($role_user->name)){
+                $user->roles()->attach($role_user->id);
+            }
 
-            /**
-             * And finnaly send email greeting to registered user
-             */
-            Mail::send('emails.greeting', ['user' => $user], function ($mail) use ($user) {
-                $mail->from('noreply@getajaib.com', 'Ajaib');
-                $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
-            });
             return compact('user', 'exists');
         }else{
             return null;
