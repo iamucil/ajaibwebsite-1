@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Modules\Merchant\Models\Vendor;
 use App\Modules\Merchant\Models\VendorCategory as Category;
+use Validator;
 
 class VendorController extends Controller
 {
@@ -16,6 +17,12 @@ class VendorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    private $methods        = [
+        'POST' => 'POST',
+        'GET' => 'GET',
+        'PUT' => 'PUT',
+        'DELETE' => 'DELETE'
+    ];
     public function index()
     {
         $vendors    = Vendor::orderBy('vendor_category_id', 'ASC')
@@ -32,12 +39,7 @@ class VendorController extends Controller
     public function create()
     {
         $categories     = Category::orderBy('name', 'ASC')->lists('name', 'id');
-        $methods        = [
-            'POST' => 'POST',
-            'GET' => 'GET',
-            'PUT' => 'PUT',
-            'DELETE' => 'DELETE'
-        ];
+        $methods        = $this->methods;
         // dd($categories);
         return view('Merchant::create', compact('categories', 'methods'));
     }
@@ -50,7 +52,39 @@ class VendorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $vendor         = new Vendor;
+        $validate       = Validator::make($request->all(), [
+            'name' => 'required|unique:vendors,name',
+            'vendor_category_id' => 'required|exists:vendor_categories,id',
+            'key' => 'required_with:api',
+            'params' => 'required_with_all:api,key',
+            'method' => 'required_with_all:api,key,params|in:POST,PUT,GET,DELETE',
+        ]);
+
+        if($validate->fails()){
+            flash()->error($validate->errors()->first());
+
+            return redirect()->route('vendor.create')
+                ->withInput($request->except(['_token']))
+                ->withErrors($validate);
+        }else{
+            $vendor->vendor_category_id     = $request->vendor_category_id;
+            $vendor->name                   = $request->name;
+            $vendor->description            = $request->description;
+            $vendor->api                    = $request->api;
+            $vendor->key                    = $request->key;
+            $vendor->params                 = $request->params;
+            $vendor->method                 = $request->method;
+
+            if($vendor->save()){
+                flash()->success('Penyimpanan data berhasil');
+                return redirect()->route('vendor.index');
+            }else{
+                flash()->error('Penyimpanan data gagal');
+                return redirect()->route('vendor.create')
+                    ->withInput($request->except(['_token']));
+            }
+        }
     }
 
     /**
@@ -72,7 +106,10 @@ class VendorController extends Controller
      */
     public function edit($id)
     {
-        //
+        $vendor         = Vendor::findOrFail($id);
+        $categories     = Category::orderBy('name', 'ASC')->lists('name', 'id');
+        $methods        = $this->methods;
+        return view('Merchant::edit', compact('categories', 'methods', 'vendor'));
     }
 
     /**
@@ -84,7 +121,43 @@ class VendorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if(!$request->isMethod('put')){
+            app::abort('403', 'unauthorized');
+        }
+
+        $vendor         = Vendor::findOrFail($id);
+        $validate       = Validator::make($request->all(), [
+            'name' => 'required|unique:vendors,name,'.$vendor->id.',id',
+            'vendor_category_id' => 'required|exists:vendor_categories,id',
+            'key' => 'required_with:api',
+            'params' => 'required_with_all:api,key',
+            'method' => 'required_with_all:api,key,params|in:POST,PUT,GET,DELETE',
+        ]);
+
+        if($validate->fails()){
+            flash()->error($validate->errors()->first());
+
+            return redirect()->route('vendor.edit', $vendor->id)
+                ->withInput($request->except(['_token']))
+                ->withErrors($validate);
+        }else{
+            $vendor->vendor_category_id     = $request->vendor_category_id;
+            $vendor->name                   = $request->name;
+            $vendor->description            = $request->description;
+            $vendor->api                    = $request->api;
+            $vendor->key                    = $request->key;
+            $vendor->params                 = $request->params;
+            $vendor->method                 = $request->method;
+
+            if($vendor->save()){
+                flash()->success('Penyimpanan data berhasil');
+                return redirect()->route('vendor.index');
+            }else{
+                flash()->error('Penyimpanan data gagal');
+                return redirect()->route('vendor.edit', $vendor->id)
+                    ->withInput($request->except(['_token']));
+            }
+        }
     }
 
     /**
@@ -95,6 +168,11 @@ class VendorController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $vendor     = Vendor::findOrFail($id);
+        $vendor->delete();
+
+        flash()->success('Data terhapus');
+
+        return redirect()->route('vendor.index');
     }
 }
