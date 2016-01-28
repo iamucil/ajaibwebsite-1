@@ -277,8 +277,8 @@
             inpCountryId.type           = 'hidden';
             inpCountryId.value          = data.country_id;
             inpCountryId.name           = 'country_id';
-            document.getElementById('call-code-label').innerHTML    = '';
-            document.getElementById('call-code-label').appendChild(call_code);
+            //document.getElementById('call-code-label').innerHTML    = '';
+            //document.getElementById('call-code-label').appendChild(call_code);
             form.appendChild(inpCountryId);
         }, 'json');
 
