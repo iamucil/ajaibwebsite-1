@@ -138,47 +138,59 @@ class RolesController extends Controller {
     public function generateRoles()
     {
         // find admin users
-        $user       = User::where('name', '=', 'administrator')->first();
+        $admin_user     = User::where('name', '=', 'administrator');
 
-        $root       = new Role();
-        $root->name                 = 'root';
-        $root->display_name         = 'Super User'; // optional
-        $root->description          = 'User is allowed to do everything'; // optional
+        $root           = new Role();
+        $root->where('name', '=', 'root');
         if(!$root->exists()){
+            $root->name                 = 'root';
+            $root->display_name         = 'Super User'; // optional
+            $root->description          = 'User is allowed to do everything'; // optional
             $root->save();
+        }else{
+            $root   = $root->where('name', '=', 'root')->first();
         }
 
         $admin      = new Role();
-        $admin->name                = 'admin';
-        $admin->display_name        = 'User Administrator'; // optional
-        $admin->description         = 'user is allowed to manage and edit other users data'; // optional
+        $admin->where('name', '=', 'admin');
         if(!$admin->exists()){
+            $admin->name                = 'admin';
+            $admin->display_name        = 'User Administrator'; // optional
+            $admin->description         = 'user is allowed to manage and edit other users data'; // optional
             $admin->save();
+        }else{
+            $admin      = $admin->where('name', '=', 'admin')->first();
         }
 
         $operator   = new Role();
-        $operator->name             = 'operator';
-        $operator->display_name     = 'Operator'; // optional
-        $operator->description      = 'User Is Only Allowed To Manage And Edit Their Data'; // optional
+        $operator->where('name', '=', 'operator');
         if(!$operator->exists()){
+            $operator->name             = 'operator';
+            $operator->display_name     = 'Operator'; // optional
+            $operator->description      = 'User Is Only Allowed To Manage And Edit Their Data'; // optional
             $operator->save();
+        }else{
+            $operator       = $admin->where('name', '=', 'operator')->first();
         }
 
         $users      = new Role();
-        $users->name             = 'users';
-        $users->display_name     = 'End User'; // optional
-        $users->description      = 'User is only allowed to manage and edit their data'; // optional
+        $users->where('name', '=', 'users');
         if(!$users->exists()){
+            $users->name             = 'users';
+            $users->display_name     = 'End User'; // optional
+            $users->description      = 'User is only allowed to manage and edit their data'; // optional
             $users->save();
+        }else{
+            $users      = $admin->where('name', '=', 'users')->first();
         }
 
-        if($user->exists()){
-            $user->first()->attachRole($admin);
+        if($admin_user->exists() AND false === $admin_user->first()->hasRole([$admin->name], true)){
+            $admin_user->first()->attachRole($admin);
         }
 
         if(Auth::check()){
             if(Auth::user()->hasRole('root')){
-                flash()->success('Success generated roles!!');
+                flash()->success('Your Roles has been generated!!');
                 return redirect()->route('roles.index');
             }else{
                 Auth::logout();
@@ -186,7 +198,6 @@ class RolesController extends Controller {
             }
         }else{
             return redirect()->route('login');
-            // return Auth::logout();
         }
     }
 

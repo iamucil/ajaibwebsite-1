@@ -69,8 +69,8 @@
                             </a>
                             <ul>
                                 <li>
-                                    <a href="#" title="Inbox">Inbox
-                                        <div class="noft-blue bg-red" style="display: inline-block; float: none;">Partners</div>
+                                    <a href="{{ route('vendor.index') }}" title="Inbox">Vendors
+                                        <div class="noft-blue bg-red" style="display: inline-block; float: none;">Daftar Merchant</div>
                                     </a>
                                 </li>
                                 <li>
