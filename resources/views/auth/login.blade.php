@@ -13,8 +13,8 @@
                     </p>
                     <form action="/auth/login" method="POST" class="login" novalidate>
                         {{ csrf_field() }}
-                        <span class=" icon-user"></span><input type="email" name="email" value="{{ old('email') }}" placeholder="Email" />
-                        <span class=" icon-lock-open"></span><input type="password" placeholder="Password" name="password" />
+                        <span class=" icon-user"></span><input type="email" name="email" value="{{ old('email') }}" placeholder="Email or Username" />
+                        <span class=" icon-lock-open"></span><input type="password" placeholder="Your secret" name="password" />
                         <input type="submit" value="Sign In" class="pull-right btn btn-success"/>
                     </form>
                     <div style="clear: both;"></div>
