@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+// use Illuminate\Routing\Route;
 use App\User;
 use App\Country;
 use JavaScript;
@@ -16,6 +17,7 @@ class ComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         view()->composer('layouts.dashboard', function ($view) {
+            $routing    = \Route::current();
             $user       = null;
             $country    = Country::where('iso_3166_2', '=', 'ID')
                 ->get(['calling_code', 'id'])
@@ -46,7 +48,7 @@ class ComposerServiceProvider extends ServiceProvider
                 'skey' => env('PAM_SECRET_KEY'),
             ]);
 
-            $view->with(['authUser' => $user, 'country' => $country]);
+            $view->with(['authUser' => $user, 'country' => $country, 'routing' => $routing]);
         });
     }
 

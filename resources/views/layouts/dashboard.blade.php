@@ -51,18 +51,24 @@
             @include('common.dashboard.topbar')
 
             @section('breadcrumbs')
-            <!-- breadcrumbs -->
             <ul class="breadcrumbs">
+                @if (Breadcrumbs::exists($routing->getName))
+                    {!! Breadcrumbs::renderIfExists() !!}
+                @else
+                    <li class="active">
+                        <i class="fontello-home"></i>
+                    </li>
+                @endif
+            </ul>
+            <!-- breadcrumbs -->
+            {{-- <ul class="breadcrumbs">
                 <li>
-                    <a href="#">
-                        <span class="entypo-home"></span>
+                    <a href="{{ route('admin::dashboard') }}">
+                        <span class="fontello-home"></span>
                     </a>
                 </li>
-                <li>
-                    Dashboard ujian
-                </li>
             </ul>
-            <!-- end of breadcrumbs -->
+            <!-- end of breadcrumbs --> --}}
             @show
 
             <!-- Container Begin -->
