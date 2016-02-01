@@ -55,9 +55,4 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->hasMany('App\Modules\Chat\Models\Chat', 'receiver_id', 'id');
     }
-
-    // public function roles()
-    // {
-    //     return $this->hasMany('App\RoleUser', 'user_id', 'id');
-    // }
 }
