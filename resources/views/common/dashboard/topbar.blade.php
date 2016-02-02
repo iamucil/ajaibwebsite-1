@@ -98,7 +98,7 @@
                 <!-- message end -->
                 <!--  notification nest -->
                 <li class="dropdown" id="chat-notification">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat-alt"></i>&nbsp;&nbsp;<span class="label edumix-noft">45</span><span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat-alt"></i>&nbsp;&nbsp;<span class="label edumix-noft"></span><span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-nest" role="menu">
                         <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
                         </li>

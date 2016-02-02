@@ -31,6 +31,20 @@ $(function () {
         alertify.set({ delay: 10000 });
         alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     }else{
+        // Web Notification feature detection
+        if (!window.Notification) {
+            alert('Your browser does not support Web Notifications API.');
+            return;
+        }
+
+        // Web Notification permission
+        Notification.requestPermission(function() {
+            if(Notification.permission !== 'granted') {
+                alert('Please allow Web Notifications feature to use Ajaib notifications.');
+                return;
+            }
+        });
+
         // initialize user properties
         name        = authUser.name;
         firstname   = authUser.firstname;
@@ -165,6 +179,10 @@ function InsertLogChat(param) {
         domain = 'ajaib-local';
     }
 
+    if (param.message === '' || !param.message) {
+        param.message = param.text;
+    }
+
 
     // Send to API chat
     var ajaxResponse = $.ajax({
@@ -222,6 +240,10 @@ function SubscribeChat() {
             logResponse.success(function(data){
 
                 if (data.status===201) {
+                    // notifications
+                    sounds.play('audio/chat');
+                    $('.edumix-noft').html('*');
+
                     // Grant user access
                     GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
 
@@ -275,6 +297,8 @@ function SubscribeChat() {
                     var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.message+'</p><br />';
                     $('.chat-conversation#cc_'+m.user_name).append(appendElm);
 
+                    showNotification(m);
+
                     // $('.chat-logs').append(m.command+'<br />');
                     //console.log(m);
                 } else {
@@ -314,6 +338,8 @@ function ChatBoxToggle(elm) {
  * @constructor
  */
 function AppendChat(senderId,serviced) {
+    $('.edumix-noft').html('');
+
     var obj = GetParam(senderId);
 
     // move to div slim scroll
@@ -488,21 +514,19 @@ function logging(m) {
     console.log(m);
 }
 
-/*
-function pushNotification(obj) {
-    chatFeature.publish({
-        channel: obj.channel,
-        message: {
-            "aps": {
-                "alert": obj.text,
-                "badge": 9,
-                "sound": "bingbong.aiff"
-            },
-            "acme 1": 42
-        }
+function showNotification(data) {
+    var ms = 30000; // close notification after 30sec
+    var notification = new Notification(data.message || 'Ajaib!', {
+        body: 'From: ' + data.user,
+        tag: data.sender_channel,
+        icon: 'img/logo.png'
     });
+    notification.onshow = function() {
+        setTimeout(notification.close, ms);
+    };
 }
 
+/*
 function notification(count) {
     if (count === 0 || !count) {
         // empty notif

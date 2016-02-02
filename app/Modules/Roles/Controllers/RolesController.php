@@ -137,56 +137,57 @@ class RolesController extends Controller {
 
     public function generateRoles()
     {
-        // find admin users
-        $user       = User::where('name', '=', 'administrator')->first();
+        try {
+            echo '<br>init with Sentry users seader...';
+            \Artisan::call('db:seed', [
+                '--class' => 'UsersTableSeeder',
+            ]);
+            echo '<br>done with Sentry users seeder';
 
-        $root       = new Role();
-        $root->name                 = 'root';
-        $root->display_name         = 'Super User'; // optional
-        $root->description          = 'User is allowed to do everything'; // optional
-        if(!$root->exists()){
-            $root->save();
-        }
+            echo '<br />Initializing with sentry roles seeder...';
+            \Artisan::call('db:seed', [
+                '--class' => 'RolesTableSeeder',
+            ]);
+            echo '<br />done with Sentry roles seeder';
+            $mRole          = new Role;
+            $root           = $mRole->where('name', '=', 'root');
+            $administrator  = $mRole->where('name', '=', 'admin');
+            $operator       = $mRole->where('name', '=', 'operator');
+            $users          = $mRole->where('name', '=', 'users');
+            $root_user      = User::where('name', '=', 'root');
+            $admin_user     = User::where('name', '=', 'administrator');
 
-        $admin      = new Role();
-        $admin->name                = 'admin';
-        $admin->display_name        = 'User Administrator'; // optional
-        $admin->description         = 'user is allowed to manage and edit other users data'; // optional
-        if(!$admin->exists()){
-            $admin->save();
-        }
-
-        $operator   = new Role();
-        $operator->name             = 'operator';
-        $operator->display_name     = 'Operator'; // optional
-        $operator->description      = 'User Is Only Allowed To Manage And Edit Their Data'; // optional
-        if(!$operator->exists()){
-            $operator->save();
-        }
-
-        $users      = new Role();
-        $users->name             = 'users';
-        $users->display_name     = 'End User'; // optional
-        $users->description      = 'User is only allowed to manage and edit their data'; // optional
-        if(!$users->exists()){
-            $users->save();
-        }
-
-        if($user->exists()){
-            $user->first()->attachRole($admin);
-        }
-
-        if(Auth::check()){
-            if(Auth::user()->hasRole('root')){
-                flash()->success('Success generated roles!!');
-                return redirect()->route('roles.index');
+            if(true === $root->exists()){
+                $root       = $root->first();
+                if($root_user->exists() AND false === $root_user->first()->hasRole([$root->name], true)){
+                    $root_user->first()->attachRole($root);
+                }
             }else{
-                Auth::logout();
+                $root       = null;
+            }
+
+            if(true === $administrator->exists()){
+                $administrator       = $administrator->first();
+                if($admin_user->exists() AND false === $admin_user->first()->hasRole([$administrator->name], true)){
+                    $admin_user->first()->attachRole($administrator);
+                }
+            }else{
+                $administrator       = null;
+            }
+
+            if(Auth::check()){
+                if(Auth::user()->hasRole('root')){
+                    flash()->success('Your Roles has been generated!!');
+                    return redirect()->route('roles.index');
+                }else{
+                    Auth::logout();
+                    return redirect()->route('login');
+                }
+            }else{
                 return redirect()->route('login');
             }
-        }else{
-            return redirect()->route('login');
-            // return Auth::logout();
+        } catch (Exception $e) {
+            Response::make($e->getMessage(), 500);
         }
     }
 
