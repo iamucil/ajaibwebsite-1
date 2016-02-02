@@ -226,6 +226,8 @@ function SubscribeChat() {
             logResponse.success(function(data){
 
                 if (data.status===201) {
+                    // notifications
+                    sounds.play('audio/chat');
                     $('.edumix-noft').html('*');
 
                     // Grant user access

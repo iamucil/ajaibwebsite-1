@@ -9,6 +9,7 @@
     <script language="javascript" src="https://cdn.pubnub.com/pubnub-dev.js"></script>
     <!-- Include the Chat functions -->
     <script language="javascript" src="{{secure_asset('/js/chat/chat.js')}}"></script>
+    <script language="javascript" src="{{secure_asset('/js/sound.js')}}"></script>
     <script language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.0/moment.min.js"></script>
 
     {{-- <script type="text/javascript" src="https://l2.io/ip.js?var=myip"></script> --}}
