@@ -29,10 +29,11 @@ Author:matirasa
 
 body {
     font-family: 'Open Sans', sans-serif!important;
-    background: #2f323a;
+    background: #dedede;
     padding: 0;
     font-size: 13px!important;
     color: #888!important;
+    overflow: hidden!important;
 }
 
 h1,
@@ -531,7 +532,7 @@ Foundation Coustom
     height: 49px;
     line-height: 49px!important;
     background: rgba(255, 255, 255, 0.5);
-    margin: 0 -15px 25px -15px;
+    margin: 76px -15px 25px -14px;
     border-radius: 0!important;
     border-bottom: 1px solid #ccc;
 }
@@ -994,12 +995,13 @@ input[type="url"],
 input[type="color"],
 textarea {
     -webkit-appearance: none;
-    -webkit-border-radius: 0px;
+    -webkit-border-radius: 4px;
     background-color: white;
     font-family: inherit;
     border-style: solid;
     border-width: 1px;
-    border-color: #cccccc;
+    border-color: #dedede;
+    background: #f5f5f5;
     box-shadow: none;
     color: rgba(0, 0, 0, 0.75);
     display: block;
@@ -1614,7 +1616,6 @@ Sidebar Menu
 }
 
 #menu-select {
-    background: rgba(0, 0, 0, 0.3);
     padding: 0 0 0 40px;
     position: relative;
 }
@@ -1742,7 +1743,14 @@ li.hide-min-toggle {
 }
 
 .bottom-list-menu {
-    margin: 25px 0 0 -20px;
+    margin: 0;
+    background: #25272E;
+    position: fixed;
+    width: 260px;
+    padding: 20px;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .bottom-list-menu li {
@@ -1974,7 +1982,7 @@ menu
 }
 
 ul.topnav li a:hover {
-    background: #25272E;
+    background: transparent;
     color: white!important;
     text-shadow: none;
     position: relative;
@@ -1988,6 +1996,18 @@ ul.topnav li a:hover:before {
     left: 0;
     top: 0;
     height: 100%;
+}
+
+ul.topnav li a:hover:after {
+/*    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent #ff6600;
+    position: absolute;
+    left: 0;
+    top: 15px;*/
 }
 
 ul.topnav ul {
@@ -2621,8 +2641,8 @@ Boxes
 
 #paper-bg {
     background: #dedede;
-    min-height: 1040px;
-    margin: 0 0 -35px;
+    /* min-height: 1040px; */
+    /* margin: 0 0 -35px; */
     padding: 0 15px 35px;
     position: relative;
 }

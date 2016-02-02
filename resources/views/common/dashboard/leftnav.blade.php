@@ -1,13 +1,13 @@
 <!-- Right sidemenu -->
 
-<div id="skin-select">
+<div id="skin-select" class="fixed-nest ">
     <!--      Toggle sidemenu icon button -->
     <a id="toggle">
         <span class="fa icon-menu"></span>
     </a>
     <!--      End of Toggle sidemenu icon button -->
 
-    <div class="skin-part">
+    <div class="skin-part fixed-ajaib-sidemenu">
         <div id="tree-wrap">
             <!-- Profile -->
             <div class="profile">
