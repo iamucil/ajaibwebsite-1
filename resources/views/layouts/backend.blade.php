@@ -35,209 +35,257 @@
     <div class="inner-wrap">
 
         @section('sidebar')
-        <!-- Right sidemenu -->
-        <div id="skin-select">
-            <!--      Toggle sidemenu icon button -->
-            <a id="toggle">
-                <span class="fa icon-menu"></span>
-            </a>
-            <!--      End of Toggle sidemenu icon button -->
+                <!-- Right sidemenu -->
+            <div id="skin-select" class="fixed-nest ">
+                <!--      Toggle sidemenu icon button -->
+                <a id="toggle">
+                    <span class="fa icon-menu"></span>
+                </a>
+                <!--      End of Toggle sidemenu icon button -->
 
-            <div class="skin-part">
-                <div id="tree-wrap">
-                    <!-- Profile -->
-                    <div class="profile">
-                        <img alt="" class="" src="{{ asset('/img/logo.png') }}">
-                        <h3>AJAIB <small>Beta</small></h3>
+                <div class="skin-part fixed-ajaib-sidemenu">
+                    <div id="tree-wrap">
+                        <!-- Profile -->
+                        <div class="profile">
+                            <img alt="" class="" src="./img/logo.png">
+                            <h3>EDUMIX <small>1.2</small></h3>
 
-                    </div>
-                    <!-- End of Profile -->
+                        </div>
+                        <!-- End of Profile -->
 
-                    <!-- Menu sidebar begin-->
-                    <div class="side-bar">
-                        <ul id="menu-showhide" class="topnav slicknav">
-                            <li>
-                                <a id="menu-select" class="tooltip-tip" href="#" title="Dashboard">
-                                    <i class="icon-monitor"></i>
-                                    <span>Dashboard</span>
-
-                                </a>
-
-                            </li>
-
-                            <li>
-                                <a class="tooltip-tip" href="#" title="Mail">
-                                    <i class=" icon-mail"></i>
-                                    <span>mail</span>
-
-                                </a>
-                                <ul>
+                        <!-- Menu sidebar begin-->
+                        <div class="fixed-nest-sidebar">
+                            <div class="side-bar sidebar-fixed">
+                                <ul id="menu-showhide" class="topnav slicknav">
                                     <li>
-                                        <a href="../mail.html" title="Inbox">Inbox
-                                            <div class="noft-blue bg-red" style="display: inline-block; float: none;">256</div>
+                                        <a id="menu-select" class="tooltip-tip" href="index.html" title="Dashboard">
+                                            <i class="icon-monitor"></i>
+                                            <span>Dashboard</span>
+
                                         </a>
+
                                     </li>
                                     <li>
+                                        <a class="tooltip-tip" href="#">
+                                            <i class=" icon-window"></i>
+                                            <span>Layout<small class="side-menu-noft">New</small></span>
 
-                                        <a href="../compose.html" title="Compose">Compose</a>
+                                        </a>
+                                        <ul>
+
+
+                                            <li>
+
+                                                <a href="sidebar-fixed.html">Sidebar Fixed</a>
+                                            </li>
+                                            <li>
+
+                                                <a href="all-fixed.html">All Fixed</a>
+                                            </li>
+
+                                        </ul>
                                     </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <i class="icon-document-new"></i>
-                                        <span>Page&nbsp;
+                                    <li>
+                                        <a class="tooltip-tip" href="#" title="Mail">
+                                            <i class=" icon-preview"></i>
+                                            <span>Skin</span>
+
+                                        </a>
+                                        <ul>
+
+                                            <li>
+                                                <a href="blue-skin.html" title="Black Skin">Blue Skin</a>
+                                            </li>
+                                            <li>
+
+                                                <a href="white-skin.html" title="White Skin">White Skin</a>
+                                            </li>
+                                            <li>
+
+                                                <a href="green-skin.html" title="Blue Skin">Green Skin</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a class="tooltip-tip" href="#" title="Mail">
+                                            <i class=" icon-mail"></i>
+                                            <span>mail</span>
+
+                                        </a>
+                                        <ul>
+                                            <li>
+                                                <a href="mail.html" title="Inbox">Inbox
+                                                 <div class="noft-blue bg-red" style="display: inline-block; float: none;">256</div>
+                                            </a>
+                                            </li>
+                                            <li>
+
+                                                <a href="compose.html" title="Compose">Compose</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="icon-document-new"></i>
+                                            <span>Page&nbsp;
                                     <small class="side-menu-noft bg-blue">hot</small></span>
-                                </a>
-                                <ul>
-                                    <li>
-                                        <a href="../blog-list.html">Blog List</a>
-                                    </li>
-                                    <li>
-                                        <a href="../blog-detail.html">Blog Detail</a>
-                                    </li>
-                                    <li>
-                                        <a href="../gallery.html">Gallery</a>
-                                    </li>
-                                    <li>
-                                        <a href="../calendar.html" title="Calender">Calendar</a>
-                                    </li>
-                                    <li>
-                                        <a href="../master.html" title="Chart">Blank Page</a>
-                                    </li>
+                                        </a>
+                                        <ul>
+                                            <li>
+                                                <a href="bootstrap/index.html">Bootstrap<div class="noft-blue bg-red" style="display: inline-block; float: none;"><strong>NEW</strong></div></a>
+                                            </li>
+                                            <li>
+                                                <a href="blog-list.html">Blog List</a>
+                                            </li>
+                                            <li>
+                                                <a href="blog-detail.html">Blog Detail</a>
+                                            </li>
+                                            <li>
+                                                <a href="gallery.html">Gallery</a>
+                                            </li>
+                                            <li>
+                                                <a href="calendar.html" title="Calender">Calendar</a>
+                                            </li>
+                                            <li>
+                                                <a href="master.html" title="Chart">Blank Page</a>
+                                            </li>
 
-                                </ul>
-                            </li>
-                            <li>
-                                <a class="tooltip-tip" href="#" title="UI">
-                                    <i class="icon-align-justify"></i>
-                                        <span>UI&nbsp;
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a class="tooltip-tip" href="#" title="UI">
+                                            <i class="icon-align-justify"></i>
+                                            <span>UI&nbsp;
                                     <small class="side-menu-noft">new</small></span>
-                                </a>
-                                <ul>
+                                        </a>
+                                        <ul>
 
-                                    <li>
-                                        <a href="../element.html" title="Element">Element</a>
-                                    </li>
-                                    <li><a href="../button.html" title="Button">
+                                            <li>
+                                                <a href="element.html" title="Element">Element</a>
+                                            </li>
+                                            <li><a href="button.html" title="Button">
                                             Button
                                         </a>
-                                    </li>
-                                    <li>
-                                        <a href="../tab.html" title="Tab & Accordion">Tab & Accordion</a>
-                                    </li>
-                                    <li>
-                                        <a href="../typography.html" title="Typography">
+                                            </li>
+                                            <li>
+                                                <a href="tab.html" title="Tab & Accordion">Tab & Accordion</a>
+                                            </li>
+                                            <li>
+                                                <a href="typography.html" title="Typography">
+                                                
+                                                Typography
+                                            </a>
+                                            </li>
+                                            <li>
+                                                <a href="panel.html" title="panel">Panel</a>
+                                            </li>
 
-                                            Typography
+                                            <li>
+                                                <a href="grids.html" title="Grids">Grids</a>
+                                            </li>
+                                            <li>
+                                                <a href="chart.html" title="Chart">Chart</a>
+                                            </li>
+
+
+                                        </ul>
+                                    </li>
+
+
+                                    <li>
+                                        <a href="#">
+                                            <i class="fontello-doc-1"></i>
+                                            <span>Form&nbsp;  <small class="side-menu-noft">new</small></span>
+                                        </a>
+                                        <ul>
+                                            <li>
+                                                <a href="form-element.html" title="Form Elements">Form Elements</a>
+                                            </li>
+                                            <li>
+                                                <a href="andvance-form.html" title="Andvance Form">Andvance Form</a>
+                                            </li>
+                                            <li>
+                                                <a href="text-editor.html" title="Text Editor">Text Editor</a>
+                                            </li>
+                                            <li>
+                                                <a href="file-upload.html" title="File Upload">File Upload</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class=" icon-view-list-large"></i>
+                                            <span>Tables</span>
+                                        </a>
+                                        <ul>
+                                            <li>
+                                                <a href="table-static.html" title="Table Static">Table Static</a>
+                                            </li>
+                                            <li>
+                                                <a href="table-dynamic.html" title="Table Dynamic">Table Dynamic</a>
+
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a class="tooltip-tip" href="icon.html" title="Icons">
+                                            <i class="fontello-print"></i>
+                                            <span>Icons</span>
+
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="../panel.html" title="panel">Panel</a>
-                                    </li>
 
-                                    <li>
-                                        <a href="../grids.html" title="Grids">Grids</a>
-                                    </li>
-                                    <li>
-                                        <a href="../chart.html" title="Chart">Chart</a>
-                                    </li>
+                                    <li style="height:400px">
+                                        <a class="tooltip-tip" href="#" title="Extra">
+                                            <i class="fontello-beaker"></i>
+                                            <span>Extra</span>
+                                        </a>
+                                        <ul>
+                                            <li>
+                                                <a href="invoice.html" title="Invoice">Invoice</a>
+                                            </li>
+                                            <li>
+                                                <a href="pricing_table.html" title="Pricing Table">Pricing Table</a>
+                                            </li>
+                                            <li>
+                                                <a href="time-line.html" title="Time Line">Time Line</a>
+                                            </li>
+                                            <li>
+                                                <a href="login.html" title="Chart">Login</a>
+                                            </li>
+                                            <li>
+                                                <a href="map.html" title="Lock Screen">Map</a>
+                                            </li>
+                                            <li>
+                                                <a href="404.html" title="404 Error Page">404 Error Page</a>
+                                            </li>
+                                            <li>
+                                                <a href="500.html" title="500 Error Page">500 Error Page</a>
+                                            </li>
 
-
-                                </ul>
-                            </li>
-
-
-                            <li>
-                                <a href="#">
-                                    <i class="fontello-doc-1"></i>
-                                    <span>Form&nbsp;  <small class="side-menu-noft">new</small></span>
-                                </a>
-                                <ul>
-                                    <li>
-                                        <a href="../form-element.html" title="Form Elements">Form Elements</a>
-                                    </li>
-                                    <li>
-                                        <a href="../andvance-form.html" title="Andvance Form">Andvance Form</a>
-                                    </li>
-                                    <li>
-                                        <a href="../text-editor.html" title="Text Editor">Text Editor</a>
-                                    </li>
-                                    <li>
-                                        <a href="../file-upload.html" title="File Upload">File Upload</a>
+                                        </ul>
                                     </li>
                                 </ul>
+                            </div>
+                        </div>
+                        <!-- end of Menu sidebar  -->
+                        <ul class="bottom-list-menu">
+                            <li>Settings <span class="icon-gear"></span>
                             </li>
-                            <li>
-                                <a href="#">
-                                    <i class=" icon-view-list-large"></i>
-                                    <span>Tables</span>
-                                </a>
-                                <ul>
-                                    <li>
-                                        <a href="../table-static.html" title="Table Static">Table Static</a>
-                                    </li>
-                                    <li>
-                                        <a href="../table-dynamic.html" title="Table Dynamic">Table Dynamic</a>
-
-                                    </li>
-
-                                </ul>
+                            <li>Help <span class="icon-phone"></span>
                             </li>
-                            <li>
-                                <a class="tooltip-tip" href="icon.html" title="Icons">
-                                    <i class="fontello-print"></i>
-                                    <span>Icons</span>
-
-                                </a>
+                            <li>About Edumix <span class="icon-music"></span>
                             </li>
 
-                            <li>
-                                <a class="tooltip-tip" href="#" title="Extra">
-                                    <i class="fontello-beaker"></i>
-                                    <span>Extra</span>
-                                </a>
-                                <ul>
-                                    <li>
-                                        <a href="../invoice.html" title="Invoice">Invoice</a>
-                                    </li>
-                                    <li>
-                                        <a href="../pricing_table.html" title="Pricing Table">Pricing Table</a>
-                                    </li>
-                                    <li>
-                                        <a href="../time-line.html" title="Time Line">Time Line</a>
-                                    </li>
-                                    <li>
-                                        <a href="../login.html" title="Chart">Login</a>
-                                    </li>
-                                    <li>
-                                        <a href="../map.html" title="Lock Screen">Map</a>
-                                    </li>
-                                    <li>
-                                        <a href="../404.html" title="404 Error Page">404 Error Page</a>
-                                    </li>
-                                    <li>
-                                        <a href="../500.html" title="500 Error Page">500 Error Page</a>
-                                    </li>
-
-                                </ul>
-                            </li>
                         </ul>
-                    </div>
-                    <!-- end of Menu sidebar  -->
-                    <ul class="bottom-list-menu">
-                        <li>Settings <span class="icon-gear"></span>
-                        </li>
-                        <li>Help <span class="icon-phone"></span>
-                        </li>
-                        <li>About Edumix <span class="icon-music"></span>
-                        </li>
 
-                    </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- end of Rightsidemenu -->
+            <!-- end of Rightsidemenu -->
+
         @show
 
         <div class="wrap-fluid" id="paper-bg">
@@ -435,6 +483,50 @@
             <!-- Content Begin -->
             <div class="row">
                 <div class="col-md-12">
+                       <!-- Bootstrap Content -->
+
+                        <a class="btn btn-default" href="#" role="button">Link</a>
+                        <button class="btn btn-default" type="submit">Button</button>
+                        <input class="btn btn-default" type="button" value="Input">
+                        <input class="btn btn-default" type="submit" value="Submit">
+                        <br>
+                        <br>
+
+
+                        <!-- Standard button -->
+                        <button type="button" class="btn btn-default">Default</button>
+
+                        <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+                        <button type="button" class="btn btn-primary">Primary</button>
+
+                        <!-- Indicates a successful or positive action -->
+                        <button type="button" class="btn btn-success">Success</button>
+
+                        <!-- Contextual button for informational alert messages -->
+                        <button type="button" class="btn btn-info">Info</button>
+
+                        <!-- Indicates caution should be taken with this action -->
+                        <button type="button" class="btn btn-warning">Warning</button>
+
+                        <!-- Indicates a dangerous or potentially negative action -->
+                        <button type="button" class="btn btn-danger">Danger</button>
+
+                        <!-- Deemphasize a button by making it look like a link while maintaining button behavior -->
+                        <button type="button" class="btn btn-link">Link</button>
+
+                        <br>
+                        <br>
+                        
+                        <div class="btn-group" role="group" aria-label="...">
+                          <button type="button" class="btn btn-default">Left</button>
+                          <button type="button" class="btn btn-default">Middle</button>
+                          <button type="button" class="btn btn-default">Right</button>
+                        </div>
+
+
+                       <!-- End of Bootstrap Content -->
+
+
                     @yield('content')
                 </div>
             </div>
@@ -447,16 +539,15 @@
                         <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Blink</a>
                         <div class="webui-popover-content">
-                            <div class="chat-conversation">
-
-                            <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
-                            <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
-                                kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
-                            <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
-                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
-                            
-        
-                            </div>
+                          
+                                <div class="chat-conversation slim-scroll-chat">
+                                    <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
+                                    <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
+                                        kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
+                                    <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
+                                    <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
+                                </div>
+                          
                             <div class="textarea-nest">
                                 <div class="form-group">
                                     <span class="fontello-attach"></span>
@@ -475,7 +566,7 @@
                         <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Aktif</a>
                         <div class="webui-popover-content">
-                            <div class="chat-conversation">
+                            <div class="chat-conversation slim-scroll-chat">
                             
                             <p class="ajaib-client"><small>Sat 7:19 PM</small>ha</p>
                             <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat .</p>
@@ -502,7 +593,7 @@
                         <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Idle</a>
                         <div class="webui-popover-content">
-                            <div class="chat-conversation">
+                            <div class="chat-conversation slim-scroll-chat">
                             
                             <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
                             <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
@@ -618,7 +709,7 @@
 <!-- main edumix javascript -->
 <script type='text/javascript' src="{{asset('/js/slimscroll/jquery.slimscroll.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/slicknav/jquery.slicknav.js')}}"></script>
-<script type='text/javascript' src="{{asset('/js/sliding-menu.js')}}"></script>
+<script type='text/javascript' src="{{asset('/js/sliding-menu-fixed.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/scriptbreaker-multiple-accordion-1.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/app.js')}}"></script>
 
@@ -630,13 +721,14 @@
    jQuery(function() {
         //$('.chat-pop-over').popover();
         $('.chat-pop-over').webuiPopover({
-            placement:'auto',
+            placement:'auto-top',
              padding:false,
             width:'300',//can be set with  number
             //height:'300',//can be set with  number
             height:'400',//can be set with  number
-            animation:'',
-             offsetTop:-5,  // offset the top of the popover
+            animation:'pop',
+            trigger:'click',
+            offsetTop:-5,  // offset the top of the popover
             multi:true,//allow other popovers in page at same time
              dismissible:true, // if popover can be dismissed by  outside click or escape key
              closeable:true//display close button or not

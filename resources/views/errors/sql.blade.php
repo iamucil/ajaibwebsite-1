@@ -65,7 +65,10 @@
                         <code>
                            {!! $exception->getSql() !!}
                         </code>
-                    </div></p>
+                    </div></p><br />
+                    <p>
+                        {{ $exception->getMessage() }}
+                    </p>
                     <ul>
                         <li><a href="#"><i class="icon-home"></i> Home</a></li>
                         <li><a href="#"><i class="icon-mail"></i> Contact Us</a></li>

@@ -30,6 +30,26 @@ $(function() {
         height: "380px",
         alwaysVisible: true,
         size: "4px"
+    }); 
+     $(".slim-scroll-chat").slimscroll({
+        height: "400px",
+        alwaysVisible: false,
+        size: "3px"
+    });   
+
+     $("#paper-bg").slimscroll({
+        height: "600px",
+        alwaysVisible: true,
+        size: "5px"
+    });
+    $(".sidebar-fixed").slimscroll({
+        height: "460px",
+        width: "260px",
+        position: 'left',
+        alwaysVisible: true,
+        allowPageScroll: true,
+        distance: '-1px',
+        size: "4px"
     });
 });
 
