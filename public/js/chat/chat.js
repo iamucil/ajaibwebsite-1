@@ -165,6 +165,10 @@ function InsertLogChat(param) {
         domain = 'ajaib-local';
     }
 
+    if (param.message === '' || !param.message) {
+        param.message = param.text;
+    }
+
 
     // Send to API chat
     var ajaxResponse = $.ajax({
@@ -222,6 +226,8 @@ function SubscribeChat() {
             logResponse.success(function(data){
 
                 if (data.status===201) {
+                    $('.edumix-noft').html('*');
+
                     // Grant user access
                     GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
 
@@ -314,6 +320,8 @@ function ChatBoxToggle(elm) {
  * @constructor
  */
 function AppendChat(senderId,serviced) {
+    $('.edumix-noft').html('');
+
     var obj = GetParam(senderId);
 
     // move to div slim scroll
