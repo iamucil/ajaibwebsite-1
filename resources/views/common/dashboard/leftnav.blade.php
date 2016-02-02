@@ -1,13 +1,13 @@
 <!-- Right sidemenu -->
 
-<div id="skin-select">
+<div id="skin-select" class="fixed-nest ">
     <!--      Toggle sidemenu icon button -->
     <a id="toggle">
         <span class="fa icon-menu"></span>
     </a>
     <!--      End of Toggle sidemenu icon button -->
 
-    <div class="skin-part">
+    <div class="skin-part fixed-ajaib-sidemenu">
         <div id="tree-wrap">
             <!-- Profile -->
             <div class="profile">
@@ -122,39 +122,9 @@
                             <a class="tooltip-tip" href="#" title="UI">
                                 <i class="icon-align-justify"></i>
                                     <span>Chat&nbsp;
-                                <small class="side-menu-noft">new</small></span>
+                                <small class="side-menu-noft">Chating</small></span>
                             </a>
-                            <ul>
 
-                                <li>
-                                    <a href="../element.html" title="Element">Element</a>
-                                </li>
-                                <li><a href="../button.html" title="Button">
-                                        Live Chat
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="../tab.html" title="Tab & Accordion">Tab & Accordion</a>
-                                </li>
-                                <li>
-                                    <a href="../typography.html" title="Typography">
-
-                                        Typography
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="../panel.html" title="panel">Panel</a>
-                                </li>
-
-                                <li>
-                                    <a href="../grids.html" title="Grids">Grids</a>
-                                </li>
-                                <li>
-                                    <a href="../chart.html" title="Chart">Chart</a>
-                                </li>
-
-
-                            </ul>
                         </li>
                     @endif
                 </ul>

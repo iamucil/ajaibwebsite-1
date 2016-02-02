@@ -91,7 +91,7 @@
 
             <!-- end of Container Begin -->
             <footer>
-                <div id="footer">Copyright &copy; 2015 <a href="http://ajaib.co">Ajaib</a> Made with <i class="fontello-heart-1 text-green"></i></div>
+                <div id="footer">Copyright &copy; 2015 <a href="http://ajaib.co">Ajaib</a> Made with keyboard and hardwork <i class="fontello-heart-1 text-green"></i></div>
             </footer>
             @include('common.dashboard.rightchatbar')
         </div>
@@ -118,7 +118,7 @@
     <!-- main edumix javascript -->
     <script type='text/javascript' src="{{asset('/js/slimscroll/jquery.slimscroll.js')}}"></script>
     <script type='text/javascript' src="{{asset('/js/slicknav/jquery.slicknav.js')}}"></script>
-    <script type='text/javascript' src="{{asset('/js/sliding-menu.js')}}"></script>
+    <script type='text/javascript' src="{{asset('/js/sliding-menu-fixed.js')}}"></script>
     <script type='text/javascript' src="{{asset('/js/scriptbreaker-multiple-accordion-1.js')}}"></script>
     <script type='text/javascript' src="{{asset('/js/app.js')}}"></script>
     <script type='text/javascript' src="{{ secure_asset('/js/vendor/js-cookie/js.cookie.js') }}"></script>
@@ -144,15 +144,16 @@
         jQuery(function() {
             //$('.chat-pop-over').popover();
             $('.chat-pop-over').webuiPopover({
-                placement:'auto',
+                placement:'auto-top',
                 padding:false,
                 width:'300',//can be set with  number
                 //height:'300',//can be set with  number
                 height:'400',//can be set with  number
-                animation:'',
-                offsetTop:-18,  // offset the top of the popover
+                animation:'pop',
+                trigger:'click',
+                offsetTop:-5,  // offset the top of the popover
                 multi:true,//allow other popovers in page at same time
-                dismissible:false, // if popover can be dismissed by  outside click or escape key
+                dismissible:true, // if popover can be dismissed by  outside click or escape key
                 closeable:true//display close button or not
             });
 

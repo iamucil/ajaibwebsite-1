@@ -48,7 +48,7 @@
     <nav id="footer">
         <div class="container">
             <div class="pull-left fnav">
-                <p>All right reserved. Copyright @ 2015. Designed by <a href="#" target="_blank">Themesmile</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-envelope"></span> &nbsp;&nbsp;ask@getajaib.com</p>
+                <p>All right reserved. Copyright @ 2015. Powered by <a href="#" target="_blank">Jet Company </a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<span class="fa fa-envelope"></span> &nbsp;&nbsp;info@getajaib.com</p>
             </div>
             <div class="pull-right fnav">
                 <ul class="footer-social">
