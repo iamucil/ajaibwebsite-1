@@ -515,11 +515,11 @@ function logging(m) {
 }
 
 function showNotification(data) {
-    var ms = 30000; // close notification after 30sec
+    var ms = 5000; // close notification after 30sec
     var notification = new Notification(data.message || 'Ajaib!', {
         body: 'From: ' + data.user,
         tag: data.sender_channel,
-        icon: 'img/logo.png'
+        icon: 'img/icon-ajaib-80.png'
     });
     notification.onshow = function() {
         setTimeout(notification.close, ms);
