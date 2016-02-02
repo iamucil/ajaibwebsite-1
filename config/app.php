@@ -164,6 +164,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         App\Providers\ComposerServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
+        DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
     ],
 
     /*
@@ -219,6 +220,7 @@ return [
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Javascript' => Laracasts\Utilities\JavaScript\JavaScriptFacade::class,
+        'Breadcrumbs'   => DaveJamesMiller\Breadcrumbs\Facade::class,
     ],
 
 ];

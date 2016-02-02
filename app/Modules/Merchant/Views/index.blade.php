@@ -13,7 +13,7 @@
                     <a href="{{ route('vendor.create') }}" class="btn btn-default" role="button">
                         Tambah Vendor
                     </a>
-                    <a href="#" class="btn btn-default" role="button" href="vendor.category.index">
+                    <a href="{{ route('vendor.category.index') }}" class="btn btn-default" role="button" href="vendor.category.index">
                         Daftar Kategori
                     </a>
                     {{-- <button type="button" class="btn btn-default">Tambah Kategory</button>
