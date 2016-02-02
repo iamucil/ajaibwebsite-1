@@ -519,7 +519,7 @@ function showNotification(data) {
     var notification = new Notification(data.message || 'Ajaib!', {
         body: 'From: ' + data.user,
         tag: data.sender_channel,
-        icon: 'img/logo.png'
+        icon: 'img/icon-ajaib-80.png'
     });
     notification.onshow = function() {
         setTimeout(notification.close, ms);
