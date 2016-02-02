@@ -156,6 +156,7 @@ class RolesController extends Controller {
             $users          = $mRole->where('name', '=', 'users');
             $root_user      = User::where('name', '=', 'root');
             $admin_user     = User::where('name', '=', 'administrator');
+            $operator_user  = User::where('name', '=', 'operator');
 
             if(true === $root->exists()){
                 $root       = $root->first();
@@ -173,6 +174,15 @@ class RolesController extends Controller {
                 }
             }else{
                 $administrator       = null;
+            }
+
+            if(true === $operator->exists()){
+                $operator       = $operator->first();
+                if($operator_user->exists() AND false === $operator_user->first()->hasRole([$operator->name], true)){
+                    $operator_user->first()->attachRole($operator);
+                }
+            }else{
+                $operator       = null;
             }
 
             if(Auth::check()){
