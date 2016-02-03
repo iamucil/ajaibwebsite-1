@@ -459,7 +459,7 @@ function publish(senderId) {
                     "sender_channel": channel,
                     "receiver_id": obj.sender_id,
                     "time": datetime,
-                    "pn_gcm":{"data" :{"title": 'Ajaib Notification!',"message": text}}
+                    "pn_gcm":{"data" :{"title": 'Ajaib',"message": text}}
                 },
                 callback: function(m) {
                     //TODO: publish event -> don't forget to disable this debug when it goes online
