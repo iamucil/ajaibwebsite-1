@@ -237,9 +237,9 @@ function SubscribeChat() {
             var logResponse = InsertLogChat(m);
 
             // valid user permit to chat
-            logResponse.success(function(data){
+            //logResponse.success(function(data){
 
-                if (data.status===201) {
+                //if (data.status===201) {
                     // notifications
                     sounds.play('audio/chat');
                     $('.edumix-noft').html('*');
@@ -301,10 +301,10 @@ function SubscribeChat() {
 
                     // $('.chat-logs').append(m.command+'<br />');
                     //console.log(m);
-                } else {
-                    logging("There are unauthenticated user's coming");
-                }
-            });
+                //} else {
+                //    logging("There are unauthenticated user's coming");
+                //}
+            //});
         },
         /**
          * using callback
@@ -436,9 +436,9 @@ function publish(senderId) {
     var logResponse = InsertLogChat(param);
 
     // valid user permit to chat
-    logResponse.success(function(data) {
+    //logResponse.success(function(data) {
 
-        if (data.status=='201') {
+        //if (data.status=='201') {
             // success then publish message
             var datetime = getDate();
             chatFeature.publish({
@@ -472,11 +472,11 @@ function publish(senderId) {
 
             // set chat text to null
             $('.chat-text#ct_'+obj.user_name).val('')
-        } else {
+        //} else {
             // fail
-            alertify.error("Gagal insert log chat. Periksa koneksi database!");
-        }
-    });
+            //alertify.error("Gagal insert log chat. Periksa koneksi database!");
+        //}
+    //});
 }
 
 function whileTyping() {
