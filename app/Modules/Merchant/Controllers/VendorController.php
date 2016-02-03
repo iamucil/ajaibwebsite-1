@@ -25,7 +25,7 @@ class VendorController extends Controller
     ];
     public function index()
     {
-        $vendors    = Vendor::orderBy('vendor_category_id', 'ASC')
+        $vendors    = Vendor::orderBy('category_id', 'ASC')
             ->orderBy('created_at', 'DESC')
             ->paginate(15);
         return view('Merchant::index', compact('vendors'));
