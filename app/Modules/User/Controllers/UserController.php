@@ -73,7 +73,8 @@ class UserController extends Controller {
                 'phone_number'=>$user['phone_number'],
                 'email'=>$user['email'],
                 'photo'=>$user['photo'],
-                'channel'=>$user['channel']
+                'channel'=>$user['channel'],
+                'device_id'=>$user['device_id']
             ];
 
             return response()->json(array(
@@ -244,6 +245,10 @@ class UserController extends Controller {
         if(!is_null($request->gender))
         {
             $user->gender=$request->gender;
+        }
+        if(!is_null($request->device_id))
+        {
+            $user->device_id=$request->device_id;
         }
 
         if(!is_null($request->file('image_file')))
