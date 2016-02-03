@@ -17,7 +17,9 @@ class VendorCategoryController extends Controller
      */
     public function index()
     {
-        $categories     = Category::orderBy('created_at', 'DESC')->paginate(15);
+        $categories     = Category::where('type', '=', 'vendor')
+            ->orderBy('created_at', 'DESC')
+            ->paginate(15);
         return view('Merchant::Categories.index', compact('categories'));
     }
 
@@ -40,7 +42,7 @@ class VendorCategoryController extends Controller
     public function store(Request $request)
     {
         $validate   = Validator::make($request->all(), [
-            'name' => 'required|unique:vendor_categories,name',
+            'name' => 'required|unique:categories,name',
         ]);
 
         if($validate->fails()){
@@ -50,6 +52,7 @@ class VendorCategoryController extends Controller
         }else{
             $category   = new Category;
             $category->name     = $request->name;
+            $category->type     = 'vendor';
             $category->description  = $request->description;
 
             if($category->save()){
