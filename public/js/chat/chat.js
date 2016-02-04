@@ -500,11 +500,11 @@ function publish(senderId) {
             });
 
             // append the text to conversation area
-            var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
-            $('.chat-conversation#cc_'+obj.user_name).append(appendElm);
+            //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
+            //$('.chat-conversation#cc_'+obj.user_name).append(appendElm);
 
             // set chat text to null
-            $('.chat-text#ct_'+obj.user_name).val('')
+            $('.chat-text#ct_'+obj.user_name).val('');
         //} else {
             // fail
             //alertify.error("Gagal insert log chat. Periksa koneksi database!");
