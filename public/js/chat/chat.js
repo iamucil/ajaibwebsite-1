@@ -243,7 +243,7 @@ function SubscribeChat() {
 
             if (m.sender_id === authUser.id) {
                 // operator it self
-                var appendElm = '<p class="ajaib-client"><small>' + parseTime(m.time) + '</small>' + m.message + '</p><br />';
+                var appendElm = '<p class="ajaib-operator"><small>' + parseTime(m.time) + '</small>' + m.message + '</p><br />';
                 $('.chat-conversation#cc_' + m.user_name).append(appendElm);
             } else {
                 var serviceSender = ServiceSenderDeviceId(m.sender_auth);
@@ -487,7 +487,7 @@ function publish(senderId) {
             chatFeature.publish({
                 channel: authUser.channel,
                 message: {
-                    "user_name": firstname,
+                    "user_name": obj.user_name,
                     "sender_id": authUser.id,
                     "message": text,
                     "time": datetime
