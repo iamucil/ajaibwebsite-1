@@ -229,87 +229,94 @@ function SubscribeChat() {
         channel: [roles,channel],
         //presence: function(m){console.log(m)},
         message: function (m) {
-            var serviceSender = ServiceSenderDeviceId(m.sender_auth);
-            serviceSender.success(function(success){
-                m.device_id = success.data.device_id;
-            });
-
             //TODO: subscribe chat -> don't forget to disable this debug when it goes online
             logging('subscribe chat '+m);
             logging(m);
 
             // cek valid user based on insert log proses
-            var logResponse = InsertLogChat(m);
+            //var logResponse = InsertLogChat(m);
 
             // valid user permit to chat
-            logResponse.success(function(data){
+            //logResponse.success(function(data){
 
-                if (data.status===201) {
-                    // notifications
-                    sounds.play('audio/chat');
-                    $('.edumix-noft').html('*');
+                //if (data.status===201) {
 
-                    // Grant user access
-                    GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
+            if (m.sender_id === authUser.id) {
+                // operator it self
+                var appendElm = '<p class="ajaib-client"><small>' + parseTime(m.time) + '</small>' + m.message + '</p><br />';
+                $('.chat-conversation#cc_' + m.user_name).append(appendElm);
+            } else {
+                var serviceSender = ServiceSenderDeviceId(m.sender_auth);
+                serviceSender.success(function(success){
+                    m.device_id = success.data.device_id;
+                });
 
-                    // handle times
-                    //var times = moment(m.time, "DD/MM/YYYY HH:mm:ss").fromNow();
+                // notifications
+                sounds.play('audio/chat');
+                $('.edumix-noft').html('*');
 
-                    // user notification should be here
-                    if (!m.user_name || 0 === m.user_name.length) {
-                        // it means users are not serviced yet.
-                        // then push notifications to all operator
-                        // if notification with this id doesn't exist then create it
-                        //if ($('#cn_' + m.sender_id).length === 0) {
-                        //console.log(m);
+                // Grant user access
+                GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
 
-                        // Set parameter for the next usage of AppendChat function
+                // handle times
+                //var times = moment(m.time, "DD/MM/YYYY HH:mm:ss").fromNow();
 
-
-                        // debugging to see the data
-                        // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
-                        //}
-                        var serviced = false;
-                    } else {
-                        var serviced = true;
-                        // users has been serviced
-                        // if users have been chat with this operator, then just change the style
-                        if ($('#ss_' + m.user_name).length !== 0) {
-                            // users has old notification then remove it
-                            // alert($('#ss_'+ m.sender_id).length);
-                            $('div#ss_' + m.user_name).remove();
-
-                            //ChatBoxToggle($('#cb_'+ m.sender_id));
-
-                            //$('#cb_'+ m.sender_id).click(function(){
-                            //    alert($(this).attr('class'));
-                            //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
-                            //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
-                            //    }
-                            //});
-                        }
-                    }
-                    // Set parameter for the next usage of AppendChat function
-                    SetParam(m.sender_id, m);
-                    if ($('#cn_' + m.user_name) !== 0) {
-                        $('#cn_' + m.user_name).remove();
-                    }
-
-                    // create new notification
-                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">'+parseTime(m.time)+'</p></a></li>');
-
-                    // append chat to chat-conversation div
-                    var appendElm = '<p class="ajaib-client"><small>'+parseTime(m.time)+'</small>'+m.message+'</p><br />';
-                    $('.chat-conversation#cc_'+m.user_name).append(appendElm);
-
-                    showNotification(m);
-
-                    // $('.chat-logs').append(m.command+'<br />');
+                // user notification should be here
+                if (!m.user_name || 0 === m.user_name.length) {
+                    // it means users are not serviced yet.
+                    // then push notifications to all operator
+                    // if notification with this id doesn't exist then create it
+                    //if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
+
+                    // Set parameter for the next usage of AppendChat function
+
+
+                    // debugging to see the data
+                    // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
+                    //}
+                    var serviced = false;
                 } else {
-                    logging("There are unauthenticated user's coming");
+                    var serviced = true;
+                    // users has been serviced
+                    // if users have been chat with this operator, then just change the style
+                    if ($('#ss_' + m.user_name).length !== 0) {
+                        // users has old notification then remove it
+                        // alert($('#ss_'+ m.sender_id).length);
+                        $('div#ss_' + m.user_name).remove();
+
+                        //ChatBoxToggle($('#cb_'+ m.sender_id));
+
+                        //$('#cb_'+ m.sender_id).click(function(){
+                        //    alert($(this).attr('class'));
+                        //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
+                        //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
+                        //    }
+                        //});
+                    }
                 }
-            });
+                // Set parameter for the next usage of AppendChat function
+                SetParam(m.sender_id, m);
+                if ($('#cn_' + m.user_name) !== 0) {
+                    $('#cn_' + m.user_name).remove();
+                }
+
+                // create new notification
+                $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+
+                // append chat to chat-conversation div
+                var appendElm = '<p class="ajaib-client"><small>' + parseTime(m.time) + '</small>' + m.message + '</p><br />';
+                $('.chat-conversation#cc_' + m.user_name).append(appendElm);
+
+                showNotification(m);
+
+                // $('.chat-logs').append(m.command+'<br />');
+                //console.log(m);
+                //} else {
+                //    logging("There are unauthenticated user's coming");
+                //}
+                //});
+            }
         },
         /**
          * using callback
@@ -472,6 +479,23 @@ function publish(senderId) {
                     //    "text" : text
                     //};
                     //pushNotification(pushParam);
+                }
+            });
+
+            // publish message to my channel
+            // used to: if operator use difference device/browser
+            chatFeature.publish({
+                channel: authUser.channel,
+                message: {
+                    "user_name": firstname,
+                    "sender_id": authUser.id,
+                    "message": text,
+                    "time": datetime
+                },
+                callback: function(m) {
+                    //TODO: publish event -> don't forget to disable this debug when it goes online
+                    logging('publish event '+m);
+                    logging(m);
                 }
             });
 
