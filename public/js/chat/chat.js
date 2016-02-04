@@ -5,6 +5,7 @@
  */
 <!-- Include the PubNub Library -->
 var chatParameter = [];
+var SenderDeviceId = [];
 var senderId = '';
 var receiverId = '';
 var chatFeature;
@@ -167,7 +168,6 @@ function getDate() {
     return output;
 }
 
-
 function InsertLogChat(param) {
     var datetime=getDate();
     if (param.receiver_id==='') {
@@ -229,6 +229,11 @@ function SubscribeChat() {
         channel: [roles,channel],
         //presence: function(m){console.log(m)},
         message: function (m) {
+            var serviceSender = ServiceSenderDeviceId(m.sender_auth);
+            serviceSender.success(function(success){
+                m.device_id = success.data.device_id;
+            });
+
             //TODO: subscribe chat -> don't forget to disable this debug when it goes online
             logging('subscribe chat '+m);
             logging(m);
@@ -416,6 +421,9 @@ function publish(senderId) {
     logging('sender object '+obj);
     logging(obj);
 
+    // adding device
+    addDeviceToChannel(obj);
+
     // get message to publish
     var text = $('.chat-text#ct_'+obj.user_name).val();
     var geoip   = JSON.parse(Cookies.get('geoip'));
@@ -450,7 +458,8 @@ function publish(senderId) {
                     "sender_id": authUser.id,
                     "sender_channel": channel,
                     "receiver_id": obj.sender_id,
-                    "time": datetime
+                    "time": datetime,
+                    "pn_gcm":{"data" :{"title": 'Ajaib',"message": text}}
                 },
                 callback: function(m) {
                     //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -476,6 +485,35 @@ function publish(senderId) {
             // fail
             //alertify.error("Gagal insert log chat. Periksa koneksi database!");
         }
+    });
+}
+
+
+function ServiceSenderDeviceId(sender_auth) {
+    var domain = window.location.hostname;
+    // Send to API chat
+    var ajaxResponse = $.ajax({
+        type: "GET",
+        url: "https://"+domain+"/api/v1/user",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader("Authorization", 'Bearer ' + sender_auth);
+        }
+    });
+
+    return ajaxResponse;
+}
+
+function addDeviceToChannel(obj) {
+    chatFeature.mobile_gw_provision ({
+        device_id: obj.device_id, // Reg ID you got on your device
+        channel  : obj.sender_channel,
+        op: 'add',
+        gw_type: 'gcm',
+        error : function(msg){console.log(msg);},
+        callback : function(msg){console.log(msg);}
     });
 }
 
