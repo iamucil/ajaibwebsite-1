@@ -11,8 +11,8 @@ class ChatController extends Controller {
 
     public function __construct()
     {
-        $this->middleware("oauth", ['only' => ['index', 'store', 'insertLog']]);
-        $this->middleware("oauth-user", ['only' => ['index', 'store', 'insertLog']]);
+        $this->middleware("oauth", ['only' => ['index', 'store']]);
+        $this->middleware("oauth-user", ['only' => ['index', 'store']]);
         $this->middleware('auth', ['except' => ['index', 'store', 'insertLog']]);
     }
 
@@ -52,14 +52,12 @@ class ChatController extends Controller {
      */
     public function store(Request $request)
     {
-        $chat=Chat::create([
-            'sender_id' => Authorizer::getResourceOwnerId(),
-            'message' => $request->message,
-            'ip_address' => $request->ipaddress,
-            'receiver_id' => $request->receiver_id,
-            'useragent' => $request->useragent,
-            'read' => $request->read
-        ]);
+        $param = array();
+        $param['sender_id'] = Authorizer::getResourceOwnerId();
+        foreach ($request->data as $key => $item) {
+            $param[$key] = $item;
+        }
+        $chat=Chat::create($param);
         if($chat){
             return response()->json(array(
                 'status'=>201,
@@ -136,9 +134,9 @@ class ChatController extends Controller {
          */
         $return 	= [];
 
-        $ownerId =  Authorizer::getResourceOwnerId();
+//        $ownerId =  Authorizer::getResourceOwnerId();
 
-        if(is_null($ownerId))
+        if(is_null($request->sender_id))
         {
             $return['status']= 404;
             $return['message']= 'not found';
