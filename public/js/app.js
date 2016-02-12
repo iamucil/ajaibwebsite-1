@@ -41,6 +41,11 @@ $(function() {
         height: "600px",
         alwaysVisible: true,
         size: "5px"
+    });  
+     $("#right-chat").slimscroll({
+        height: "600px",
+        alwaysVisible: true,
+        size: "5px"
     });
     $(".sidebar-fixed").slimscroll({
         height: "460px",

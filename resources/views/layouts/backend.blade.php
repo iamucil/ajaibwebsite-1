@@ -639,7 +639,7 @@
     <div id="right-chat-menu-off" class="sidetogglemenu">
             <!-- Your right Slidebar content. -->
             <!-- Right Menu -->
-            <aside class="right-off-canvas-menu">
+            <aside class="right-off-canvas-menu" id="right-chat">
                 <!-- whatever you want goes here -->
                 <ul class="off-canvas-list">
                     <li>
@@ -659,7 +659,7 @@
                             <br>Do you receive my email?</a>
                     </li>
 
-                    <li>
+               <!--      <li>
                         <a href="#"><img alt="" class="chat-pic" src="http://api.randomuser.me/portraits/thumb/men/29.jpg"><b>James S. Houchin</b>
                             <br>Thak you, you're wellcome</a>
                     </li>
@@ -690,7 +690,7 @@
                         <a href="#"><img alt="" class="chat-pic chat-pic-gray" src="http://api.randomuser.me/portraits/thumb/women/34.jpg"><b>Teresa M. Boothe</b>
                             <br>Hi, there...</a>
                     </li>
-
+ -->
 
                 </ul>
             </aside>
