@@ -334,6 +334,27 @@ class UserController extends Controller {
         return view('User::index', compact('users'));
     }
 
+    /**
+     * Get list user (role = users) and accessed by operator to be parsed to offline user list
+     * will be init at the first time operator access his/her dashboard
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getListUsersOperator(Request $request)
+    {
+        $users = User::join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->whereIn('roles.name', ['users'])
+            ->orderBy('users.name', 'DESC')
+            ->selectRaw('users.id,users.name as user_name,case when users.firstname = \'\' then users.name else users.firstname end as user,users.lastname,users.channel,users.photo')
+            ->get();
+        return response()->json(array(
+            'status'=>200,
+            'message'=>'Success Retrieve Data',
+            'data'=>$users
+        ),200);
+    }
+
     public function showProfile($id, User $User)
     {
         if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
