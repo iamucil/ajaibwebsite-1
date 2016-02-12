@@ -5,6 +5,7 @@
  */
 <!-- Include the PubNub Library -->
 var chatParameter = [];
+var SenderDeviceId = [];
 var senderId = '';
 var receiverId = '';
 var chatFeature;
@@ -17,6 +18,7 @@ var roles='';
 var channel='';
 var phone='';
 var status='';
+var domain = '';
 
 // model/service properties
 var sharedProperties={};
@@ -31,6 +33,15 @@ $(function () {
         alertify.set({ delay: 10000 });
         alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     }else{
+
+        // get domain from accessed application url
+        domain = window.location.hostname;
+
+        // testing purpose only
+        if (domain === 'localhost') {
+            domain = 'ajaib-local';
+        }
+
         // Web Notification feature detection
         if (!window.Notification) {
             alert('Your browser does not support Web Notifications API.');
@@ -60,16 +71,49 @@ $(function () {
         // operator grant access
         // grant global channel (without auth)
         GrantChat(roles,'',true,true,0);
+
         // grant operator private channel
         GrantChat(channel,authk,true,true,0);
+
         // grant global access to users
         GrantChat("","",true,true,0);
 
-        // listening to 'OPERATOR' channel for group and 'OP-USERNAME' channel for private
+        // listening to 'OPERATOR' channel for group and operator private's channel
         SubscribeChat();
+
+        $('.btn-ajaib').click(function(){
+
+        });
+
+        $('.chat-text').bind('keydown', function (event) {
+            if((event.keyCode || event.charCode) !== 13) return true;
+            $('.chat-text').parent().siblings()[1].click();
+            return false;
+        });
+
+        // init offline user
+        InitOfflineUser();
     }
 
 });
+
+function InitOfflineUser() {
+    // https://ajaib-local/dashboard/users/list
+    $.ajax({
+        type: "GET",
+        url: "https://"+domain+"/dashboard/users/list",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){
+            if (data.status === 200) {
+                var items = data.data
+                for (var i = 0 ; i < items.length ; i++) {
+                    AppendListUsers(items[i],'offline');
+                }
+            }
+        }
+    });
+}
 
 /**
  * Initializing chat feature
@@ -82,7 +126,14 @@ function InitChat() {
         secret_key: skey,
         auth_key: authk,
         ssl : (('https:' == document.location.protocol) ? true : false),
-        uuid: name
+        uuid: roles+'-'+name
+    });
+}
+
+function UsersOnline() {
+    chatFeature.here_now({
+        channel : 'users',
+        callback : function(m){console.log(m)}
     });
 }
 
@@ -167,16 +218,10 @@ function getDate() {
     return output;
 }
 
-
 function InsertLogChat(param) {
     var datetime=getDate();
     if (param.receiver_id==='') {
         param.receiver_id = authUser.id;
-    }
-
-    var domain = window.location.hostname;
-    if (domain === 'localhost') {
-        domain = 'ajaib-local';
     }
 
     if (param.message === '' || !param.message) {
@@ -220,13 +265,112 @@ function GetSharedProperties(key) {
 }
 
 /**
+ * Fungsi untuk retrieve state dari user
+ * @param p, pubnub presence api
+ */
+function GenerateListUsers(p) {
+    if (p.uuid.split('-')[0]!=='operator') {
+        chatFeature.state({
+            channel  : p.uuid,
+            uuid     : p.uuid,
+            callback : function(m){
+                console.log(m);
+                // if not exist then create it
+                AppendListUsers(m,p.action);
+            },
+            error    : function(m){console.log(m)}
+        });
+    }
+}
+
+function TriggerChatOnline() {
+    // jika list online user diklik maka akan menampilkan chatbox dan history untuk user tersebut
+    $('.list-online').click(function(){
+        console.log($(this));
+        // user_name : 085227052004
+        // user : firstname is exist or phone number if firstname not exist
+        // sender_id : user id
+        var arrData = $(this).attr('data').split('-');
+        var channel = $(this).attr('cn-data');
+
+        var obj = {
+            sender_id       : arrData[0],
+            user_name       : arrData[1],
+            user            : arrData[2],
+            sender_channel  :channel
+        }
+        SetParam(obj.sender_id, obj);
+        GenerateChatBox(obj);
+    });
+}
+
+/**
+ * Fungsi yang digunakan untuk membuat list online/offline user pada sidebar di kanan aplikasi
+ * @param m, object passing from pubnub state
+ * @param action, join || leave || timeout
+ */
+function AppendListUsers(m,action) {
+    console.log(m);
+    // show online users
+    if (!m.time) {
+        var time = '';
+    } else {
+        var time = calendar(moment(m.time,       "YYYY-MM-DD HH:mm").toDate());/*26/01/2016 07:00 am*/
+    }
+    if (action === 'join' || action === 'state-change') {
+        // jika user ini ada di list offline user, maka hapus terlebih dahulu elementnya
+        if (ElementIsExist('offline-user-'+ m.user_name)) {
+            $('#offline-user-'+ m.user_name).remove();
+        }
+
+        // pada saat join, jika element list online user untuk username ini tidak ada, maka akan dibuat
+        if (!ElementIsExist('online-user-'+ m.user_name)) {
+            var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel +'" data="'+ m.sender_id + '-' + m.user_name + '-' + m.user +'" id="online-user-'+ m.user_name +'"><img alt="" class="chat-pic" src="https://randomuser.me/api/portraits/thumb/men/25.jpg"><b>'+ m.user +'</b><br>'+time+'</a></li>';
+            $('.online-list').append(elm);
+        }
+
+        // register list-online class to click event
+        TriggerChatOnline(m);
+
+    } else {
+        // jika user leave || timeout, cek apakah user tersebut ada di list online user?
+        // jika ada maka hapus terlebih dahulu dari list online user
+        if (ElementIsExist('online-user-'+ m.user_name)) {
+            $('#online-user-'+ m.user_name).remove();
+        }
+
+        // jika belum ada di list offline user maka akan dibuat
+        if (!ElementIsExist('offline-user-'+ m.user_name)) {
+            var elm = '<li><a href="#" id="offline-user-'+ m.user_name +'"><img alt="" class="chat-pic chat-pic-gray" src="https://randomuser.me/api/portraits/thumb/men/30.jpg"><b>'+m.user+'</b><br>'+time+'</a></li>';
+            $('.offline-list').append(elm);
+        }
+    }
+}
+
+/**
+ * Fungsi yang digunakan untuk mengetahui apakah sebuah element exist or not (by id)
+ * @param idname, nama id dari element
+ * @returns {boolean}, true : jika element exist || false : jika element not exist
+ */
+function ElementIsExist(idname) {
+    if ($('#'+idname).length === 0 || !$('#'+idname)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+/**
  * Initializing for subscribe on group channel and private channel
  * @constructor
  */
 function SubscribeChat() {
     // Subscribe/listen to the OPERATOR channel
     chatFeature.subscribe({
-        channel: [roles,channel],
+        channel: ['users',channel],
+        presence: function(p){
+            GenerateListUsers(p);
+        },
         //presence: function(m){console.log(m)},
         message: function (m) {
             //TODO: subscribe chat -> don't forget to disable this debug when it goes online
@@ -234,83 +378,97 @@ function SubscribeChat() {
             logging(m);
 
             // cek valid user based on insert log proses
-            var logResponse = InsertLogChat(m);
+            //var logResponse = InsertLogChat(m);
 
             // valid user permit to chat
-            logResponse.success(function(data){
+            //logResponse.success(function(data){
 
-                if (data.status===201) {
-                    // notifications
-                    sounds.play('audio/chat');
-                    $('.edumix-noft').html('*');
+                //if (data.status===201) {
 
-                    // Grant user access
-                    GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
+            if (m.sender_id === authUser.id) {
+                // operator it self
+                renderMessage('operator', m.message, m.time, m.user_name);
+                //var appendElm = '<p class="ajaib-operator"><small>' + parseTime(m.time) + '</small>' + m.message + '</p><br />';
+                //$('.chat-conversation#cc_' + m.user_name).append(appendElm);
+            } else {
+                var serviceSender = ServiceSenderDeviceId(m.sender_auth);
+                serviceSender.success(function(success){
+                    m.device_id = success.data.device_id;
+                });
 
-                    // handle times
-                    var times = moment(m.time, "DD/MM/YYYY HH:mm:ss").fromNow();
+                // notifications
+                sounds.play('audio/chat');
+                $('.edumix-noft').html('*');
 
-                    // user notification should be here
-                    if (!m.user_name || 0 === m.user_name.length) {
-                        // it means users are not serviced yet.
-                        // then push notifications to all operator
-                        // if notification with this id doesn't exist then create it
-                        //if ($('#cn_' + m.sender_id).length === 0) {
-                        //console.log(m);
+                // Grant user access
+                GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
 
-                        // Set parameter for the next usage of AppendChat function
+                // handle times
+                //var times = moment(m.time, "DD/MM/YYYY HH:mm:ss").fromNow();
 
-
-                        // debugging to see the data
-                        // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
-                        //}
-                        var serviced = false;
-                    } else {
-                        var serviced = true;
-                        // users has been serviced
-                        // if users have been chat with this operator, then just change the style
-                        if ($('#ss_' + m.user_name).length !== 0) {
-                            // users has old notification then remove it
-                            // alert($('#ss_'+ m.sender_id).length);
-                            $('div#ss_' + m.user_name).remove();
-
-                            //ChatBoxToggle($('#cb_'+ m.sender_id));
-
-                            //$('#cb_'+ m.sender_id).click(function(){
-                            //    alert($(this).attr('class'));
-                            //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
-                            //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
-                            //    }
-                            //});
-                        }
-                    }
-                    // Set parameter for the next usage of AppendChat function
-                    SetParam(m.sender_id, m);
-                    if ($('#cn_' + m.user_name) !== 0) {
-                        $('#cn_' + m.user_name).remove();
-                    }
-
-                    // create new notification
-                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + times + '</p></a></li>');
-
-                    // append chat to chat-conversation div
-                    var appendElm = '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+m.message+'</p><br />';
-                    $('.chat-conversation#cc_'+m.user_name).append(appendElm);
-
-                    showNotification(m);
-
-                    // $('.chat-logs').append(m.command+'<br />');
+                // user notification should be here
+                if (!m.user_name || 0 === m.user_name.length) {
+                    // it means users are not serviced yet.
+                    // then push notifications to all operator
+                    // if notification with this id doesn't exist then create it
+                    //if ($('#cn_' + m.sender_id).length === 0) {
                     //console.log(m);
+
+                    // Set parameter for the next usage of AppendChat function
+
+
+                    // debugging to see the data
+                    // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
+                    //}
+                    var serviced = false;
                 } else {
-                    logging("There are unauthenticated user's coming");
+                    var serviced = true;
+                    // users has been serviced
+                    // if users have been chat with this operator, then just change the style
+                    if ($('#ss_' + m.user_name).length !== 0) {
+                        // users has old notification then remove it
+                        // alert($('#ss_'+ m.sender_id).length);
+                        $('div#ss_' + m.user_name).remove();
+
+                        //ChatBoxToggle($('#cb_'+ m.sender_id));
+
+                        //$('#cb_'+ m.sender_id).click(function(){
+                        //    alert($(this).attr('class'));
+                        //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
+                        //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
+                        //    }
+                        //});
+                    }
                 }
-            });
+                // Set parameter for the next usage of AppendChat function
+                SetParam(m.sender_id, m);
+                if ($('#cn_' + m.user_name) !== 0) {
+                    $('#cn_' + m.user_name).remove();
+                }
+
+                // create new notification
+                $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+
+                // append chat to chat-conversation div
+                renderMessage('client', m.message, m.time, m.user_name);
+                //var appendElm = '<p class="ajaib-client"><small>' + parseTime(m.time) + '</small>' + m.message + '</p><br />';
+                //$('.chat-conversation#cc_' + m.user_name).append(appendElm);
+
+                showNotification(m);
+
+                // $('.chat-logs').append(m.command+'<br />');
+                //console.log(m);
+                //} else {
+                //    logging("There are unauthenticated user's coming");
+                //}
+                //});
+            }
         },
         /**
          * using callback
          */
         connect: function () {
-            console.log("Connected")
+            console.log("Connected");
         },
         disconnect: function () {
             console.log("Disconnected")
@@ -331,31 +489,34 @@ function ChatBoxToggle(elm) {
     }
 }
 
-/**
- * Append chat to chat-conversation box on chat panel
- * @param senderId
- * @param serviced
- * @constructor
- */
-function AppendChat(senderId,serviced) {
-    $('.edumix-noft').html('');
+function ValidateValue(value) {
+    if (value === 'undefined' || !value) {
+        return false;
+    } else {
+        return true;
+    }
+}
 
-    var obj = GetParam(senderId);
+function GenerateChatBox(obj) {
+    // user_name : 085227052004
+    // user : firstname is exist or phone number if firstname not exist
+    // time : to parsing time
+    // message : chat text
+    // sender_id : user id
 
-    // move to div slim scroll
-    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>Just Now !</p></a></div>');
-
-    // remove old notification
-    $('#cn_' + obj.user_name).remove();
-
-    //alert($('.chat-bottom').find('div').attr('id',senderId).attr('id'));
-    //if ($('div#cb_' + obj.sender_id).length === 0) {
-    if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
-        $('.chat-bottom').append('<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' +
+    // if chat box exist then leave it, if not exist then generate
+    //cb_85227052004
+    if (!ElementIsExist('cb_'+obj.user_name)) {
+        if (ValidateValue(obj.time) && ValidateValue(obj.message)) {
+            var chatText = '<p class="ajaib-client"><small>'+parseTime(obj.time)+'</small>'+obj.message+'</p>';
+        } else {
+            var chatText = '';
+        }
+        var elm = '<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' +
             '<a class="chat-pop-over" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
             '<div class="chat-conversation" id="cc_'+obj.user_name+'">' +
-            '<p class="ajaib-client"><small>Sat 7:19 PM</small>'+obj.message+'</p>' +
+            chatText +
             '</div>' +
             '<div class="textarea-nest">' +
             '<div class="form-group">' +
@@ -368,9 +529,35 @@ function AppendChat(senderId,serviced) {
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + obj.sender_id + '\')">Submit</button>' +
             '</div>' +
             '</div>' +
-            '</div>');
+            '</div>';
+        $('.chat-bottom').append(elm);
+
         // reload js
         load_js();
+    }
+}
+
+/**
+ * Append chat to chat-conversation box on chat panel
+ * @param senderId
+ * @param serviced
+ * @constructor
+ */
+function AppendChat(senderId,serviced) {
+    $('.edumix-noft').html('');
+
+    var obj = GetParam(senderId);
+
+    // move to div slim scroll
+    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>'+parseTime(obj.time)+'</p></a></div>');
+
+    // remove old notification
+    $('#cn_' + obj.user_name).remove();
+
+    //alert($('.chat-bottom').find('div').attr('id',senderId).attr('id'));
+    //if ($('div#cb_' + obj.sender_id).length === 0) {
+    if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
+        GenerateChatBox(obj);
     } else {
         // if chat bottom with this id exist, then just append text
         //$('#cb_'+obj.sender_id);
@@ -416,6 +603,9 @@ function publish(senderId) {
     logging('sender object '+obj);
     logging(obj);
 
+    // adding device
+    //addDeviceToChannel(obj);
+
     // get message to publish
     var text = $('.chat-text#ct_'+obj.user_name).val();
     var geoip   = JSON.parse(Cookies.get('geoip'));
@@ -441,6 +631,19 @@ function publish(senderId) {
         if (data.status=='201') {
             // success then publish message
             var datetime = getDate();
+
+            logging({
+                channel: obj.sender_channel,
+                "user_name": firstname,
+                "message": text,
+                "ip": geoip.ip_address,
+                "sender_id": authUser.id,
+                "sender_channel": channel,
+                "receiver_id": obj.sender_id,
+                "time": datetime,
+                "pn_gcm":{"data" :{"title": 'Ajaib',"message": text}}
+            });
+
             chatFeature.publish({
                 channel: obj.sender_channel,
                 message: {
@@ -450,7 +653,8 @@ function publish(senderId) {
                     "sender_id": authUser.id,
                     "sender_channel": channel,
                     "receiver_id": obj.sender_id,
-                    "time": datetime
+                    "time": datetime,
+                    "pn_gcm":{"data" :{"title": 'Ajaib',"message": text}}
                 },
                 callback: function(m) {
                     //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -466,16 +670,62 @@ function publish(senderId) {
                 }
             });
 
+            // publish message to my channel
+            // used to: if operator use difference device/browser
+            chatFeature.publish({
+                channel: authUser.channel,
+                message: {
+                    "user_name": obj.user_name,
+                    "sender_id": authUser.id,
+                    "message": text,
+                    "time": datetime
+                },
+                callback: function(m) {
+                    //TODO: publish event -> don't forget to disable this debug when it goes online
+                    logging('publish event '+m);
+                    logging(m);
+                }
+            });
+
             // append the text to conversation area
-            var appendElm = '<p class="ajaib-operator"><small>Sat 7:19 PM</small>'+text+'</p><br />';
-            $('.chat-conversation#cc_'+obj.user_name).append(appendElm);
+            //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
+            //$('.chat-conversation#cc_'+obj.user_name).append(appendElm);
 
             // set chat text to null
-            $('.chat-text#ct_'+obj.user_name).val('')
+            $('.chat-text#ct_'+obj.user_name).val('');
         } else {
-            // fail
+             fail
             alertify.error("Gagal insert log chat. Periksa koneksi database!");
         }
+    });
+}
+
+
+function ServiceSenderDeviceId(sender_auth) {
+    var domain = window.location.hostname;
+    // Send to API chat
+    var ajaxResponse = $.ajax({
+        type: "GET",
+        url: "https://"+domain+"/api/v1/user",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader("Authorization", 'Bearer ' + sender_auth);
+        }
+    });
+
+    return ajaxResponse;
+}
+
+function addDeviceToChannel(obj) {
+    chatFeature.mobile_gw_provision ({
+        device_id: obj.device_id, // Reg ID you got on your device
+        channel  : obj.sender_channel,
+        op: 'add',
+        gw_type: 'gcm',
+        error : function(msg){console.log(msg);},
+        callback : function(msg){console.log(msg);}
     });
 }
 
@@ -515,25 +765,59 @@ function logging(m) {
 }
 
 function showNotification(data) {
-    var ms = 30000; // close notification after 30sec
+    var ms = 5000; // close notification after 30sec
     var notification = new Notification(data.message || 'Ajaib!', {
         body: 'From: ' + data.user,
         tag: data.sender_channel,
-        icon: 'img/logo.png'
+        icon: 'img/icon-ajaib-80.png'
     });
     notification.onshow = function() {
         setTimeout(notification.close, ms);
     };
 }
 
-/*
-function notification(count) {
-    if (count === 0 || !count) {
-        // empty notif
-        $('.edumix-noft').html('');
-    } else {
-        $('.edumix-noft').html(count);
+function calendar(time) {
+    return moment(time).calendar(null, {
+        lastDay : '[Yesterday] h:hh a',
+        sameDay : '[Today] LT',
+        lastWeek : 'dddd',
+        sameElse : 'DD/MM/YY h:hh a'
+    });
+}
+
+function parseTime(datetime) {
+    // get local time
+    var localTime  = moment(datetime,       "YYYY-MM-DD HH:mm").toDate();
+
+    // whatsapp wannabe
+    return calendar(moment(localTime));/*26/01/2016 07:00 am*/
+}
+
+function renderMessage(actor,text,time, user) {
+    var timeSeparator = '';
+
+    // time to parse
+    var parsedTime = '';
+
+    // get local time
+    var localTime  = moment(time,       "YYYY-MM-DD HH:mm").toDate();
+
+    // whatsapp wannabe
+    var momentTime = calendar(moment(localTime));/*26/01/2016 07:00 am*/
+    var splitMoment = momentTime.split(' '); /*['26/01/2016','07:00','am']*/
+    if (splitMoment.length > 2) {
+        parsedTime = splitMoment[1]+' '+splitMoment[2];
+        if (timeSeparator === '') {
+            // add separator for the first time
+            //elm.append('<li class="history-chat-time"><span>'+splitMoment[0]+'</span></li>');
+            var appendElm = '<p class="ajaib-'+actor+'"><small>' + parsedTime + '</small>' + text + '</p><br />';
+        } else if (splitMoment[0] !== timeSeparator) {
+            // add separator
+            //elm.append('<li class="history-chat-time"><span>'+splitMoment[0]+'</span></li>');
+            var appendElm = '<p class="ajaib-'+actor+'"><small>' + parsedTime + '</small>' + text + '</p><br />';
+        }
+        timeSeparator = splitMoment[0];
     }
 
+    $('.chat-conversation#cc_' + user).append(appendElm);
 }
-*/

@@ -95,7 +95,7 @@ return [
     |
     */
 
-    'log' => 'single',
+    'log' => 'daily',
 
     /*
     |--------------------------------------------------------------------------
@@ -164,6 +164,8 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         App\Providers\ComposerServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
+        DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
+        Aloha\Twilio\Support\Laravel\ServiceProvider::class,
     ],
 
     /*
@@ -177,7 +179,7 @@ return [
     |
     */
 
-    'aliases' => [
+    'aliases' => array (
 
         'App'       => Illuminate\Support\Facades\App::class,
         'Artisan'   => Illuminate\Support\Facades\Artisan::class,
@@ -219,6 +221,8 @@ return [
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Javascript' => Laracasts\Utilities\JavaScript\JavaScriptFacade::class,
-    ],
+        'Breadcrumbs'   => DaveJamesMiller\Breadcrumbs\Facade::class,
+        'Twilio' => Aloha\Twilio\Support\Laravel\Facade::class,
+    ),
 
 ];

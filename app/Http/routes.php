@@ -17,7 +17,7 @@ Route::get('/', function () {
 });
 
 Route::get('/backend', function () {
-    return view('dashboard');
+    return view('dashboard', compact('route'));
 });
 
 Route::group([

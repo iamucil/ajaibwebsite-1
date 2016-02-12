@@ -42,65 +42,65 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <!--  message end -->
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-bell"></i>&nbsp;&nbsp;<span class="label edumix-msg-noft">999</span><span class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-nest" role="menu">
-                        <li class="top-dropdown-nest"><span class="label round bg-green">MESSAGE</span>
-                        </li>
-                        <li class="edumix-sticky-title">
-                            <a href="#">
-                                <h3 class=" text-black"> Big Boss<b class="text-red fontello-record" ></b><span>Just Now<small></small></span>
-                                </h3>
-                                <p class=" text-black">Important task!</p>
-                            </a>
-                        </li>
+                {{--<li class="dropdown">--}}
+                    {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-bell"></i>&nbsp;&nbsp;<span class="label edumix-msg-noft">999</span><span class="caret"></span></a>--}}
+                    {{--<ul class="dropdown-menu dropdown-nest" role="menu">--}}
+                        {{--<li class="top-dropdown-nest"><span class="label round bg-green">MESSAGE</span>--}}
+                        {{--</li>--}}
+                        {{--<li class="edumix-sticky-title">--}}
+                            {{--<a href="#">--}}
+                                {{--<h3 class=" text-black"> Big Boss<b class="text-red fontello-record" ></b><span>Just Now<small></small></span>--}}
+                                {{--</h3>--}}
+                                {{--<p class=" text-black">Important task!</p>--}}
+                            {{--</a>--}}
+                        {{--</li>--}}
 
-                        <li>
-                            <div class="slim-scroll">
+                        {{--<li>--}}
+                            {{--<div class="slim-scroll">--}}
 
-                                <div>
-                                    <a href="#">
-                                        <h3>Noel A. Riley<b class="text-green fontello-record" ></b><span>12:23<small>PM</small></span>
-                                        </h3>
-                                        <p>Dua dua sayang adik kakak</p>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="#">
-                                        <h3>Shirley J. Carneal<b class="text-gray fontello-record" ></b><span>10:11<small>PM</small></span>
-                                        </h3>
-                                        <p>Tiga tiga sayang kekasihku</p>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="#">
-                                        <h3>Paul L. Williamsr<b class="text-gray fontello-record" ></b><span>Yesterday</span>
-                                        </h3>
-                                        <p>Empat empat sayang semuanya</p>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="#">
-                                        <h3>William L. Wilcox<b class="text-gray fontello-record" ></b><span>2 Days Ago</span>
-                                        </h3>
-                                        <p>Yang jomblo kasian deh lu</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="bg-white pull-right">
-                            <a href="#">
-                                <div class="label bg-white">View All</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                                {{--<div>--}}
+                                    {{--<a href="#">--}}
+                                        {{--<h3>Noel A. Riley<b class="text-green fontello-record" ></b><span>12:23<small>PM</small></span>--}}
+                                        {{--</h3>--}}
+                                        {{--<p>Dua dua sayang adik kakak</p>--}}
+                                    {{--</a>--}}
+                                {{--</div>--}}
+                                {{--<div>--}}
+                                    {{--<a href="#">--}}
+                                        {{--<h3>Shirley J. Carneal<b class="text-gray fontello-record" ></b><span>10:11<small>PM</small></span>--}}
+                                        {{--</h3>--}}
+                                        {{--<p>Tiga tiga sayang kekasihku</p>--}}
+                                    {{--</a>--}}
+                                {{--</div>--}}
+                                {{--<div>--}}
+                                    {{--<a href="#">--}}
+                                        {{--<h3>Paul L. Williamsr<b class="text-gray fontello-record" ></b><span>Yesterday</span>--}}
+                                        {{--</h3>--}}
+                                        {{--<p>Empat empat sayang semuanya</p>--}}
+                                    {{--</a>--}}
+                                {{--</div>--}}
+                                {{--<div>--}}
+                                    {{--<a href="#">--}}
+                                        {{--<h3>William L. Wilcox<b class="text-gray fontello-record" ></b><span>2 Days Ago</span>--}}
+                                        {{--</h3>--}}
+                                        {{--<p>Yang jomblo kasian deh lu</p>--}}
+                                    {{--</a>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                        {{--</li>--}}
+                        {{--<li class="bg-white pull-right">--}}
+                            {{--<a href="#">--}}
+                                {{--<div class="label bg-white">View All</div>--}}
+                            {{--</a>--}}
+                        {{--</li>--}}
+                    {{--</ul>--}}
+                {{--</li>--}}
                 <!-- message end -->
                 <!--  notification nest -->
                 <li class="dropdown" id="chat-notification">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat-alt"></i>&nbsp;&nbsp;<span class="label edumix-noft"></span><span class="caret"></span></a>
                     <ul class="dropdown-menu dropdown-nest" role="menu">
-                        <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
+                        <li class="top-dropdown-nest"><span class="label round bg-blue">CHAT NOTIFIACTIONS</span>
                         </li>
                         <li>
                             <div class="slim-scroll">
