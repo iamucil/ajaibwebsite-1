@@ -16,6 +16,7 @@ use File;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
+// use Twilio;
 
 class UserController extends Controller {
     protected $User;
@@ -293,35 +294,11 @@ class UserController extends Controller {
         $result         = $user->where('id', '=', $id)->update(['status' => false]);
         flash()->success('Your data has been deleted');
 
-        // $result         = DB::transaction(function ($id) use ($id) {
-        //     $result     = true;
-        //     $result     &= DB::table('users')->where('id', '=', $id)->update([
-        //         'sttaus' => false
-        //     ]);
-        //     // $result     &= DB::table('role_user')->where('user_id', '=', $id)->delete();
-
-        //     return $result;
-        // });
-
-        // if((bool)$result === true){
-        // }else{
-        //     flash()->error('Unable to delete data user');
-        // }
-
         return redirect()->route('user.list');
     }
 
     public function getListUsers(Request $request)
     {
-        // $data_user  = User::all();
-        // dd($data_user);
-        // foreach ($data_user as $usr) {
-        //     echo '<pre>';
-        //     print_r($usr->roles);
-        //     echo '</pre>';
-        // }
-
-        // die();
         $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereNotIn('roles.name', ['root'])
@@ -331,6 +308,9 @@ class UserController extends Controller {
             ->selectRaw('users.name as username, roles.id as role_id, users.*')
             // ->distinct()
             ->paginate(15);
+        // $sms    = Twilio::message('+6285640427774', 'Your Ajaib Verification code is 801753');
+
+        // dd(Twilio::message('+6285227052004', 'shit'));
         return view('User::index', compact('users'));
     }
 
