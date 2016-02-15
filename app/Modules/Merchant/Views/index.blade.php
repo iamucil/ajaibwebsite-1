@@ -69,7 +69,8 @@
                             <a href="{{ route('vendor.edit', $vendor->id) }}" class="btn btn-default">
                                 <i class="glyphicon glyphicon-pencil"></i>
                             </a>
-                            <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-sm">
+                            {{-- <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-sm" href="http://gogole.com"> --}}
+                            <a href="{{ route('vendor.show', $vendor->id) }}" class="btn btn-default">
                                 <i class="glyphicon glyphicon-list-alt"></i>
                             </a>
 
@@ -103,7 +104,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">×</span></button>
                     <h4 class="modal-title" id="mySmallModalLabel">Small modal</h4></div>
-                <div class="modal-body"> ...</div>
+                <div class="modal-body "> ...</div>
             </div>
         </div>
     </div>

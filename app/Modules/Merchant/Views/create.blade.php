@@ -16,7 +16,7 @@
                     </label>
 
                     <div class="col-sm-2">
-                        {!! Form::select('vendor_category_id', $categories, old('vendor_category_id'), ['placeholder' => 'Pick a category...', 'class' => 'form-control', 'id' => 'select-category']) !!}
+                        {!! Form::select('category_id', $categories, old('category_id'), ['placeholder' => 'Pick a category...', 'class' => 'form-control', 'id' => 'select-category']) !!}
                     </div>
                 </div>
                 <div class="form-group">
@@ -37,44 +37,6 @@
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <fieldset>
-                    <legend>API</legend>
-                    <div class="form-group">
-                        <label for="inputApi" class="col-sm-2 control-label">URL</label>
-
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="inputApi" placeholder="Api Url" name="api"
-                                   value="{{ old('api') }}">
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputApiKey" class="col-sm-2 control-label">Key</label>
-
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="inputApiKey" placeholder="Api Key" name="key"
-                                   value="{{ old('key') }}">
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputApi" class="col-sm-2 control-label">Params</label>
-
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="inputApi" placeholder="Api Parameter"
-                                   name="params" value="{{ old('params') }}">
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputApi" class="col-sm-2 control-label">Method</label>
-
-                        <div class="col-sm-2">
-                            {!! Form::select('method', $methods, old('method'), ['placeholder' => 'Pick a method...', 'class' => 'form-control', 'id' => 'select-method']) !!}
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                </fieldset>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-floppy-disk"></i>

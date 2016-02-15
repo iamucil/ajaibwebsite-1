@@ -37,17 +37,27 @@ Route::get('auth/login', [
    'as' => 'login',
    'uses' => 'Auth\AuthController@getLogin'
 ]);
+
+Route::get('/sign-in', [
+   'as' => 'login',
+   'uses' => 'Auth\AuthController@getLogin'
+]);
 // Route::post('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
 Route::post('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@doLogin']);
+Route::post('/login', ['as' => 'login', 'uses' => 'Auth\AuthController@doLogin']);
 Route::get('auth/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
+Route::get('/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
 Route::get('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@getRegister']);
+Route::get('/register', ['as' => 'register', 'uses' => 'Auth\AuthController@getRegister']);
 Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
+Route::post('/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
 
 /**
  * Success Register
  */
 Route::get('auth/success', ['as' => 'auth.success.get', 'uses' => 'UserController@confirmation']);
+Route::get('/register-success', ['as' => 'auth.success.get', 'uses' => 'UserController@confirmation']);
 
 /**
  * chat client example
