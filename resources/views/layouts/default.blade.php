@@ -29,6 +29,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/css/animate.css') }}">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700,900,500,400italic' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="{{ asset('/js/modernizr.custom.js') }}"></script>
+    <link href="{{ asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
+    <link href="{{ asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>

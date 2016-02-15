@@ -24,6 +24,9 @@
         <link rel="stylesheet" href="{{asset('js/offcanvas/sidetogglemenu.css')}}" />
         <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/alertify.js/themes/alertify.core.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/alertify.js/themes/alertify.default.css') }}">
+
+        <link href="{{ asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
+        <link href="{{ asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
     @show
 
     @section('css')
