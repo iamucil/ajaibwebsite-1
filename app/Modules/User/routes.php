@@ -24,6 +24,10 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::PUT('/users/{user}', ['as' => 'user.update', 'uses' => 'UserController@updateProfile']);
     });
 
+    Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:operator']], function() {
+        Route::get('/users/list', ['as' => 'user.list.operator', 'uses' => 'UserController@getListUsersOperator']);
+    });
+
     Route::group(['prefix'=>'/profile', 'middleware' => 'auth'], function(){
         Route::get('/{user}', ['as' => 'user.profile', 'uses' => 'UserController@showProfile']);
         Route::post('/upload/photo', ['as' => 'user.profile.uploadphoto', 'uses' => 'UserController@uploadPhoto']);

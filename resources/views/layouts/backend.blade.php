@@ -639,7 +639,7 @@
     <div id="right-chat-menu-off" class="sidetogglemenu">
             <!-- Your right Slidebar content. -->
             <!-- Right Menu -->
-            <aside class="right-off-canvas-menu">
+            <aside class="right-off-canvas-menu" id="right-chat">
                 <!-- whatever you want goes here -->
                 <ul class="off-canvas-list">
                     <li>
