@@ -1,43 +1,45 @@
-<?php
-
-namespace App\Modules\Merchant\Controllers;
-
-use Illuminate\Http\Request;
+<?php namespace App\Modules\Transaction\Controllers;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Modules\Merchant\Models\VendorCategory as Category;
+
+use Illuminate\Http\Request;
+use App\Modules\Transaction\Models\Category;
 use Validator;
-class VendorCategoryController extends Controller
+/**
+* FILENAME     : CategoriesController.php
+* @package     : CategoriesController
+*/
+class CategoriesController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
-        $categories     = Category::where('type', '=', 'vendor')
+        $categories         = Category::where('type', '=', 'transaction')
             ->orderBy('created_at', 'DESC')
             ->paginate(15);
-        return view('Merchant::Categories.index', compact('categories'));
+        // $categories         = [];
+        return view("Transaction::Categories.index", compact('categories'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
-        return view('Merchant::Categories.create');
+        return view('Transaction::Categories.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -48,19 +50,19 @@ class VendorCategoryController extends Controller
         if($validate->fails()){
             flash()->error($validate->errors()->first());
 
-            return redirect()->route('vendor.category.create')->withInput($request->except(['_token']))->withErrors($validate);
+            return redirect()->route('transaction.category.create')->withInput($request->except(['_token']))->withErrors($validate);
         }else{
             $category   = new Category;
             $category->name     = $request->name;
-            $category->type     = 'vendor';
+            $category->type     = 'transaction';
             $category->description  = $request->description;
 
             if($category->save()){
                 flash()->success('Penyimpanan data berhasil');
-                return redirect()->route('vendor.category.index');
+                return redirect()->route('transaction.category.index');
             }else{
                 flash()->warning('Penyimpanan data gagal');
-                return redirect()->route('vendor.category.create');
+                return redirect()->route('transaction.category.create');
             }
         }
     }
@@ -69,35 +71,34 @@ class VendorCategoryController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
         $category       = Category::findOrFail($id);
-        return view('Merchant::Categories.show', compact('category'));
+        return view('Transaction::Categories.show', compact('category'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
         $category       = Category::findOrFail($id);
 
-        return view('Merchant::Categories.edit', compact('category'));
+        return view('Transaction::Categories.edit', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         if(!$request->isMethod('put')){
             app::abort('403', 'unauthorized');
@@ -110,16 +111,16 @@ class VendorCategoryController extends Controller
 
         if($validate->fails()){
             flash()->error($validate->errors()->first());
-            return redirect()->route('vendor.category.edit', $id)->withInput($request->except(['_token']))->withErrors($validate);
+            return redirect()->route('transaction.category.edit', $id)->withInput($request->except(['_token']))->withErrors($validate);
         }else{
             $category->name         = $request->name;
             $category->description  = $request->description;
             if($category->save()){
                 flash()->success('Penyimpanan data berhasil');
-                return redirect()->route('vendor.category.index');
+                return redirect()->route('transaction.category.index');
             }else{
                 flash()->warning('Penyimpanan data gagal');
-                return redirect()->route('vendor.category.edit', $id);
+                return redirect()->route('transaction.category.edit', $id);
             }
         }
     }
@@ -128,7 +129,7 @@ class VendorCategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
@@ -137,6 +138,7 @@ class VendorCategoryController extends Controller
 
         flash()->success('Data terhapus');
 
-        return redirect()->route('vendor.category.index');
+        return redirect()->route('transaction.category.index');
     }
 }
+?>
