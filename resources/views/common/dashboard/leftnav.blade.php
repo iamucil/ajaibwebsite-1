@@ -107,12 +107,11 @@
                             </a>
                             <ul>
                                 <li>
-                                    <a href="#" title="Inbox">Inbox
-                                        <div class="noft-blue bg-red" style="display: inline-block; float: none;">Transaction</div>
+                                    <a href="#" title="Inbox">Transactions
+                                        <div class="noft-blue bg-red" style="display: inline-block; float: none;">Categories</div>
                                     </a>
                                 </li>
                                 <li>
-
                                     <a href="#" title="Compose">Reports</a>
                                 </li>
                             </ul>
@@ -124,7 +123,23 @@
                                     <span>Chat&nbsp;
                                 <small class="side-menu-noft">Chating</small></span>
                             </a>
+                        </li>
+                        <li>
+                            <a class="tooltip-tip" href="#" title="Transaction">
+                                <i class="fontello-tag"></i>
+                                <span>Transactions</span>
 
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="#" title="Inbox">Categories
+                                        <div class="noft-blue bg-red" style="display: inline-block; float: none;">Transaction</div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" title="Compose">Reports</a>
+                                </li>
+                            </ul>
                         </li>
                     @endif
                 </ul>
