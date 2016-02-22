@@ -13,16 +13,13 @@ Transaction Categories
                         Tambah Kategori
                     </a>
                     <a class="btn btn-default" role="button" href="{{ route('transactions.index') }}">
-                        Daftar Vendor
+                        Daftar Transaksi
                     </a>
-                    {{-- <button type="button" class="btn btn-default">Tambah Kategory</button>
-                    <button type="button" class="btn btn-default">Daftar Vendor</button> --}}
-                    {{-- <button type="button" class="btn btn-default">Right</button> --}}
                 </div>
             </div>
             <h3 class="box-title">
                 <i class="fontello-th-large-outline"></i>
-                <span>Vendor Category</span>
+                <span>Kategori Transaksi</span>
             </h3>
         </div>
         <!-- /.box-header -->
@@ -39,7 +36,7 @@ Transaction Categories
                     Deskripsi
                 </th>
                 <th style="width: 30px;">
-                    Transactions
+                    Transaksi
                 </th>
                 <th style="width: 90px;">
                     Aksi

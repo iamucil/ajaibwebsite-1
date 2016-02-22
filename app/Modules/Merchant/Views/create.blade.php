@@ -7,8 +7,7 @@
 @section('content')
     <div class="box bg-white">
         <div class="box-body pad-forty" style="display: block;">
-            <form class="form-horizontal" novalidate="true" method="post" action="{{ route('vendor.store') }}"
-                  enctype="mutipart/form-data">
+            <form class="form-horizontal" novalidate="true" method="post" action="{{ route('vendor.store') }}" enctype="mutipart/form-data">
                 {{ csrf_field() }}
                 <div class="form-group">
                     <label for="select-role" class="col-sm-2 control-label">
