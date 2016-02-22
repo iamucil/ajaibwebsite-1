@@ -4,6 +4,9 @@
     Transaction - ADD
 @stop
 
+@section('script')
+    @parent
+@stop
 @section('content')
 <div class="box bg-white">
     <div class="box-body pad-forty" style="display: block;">
@@ -12,7 +15,7 @@
                 Module Actions
             </div>
             <div class="col-sm-9">
-                <form class="form-horizontal" method="post" action="{{ route('transactions.store') }}" enc-type="multipart/form-data">
+                <form class="form-horizontal" method="post" action="{{ route('transactions.store') }}" enc-type="multipart/form-data" name="add-transaction" id="frm-transaction">
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label for="tanggal" class="col-sm-2 control-label">Tanggal</label>
@@ -67,9 +70,27 @@
 
 @section('script-bottom')
     @parent
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js" type="text/javascript"></script>
     <script language="javascript">
         $(function() {
-            console.log('add some transaction')
+            var $form       = document.forms['frm-transaction'];
+            var $quantity   = $form.quantity;
+            var $amount     = $form.amount;
+            var $total      = $form.total;
+            $('#txt-quantity').maskMoney();
+            $('#txt-amount').maskMoney();
+
+            var changeAmount    = function () {
+                var qty     = parseFloat($quantity.value.replace(',', ''));
+                var amnt    = parseFloat($amount.value.replace(',',''));
+
+                qty         = isNaN(qty) ? 1 : qty;
+                amnt        = isNaN(amnt) ? 0 : amnt;
+                $total.value    = qty*amnt;
+                $('#sub-total').maskMoney();
+            }
+            $quantity.onkeyup  = changeAmount;
+            $amount.onkeyup    = changeAmount;
         });
     </script>
 @stop

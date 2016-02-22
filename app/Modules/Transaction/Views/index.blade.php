@@ -43,7 +43,17 @@ Transaction
                 </thead>
                 <tbody>
                     @forelse ($transactions as $transaction)
-
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                                {{ $transaction->category->name }}
+                            </td>
+                        </tr>
                     @empty
                         <tr>
                             <th colspan="4">

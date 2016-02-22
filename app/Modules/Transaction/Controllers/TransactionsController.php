@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Modules\Transaction\Models\Transaction;
 use App\Modules\Transaction\Models\Category;
+use Validator;
 
 class TransactionsController extends Controller {
 
@@ -40,7 +41,36 @@ class TransactionsController extends Controller {
      */
     public function store(Request $request)
     {
-        dd($request->tanggal);
+        $transaction    = new Transaction;
+        $validate       = Validator::make($request->all(), [
+            'tanggal' => 'required',
+            'category_id' => 'required',
+            'quantity' => 'required',
+            'amount' => 'required',
+        ]);
+
+        if($validate->fails()){
+            flash()->error($validate->errors()->first());
+
+            return redirect()->route('transactions.create')
+                ->withInput($request->except(['_token']))
+                ->withErrors($validate);
+        }else{
+            $transaction->category_id   = $request->category_id;
+            $transaction->tanggal       = date('Y-m-d', strtotime($request->tanggal));
+            $transaction->quantity      = str_replace(',', '', $request->quantity);
+            $transaction->amount        = str_replace(',', '', $request->amount);
+            $transaction->keterangan    = $request->keterangan;
+
+            if($transaction->save()){
+                flash()->success('Penyimpanan data berhasil');
+                return redirect()->route('transactions.index');
+            }else{
+                flash()->error('Penyimpanan data gagal');
+                return redirect()->route('transactions.create')
+                    ->withInput($request->except(['_token']));
+            }
+        }
     }
 
     /**
