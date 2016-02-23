@@ -799,7 +799,7 @@ function publish(senderId) {
     logging(obj);
 
     // adding device
-    //addDeviceToChannel(obj);
+    addDeviceToChannel(obj);
 
     // get message to publish
     var text = $('.chat-text#ct_'+obj.user_name).val();
