@@ -3,6 +3,7 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Modules\Chat\Models\Chat;
+use GuzzleHttp\Psr7\Response;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 use Illuminate\Http\Request;
@@ -61,7 +62,8 @@ class ChatController extends Controller {
         if($chat){
             return response()->json(array(
                 'status'=>201,
-                'message'=>'Success Saving'
+                'message'=>'Success Saving',
+                'data'=>$chat
             ),201);
         }else{
             return response()->json(array(
@@ -102,6 +104,46 @@ class ChatController extends Controller {
     public function update($id, Request $request)
     {
         //
+        $chat = Chat::find($id);
+        if(is_null($chat))
+        {
+            return response()->json(array(
+                'status'=>404,
+                'message'=>'Data Not Found'
+            ),404);
+        }
+        if (!$chat->receiver_id == nullOrEmptyString())
+        {
+            $chat->receiver_id = $request->receiver_id;
+            $chat->read = $request->read;
+            $success=$chat->save();
+            if ($success)
+            {
+                $status = 201;
+                $message = 'Success Updating';
+            } else
+            {
+                $status = 500;
+                $message = 'Error Updating';
+            }
+
+        } else
+        {
+            if ($chat->receiver_id != auth()->user()->id)
+            {
+                $status = 500;
+                $message = 'Handled by others';
+            } else
+            {
+                $status = 201;
+                $message = 'You are the owner';
+            }
+        }
+
+        return response()->json(array(
+            'status'=>$status,
+            'message'=>$message
+        ),200);
     }
 
     /**
@@ -153,6 +195,7 @@ class ChatController extends Controller {
             if($chat){
                 $return['status'] = 201;
                 $return['message'] = 'success';
+                $return['data'] = $chat;
             }else{
                 $return['status'] = 500;
                 $return['message'] = 'error';
@@ -162,6 +205,18 @@ class ChatController extends Controller {
         return response()->json($return);
         // get user login
         #echo var_dump(auth()->user());
+    }
+
+    public function chatLog($id,Response $response)
+    {
+        $ownerId = auth()->user()->id;
+        $chat= Chat::whereRaw('((sender_id = '.$ownerId.' or receiver_id = '.$ownerId.') and (sender_id = '.$id.' or receiver_id = '.$id.'))')
+            ->get();
+        return response()->json(array(
+            'status'=>200,
+            'message'=>'success retrieve',
+            'data'=>$chat
+        ),200);
     }
 
 }

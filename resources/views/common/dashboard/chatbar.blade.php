@@ -6,7 +6,7 @@
 @section('script-lib')
     @parent
     <!-- Include the PubNub Library -->
-    <script language="javascript" src="https://cdn.pubnub.com/pubnub-dev.js"></script>
+    <script language="javascript" src="https://cdn.pubnub.com/pubnub-3.10.2.min.js"></script>
     <!-- Include the Chat functions -->
     <script language="javascript" src="{{secure_asset('/js/chat/chat.js')}}"></script>
     <script language="javascript" src="{{secure_asset('/js/sound.js')}}"></script>

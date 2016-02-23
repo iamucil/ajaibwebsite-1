@@ -6,6 +6,7 @@ use App\User;
 use App\Role;
 use App\Country;
 use App\Http\Requests;
+use Twilio;
 
 /**
  * FILENAME     : UserRepository.php
@@ -58,6 +59,7 @@ class UserRepository
                     ]);
                     $mail_template  = 'emails.authentication';
                     $user           = $query->first();
+//                    Twilio::message('+'.$user->phone_number, 'Your Ajaib Verification code is '.$user->verification_code);
                 }else{
                     $mail_template  = 'emails.greeting';
                 }
@@ -98,6 +100,7 @@ class UserRepository
         $user->verification_code    = $verificationCode;
         $user->status               = true;
         if($user->save()) {
+//            Twilio::message('+'.$user->phone_number, 'Your Ajaib Verification code is '.$user->verification_code);
             Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
                 $mail->from('noreply@getajaib.com', 'Ajaib');
                 $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
