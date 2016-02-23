@@ -535,7 +535,7 @@ function SubscribeChat() {
                             });
 
                             // notifications
-                            //sounds.play('audio/chat');
+                            $.playSound('audio/chat');
                             $('.edumix-noft').html('*');
 
                             // Grant user access
@@ -575,6 +575,7 @@ function SubscribeChat() {
                             showNotification(m,false);
                         } else if (cg.channels.length===1&& cg.channels[0]===authUser.channel) {
                             // operator itu sendiri
+                            $.playSound('audio/chat');
                             $('.edumix-noft').html('*');
                             // Set parameter for the next usage of AppendChat function
                             SetParam(m.sender_id, m);
@@ -803,12 +804,18 @@ function publish(senderId) {
 
     // get message to publish
     var text = $('.chat-text#ct_'+obj.user_name).val();
-    var geoip   = JSON.parse(Cookies.get('geoip'));
+    if (typeof Cookies.get('geoip') !== "undefined") {
+        var geoip  = JSON.parse(Cookies.get('geoip'));
+        var ip = geoip.ip_address;
+    } else {
+        var ip = "null";
+    }
+
     var param = {
         sender_id: authUser.id,
         receiver_id: obj.sender_id,
         message: text,
-        ip: geoip.ip_address,
+        ip: ip,
         useragent: navigator.userAgent,
         read: getDate(),
         sender_auth: obj.sender_auth
