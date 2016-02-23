@@ -20,6 +20,8 @@ var phone='';
 var status='';
 var domain = '';
 
+var timeSeparator = '';
+
 // model/service properties
 var sharedProperties={};
 var logResponse='';
@@ -136,6 +138,73 @@ function UsersOnline() {
         callback : function(m){console.log(m)}
     });
 }
+
+//=========================== channel group purpose ==================//
+function GrantChannelGroup(channel) {
+    chatFeature.grant({
+        channel_group : "cg-"+channel,
+        //auth_key      : authk,
+        channel       : authUser.channel,
+        read          : true,
+        write         : true,
+        manage        : true,      // <-- Manage Permission TRUE
+        callback      : function(c){console.log(c);},
+        error         : function(c){displayCallback(c)}
+    });
+}
+
+function AddChannelToGroupChannel(channel) {
+    chatFeature.channel_group_add_channel({
+        channel_group: "cg-"+channel,
+        channel: authUser.channel,
+        callback: function(m) {
+            console.log("CG-Add: ", m);
+        }
+    });
+}
+
+function RemoveChannelGroupList(channel) {
+    chatFeature.channel_group_remove_channel({
+        channel: authUser.channel,
+        channel_group: "cg-"+channel,
+        callback: function(c){displayCallback(c)},
+        error: function(c){displayCallback(c)}
+    });
+}
+
+function ManipulateChannelGroupList(channel) {
+    chatFeature.channel_group_list_channels({
+        channel_group: "cg-"+channel,
+        callback: function(m) {
+            console.log("FRIENDLIST: ", m);
+
+            var list = {};
+
+            if (m.channels.length>1) {
+                list.status = '0';
+                list.data = m;
+                logging('impossible !');
+            } else if (m.channels.length===0) {
+                // belum dihandle oleh operator lain
+                AddChannelToGroupChannel(channel);
+                list.status = '1';
+                list.data = m;
+            } else {
+                list.status = '0';
+                list.data = m;
+                //alertify.error("This user is chatting by other operator");
+                //return false;
+            }
+            SetSharedProperties("cg-"+channel,list);
+        }
+        //error: function(){
+            //displayCallback();
+            //alertify.error("This user is chatting by other operator");
+            //return false;
+        //}
+    });
+}
+//=========================== channel group purpose ==================//
 
 /**
  * Function to granting user using Pubnub Access Manager
@@ -269,6 +338,7 @@ function GetSharedProperties(key) {
  * @param p, pubnub presence api
  */
 function GenerateListUsers(p) {
+    logging(p);
     if (p.uuid.split('-')[0]!=='operator') {
         chatFeature.state({
             channel  : p.uuid,
@@ -283,24 +353,86 @@ function GenerateListUsers(p) {
     }
 }
 
+function TriggerCloseChat() {
+    $('.close-box').click(function(){
+        //alertify.confirm('Are you sure want to close this conversation?',RemoveChannelGroupList());
+        //alertify.confirm('Are you sure want to close this conversation?',);
+        var elm = $(this);
+        return alertify.confirm("Are you sure want to close this conversation?", function (e) {
+            if (e) {
+                CloseChatBox(elm);
+            } else {
+                // nothing happend
+            }
+        });
+    });
+}
+
+function CloseChatBox(elm) {
+    RemoveChannelGroupList(elm.siblings("a").attr("data-cn"));
+    elm.parent().remove();
+}
+
+/**
+ * fungsi untuk handle ketika list online user diklik
+ * @constructor
+ */
 function TriggerChatOnline() {
     // jika list online user diklik maka akan menampilkan chatbox dan history untuk user tersebut
     $('.list-online').click(function(){
-        console.log($(this));
         // user_name : 085227052004
         // user : firstname is exist or phone number if firstname not exist
         // sender_id : user id
         var arrData = $(this).attr('data').split('-');
         var channel = $(this).attr('cn-data');
 
-        var obj = {
-            sender_id       : arrData[0],
-            user_name       : arrData[1],
-            user            : arrData[2],
-            sender_channel  :channel
-        }
-        SetParam(obj.sender_id, obj);
-        GenerateChatBox(obj);
+        // grant this operator
+        GrantChannelGroup(channel);
+
+        // get other operators that handle this users
+        chatFeature.channel_group_list_channels({
+            channel_group: "cg-"+channel,
+            callback: function(m) {
+                console.log("FRIENDLIST: ", m);
+                if (m.channels.length>1) {
+                    logging('impossible !');
+                } else if (m.channels.length===0) {
+                    // belum dihandle oleh operator lain
+                    AddChannelToGroupChannel(channel);
+                    var obj = {
+                        sender_id       : arrData[0],
+                        user_name       : arrData[1],
+                        user            : arrData[2],
+                        sender_channel  :channel
+                    };
+                    SetParam(obj.sender_id, obj);
+                    GenerateChatBox(obj);
+                } else if (m.channels.length===1&& m.channels[0]===authUser.channel) {
+                    // operator itu sendiri
+                    var obj = {
+                        sender_id       : arrData[0],
+                        user_name       : arrData[1],
+                        user            : arrData[2],
+                        sender_channel  :channel
+                    };
+                    SetParam(obj.sender_id, obj);
+                    GenerateChatBox(obj);
+                } else {
+                    // operator yang melayani lebih dari satu
+                    // cek channel groupnya
+                }
+            }
+        });
+
+        // check if this user is not handled by other operator
+        //chatFeature.where_now({
+        //    channel  : channel,
+        //    uuid: channel,
+        //    callback : function(m){
+        //        logging('here now');
+        //        logging(m);
+        //    }
+        //});
     });
 }
 
@@ -310,7 +442,6 @@ function TriggerChatOnline() {
  * @param action, join || leave || timeout
  */
 function AppendListUsers(m,action) {
-    console.log(m);
     // show online users
     if (!m.time) {
         var time = '';
@@ -377,91 +508,97 @@ function SubscribeChat() {
             logging('subscribe chat '+m);
             logging(m);
 
-            // cek valid user based on insert log proses
-            //var logResponse = InsertLogChat(m);
-
-            // valid user permit to chat
-            //logResponse.success(function(data){
-
-                //if (data.status===201) {
-
             if (m.sender_id === authUser.id) {
                 // operator it self
                 renderMessage('operator', m.message, m.time, m.user_name);
-                //var appendElm = '<p class="ajaib-operator"><small>' + parseTime(m.time) + '</small>' + m.message + '</p><br />';
-                //$('.chat-conversation#cc_' + m.user_name).append(appendElm);
             } else {
-                var serviceSender = ServiceSenderDeviceId(m.sender_auth);
-                serviceSender.success(function(success){
-                    m.device_id = success.data.device_id;
+                console.log("masuk sini");
+                console.log(m);
+                GrantChannelGroup(m.sender_channel);
+                // get other operators that handle this users
+                chatFeature.channel_group_list_channels({
+                    channel_group: "cg-"+m.sender_channel,
+                    callback: function(cg) {
+
+                        // cek channel group nya dia
+                        // jika sudah ada operator yang handle maka hanya munculkan notifikasi di operator yang handle
+
+                        console.log("FRIENDLIST: ", cg);
+                        if (cg.channels.length>1) {
+                            logging('impossible !');
+                        } else if (cg.channels.length===0) {
+                            // belum dihandle oleh operator lain
+                            // broadcast ke semua operator
+                            var serviceSender = ServiceSenderDeviceId(m.sender_auth);
+                            serviceSender.success(function(success){
+                                m.device_id = success.data.device_id;
+                            });
+
+                            // notifications
+                            //sounds.play('audio/chat');
+                            $('.edumix-noft').html('*');
+
+                            // Grant user access
+                            GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
+
+                            // handle times
+                            //var times = moment(m.time, "DD/MM/YYYY HH:mm:ss").fromNow();
+
+                            // user notification should be here
+                            // users has been serviced
+                            // if users have been chat with this operator, then just change the style
+                            if ($('#ss_' + m.user_name).length !== 0) {
+                                // users has old notification then remove it
+                                // alert($('#ss_'+ m.sender_id).length);
+                                $('div#ss_' + m.user_name).remove();
+                            }
+
+                            if ($('#ss_' + m.user_name).length !== 0) {
+                                // users has old notification then remove it
+                                $('div#ss_' + m.user_name).remove();
+                            }
+
+                            // Set parameter for the next usage of AppendChat function
+                            SetParam(m.sender_id, m);
+                            if ($('#cn_' + m.user_name) !== 0) {
+                                $('#cn_' + m.user_name).remove();
+                            }
+
+                            // create new notification
+                            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+
+                            // append chat to chat-conversation div
+                            if (ElementIsExist('cb_'+m.user_name)) {
+                                renderMessage('client', m.message, m.time, m.user_name);
+                            }
+
+                            showNotification(m,false);
+                        } else if (cg.channels.length===1&& cg.channels[0]===authUser.channel) {
+                            // operator itu sendiri
+                            $('.edumix-noft').html('*');
+                            // Set parameter for the next usage of AppendChat function
+                            SetParam(m.sender_id, m);
+                            if ($('#cn_' + m.user_name) !== 0) {
+                                $('#cn_' + m.user_name).remove();
+                            }
+
+                            // create new notification
+                            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+
+                            // append chat to chat-conversation div
+                            if (ElementIsExist('cb_'+m.user_name)) {
+                                renderMessage('client', m.message, m.time, m.user_name);
+                            }
+
+                            showNotification(m,true);
+                        } else {
+                            // operator yang melayani lebih dari satu
+                            // cek channel groupnya
+
+                        }
+                    },
+                    error: function(m){logging('error on channel group list');console.log(m)}
                 });
-
-                // notifications
-                sounds.play('audio/chat');
-                $('.edumix-noft').html('*');
-
-                // Grant user access
-                GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
-
-                // handle times
-                //var times = moment(m.time, "DD/MM/YYYY HH:mm:ss").fromNow();
-
-                // user notification should be here
-                if (!m.user_name || 0 === m.user_name.length) {
-                    // it means users are not serviced yet.
-                    // then push notifications to all operator
-                    // if notification with this id doesn't exist then create it
-                    //if ($('#cn_' + m.sender_id).length === 0) {
-                    //console.log(m);
-
-                    // Set parameter for the next usage of AppendChat function
-
-
-                    // debugging to see the data
-                    // console.log(m.user_name+'||'+JSON.stringify(GetParam(m.sender_id)));
-                    //}
-                    var serviced = false;
-                } else {
-                    var serviced = true;
-                    // users has been serviced
-                    // if users have been chat with this operator, then just change the style
-                    if ($('#ss_' + m.user_name).length !== 0) {
-                        // users has old notification then remove it
-                        // alert($('#ss_'+ m.sender_id).length);
-                        $('div#ss_' + m.user_name).remove();
-
-                        //ChatBoxToggle($('#cb_'+ m.sender_id));
-
-                        //$('#cb_'+ m.sender_id).click(function(){
-                        //    alert($(this).attr('class'));
-                        //    if ($('#cb_'+ m.sender_id).hasClass('chat-blink')) {
-                        //        $('#cb_'+ m.sender_id).removeClass('chat-blink');
-                        //    }
-                        //});
-                    }
-                }
-                // Set parameter for the next usage of AppendChat function
-                SetParam(m.sender_id, m);
-                if ($('#cn_' + m.user_name) !== 0) {
-                    $('#cn_' + m.user_name).remove();
-                }
-
-                // create new notification
-                $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\',' + serviced + ')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
-
-                // append chat to chat-conversation div
-                renderMessage('client', m.message, m.time, m.user_name);
-                //var appendElm = '<p class="ajaib-client"><small>' + parseTime(m.time) + '</small>' + m.message + '</p><br />';
-                //$('.chat-conversation#cc_' + m.user_name).append(appendElm);
-
-                showNotification(m);
-
-                // $('.chat-logs').append(m.command+'<br />');
-                //console.log(m);
-                //} else {
-                //    logging("There are unauthenticated user's coming");
-                //}
-                //});
             }
         },
         /**
@@ -512,11 +649,11 @@ function GenerateChatBox(obj) {
         } else {
             var chatText = '';
         }
-        var elm = '<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' +
-            '<a class="chat-pop-over" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
+        var elm = '<div id=\"cb_'+ obj.user_name + '\"class="chat-list chat-active">' + '<div class="close-box">X</div>' +
+            '<a class="chat-pop-over" data-cn="'+obj.sender_channel+'" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
             '<div class="chat-conversation" id="cc_'+obj.user_name+'">' +
-            chatText +
+            //chatText +
             '</div>' +
             '<div class="textarea-nest">' +
             '<div class="form-group">' +
@@ -524,47 +661,105 @@ function GenerateChatBox(obj) {
             '<span class="fontello-camera"></span>' +
             '</div>' +
             '<div class="form-group">' +
-            '<textarea class="form-control chat-text" id="ct_'+obj.user_name+'" onkeyup="" rows="3"></textarea>' +
+            '<textarea class="form-control chat-text" id="ct_'+obj.user_name+'" onkeyup="whileTyping('+obj.sender_channel+');" rows="3"></textarea>' +
             '</div>' +
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + obj.sender_id + '\')">Submit</button>' +
             '</div>' +
             '</div>' +
             '</div>';
         $('.chat-bottom').append(elm);
-
+        RenderHistory(obj,obj.user_name);
         // reload js
         load_js();
+
+        //PUBNUB.bind( 'keyup', $("#ct_"+obj.user_name), function(e) {
+        //
+        //    (e.keyCode || e.charCode) === 13 && publish('\'' + obj.sender_id + '\'');
+        //});
+        TriggerCloseChat();
+        logging($("#cc_"+obj.user_name));
+        $("#cc_"+obj.user_name).animate({ scrollTop: $("#cc_"+obj.user_name).prop("scrollHeight")}, 1000);
     }
+}
+
+
+function RenderHistory(obj, username) {
+    $.ajax({
+        type: "GET",
+        url: "https://"+domain+"/dashboard/chat/"+obj.sender_id,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){
+            if (data.status === 200) {
+                var historyData = data.data;
+                timeSeparator = '';
+                for (i = 0 ; i < historyData.length ; i++) {
+                    // since timezone set to UTC in config/app.php then convert its create_at & updated_at to
+                    // local time
+
+                    var utcTime = moment.utc(historyData[i].created_at);
+                    var localTime = moment(utcTime).toDate();
+
+                    if (historyData[i].sender_id === authUser.id) {
+                        // operator
+                        renderMessage('operator',historyData[i].message,localTime,username);
+                    } else {
+                        // user
+                        renderMessage('client',historyData[i].message,localTime,username);
+                    }
+                }
+            } else {
+                alert('can\'t retrieve chat history');
+            }
+        }
+    });
 }
 
 /**
  * Append chat to chat-conversation box on chat panel
  * @param senderId
- * @param serviced
  * @constructor
  */
-function AppendChat(senderId,serviced) {
+function AppendChat(senderId) {
     $('.edumix-noft').html('');
 
     var obj = GetParam(senderId);
 
-    // move to div slim scroll
-    $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>'+parseTime(obj.time)+'</p></a></div>');
+    // update receiver id and read timestamp
+    $.ajax({
+        type: "PUT",
+        url: "https://"+domain+"/dashboard/chat/"+obj.message_id,
+        data: {
+            "receiver_id":authUser.id,
+            "read":getDate()
+        },
+        success: function(data){
+            console.log(data);
+            if (data.status === 201) {
+                GrantChannelGroup(obj.sender_channel);
+                AddChannelToGroupChannel(obj.sender_channel);
 
-    // remove old notification
-    $('#cn_' + obj.user_name).remove();
+                // move to div slim scroll
+                $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>'+parseTime(obj.time)+'</p></a></div>');
 
-    //alert($('.chat-bottom').find('div').attr('id',senderId).attr('id'));
-    //if ($('div#cb_' + obj.sender_id).length === 0) {
-    if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
-        GenerateChatBox(obj);
-    } else {
-        // if chat bottom with this id exist, then just append text
-        //$('#cb_'+obj.sender_id);
+                // remove old notification
+                $('#cn_' + obj.user_name).remove();
 
-        // blinking chat bottom
-        $('#cb_'+ obj.user_name).addClass('');
-    }
+                if ($('#cb_'+ obj.user_name).length === 0 || !$('#cb_'+ obj.user_name)) {
+                    GenerateChatBox(obj);
+                } else {
+                    // if chat bottom with this id exist, then just append text
+                    //$('#cb_'+obj.sender_id);
+
+                    // blinking chat bottom
+                    $('#cb_'+ obj.user_name).addClass('');
+                }
+            } else {
+                // remove old notification
+                $('#cn_' + obj.user_name).remove();
+            }
+        }
+    });
 }
 
 /**
@@ -694,7 +889,7 @@ function publish(senderId) {
             // set chat text to null
             $('.chat-text#ct_'+obj.user_name).val('');
         } else {
-             fail
+            // fail
             alertify.error("Gagal insert log chat. Periksa koneksi database!");
         }
     });
@@ -729,8 +924,13 @@ function addDeviceToChannel(obj) {
     });
 }
 
-function whileTyping() {
-
+function whileTyping(ch) {
+    chatFeature.state({
+        channel: ch,
+        uuid: roles+'-'+name,
+        state: {"action" : "isTyping"},
+        callback: function(m){console.log(JSON.stringify(m))}
+    });
 }
 
 // For todays date;
@@ -764,23 +964,37 @@ function logging(m) {
     console.log(m);
 }
 
-function showNotification(data) {
-    var ms = 5000; // close notification after 30sec
-    var notification = new Notification(data.message || 'Ajaib!', {
-        body: 'From: ' + data.user,
-        tag: data.sender_channel,
-        icon: 'img/icon-ajaib-80.png'
-    });
-    notification.onshow = function() {
-        setTimeout(notification.close, ms);
-    };
+function showNotification(data,handled) {
+    if (handled && data.receiver_id === authUser.id) {
+        // inginnya dimunculkan hanya di operator yang menyervis si user
+        var ms = 5000; // close notification after 30sec
+        var notification = new Notification(data.message || 'Ajaib!', {
+            body: 'From: ' + data.user,
+            tag: data.sender_channel,
+            icon: 'img/icon-ajaib-80.png'
+        });
+        notification.onshow = function () {
+            setTimeout(notification.close, ms);
+        };
+    } else {
+        // inginnya dimunculkan hanya di operator yang menyervis si user
+        var ms = 5000; // close notification after 30sec
+        var notification = new Notification(data.message || 'Ajaib!', {
+            body: 'From: ' + data.user,
+            tag: data.sender_channel,
+            icon: 'img/icon-ajaib-80.png'
+        });
+        notification.onshow = function() {
+            setTimeout(notification.close, ms);
+        };
+    }
 }
 
 function calendar(time) {
     return moment(time).calendar(null, {
         lastDay : '[Yesterday] h:hh a',
         sameDay : '[Today] LT',
-        lastWeek : 'dddd',
+        lastWeek : 'dddd h:hh a',
         sameElse : 'DD/MM/YY h:hh a'
     });
 }
@@ -794,30 +1008,39 @@ function parseTime(datetime) {
 }
 
 function renderMessage(actor,text,time, user) {
-    var timeSeparator = '';
+    //var timeSeparator = '';
 
     // time to parse
     var parsedTime = '';
 
     // get local time
-    var localTime  = moment(time,       "YYYY-MM-DD HH:mm").toDate();
+    //var localTime  = moment(time,       "YYYY-MM-DD HH:mm").toDate();
 
     // whatsapp wannabe
-    var momentTime = calendar(moment(localTime));/*26/01/2016 07:00 am*/
+    var momentTime = calendar(moment(time));/*26/01/2016 07:00 am*/
     var splitMoment = momentTime.split(' '); /*['26/01/2016','07:00','am']*/
     if (splitMoment.length > 2) {
         parsedTime = splitMoment[1]+' '+splitMoment[2];
+        var appendElm = '';
         if (timeSeparator === '') {
             // add separator for the first time
             //elm.append('<li class="history-chat-time"><span>'+splitMoment[0]+'</span></li>');
-            var appendElm = '<p class="ajaib-'+actor+'"><small>' + parsedTime + '</small>' + text + '</p><br />';
+            logging(splitMoment[0]);
+            appendElm+='<p class="history-chat-time"><span>'+splitMoment[0]+'</span></p>';
+
         } else if (splitMoment[0] !== timeSeparator) {
             // add separator
             //elm.append('<li class="history-chat-time"><span>'+splitMoment[0]+'</span></li>');
-            var appendElm = '<p class="ajaib-'+actor+'"><small>' + parsedTime + '</small>' + text + '</p><br />';
+            logging(splitMoment[0]);
+            appendElm+='<p class="history-chat-time"><span>'+splitMoment[0]+'</span></p>';
         }
+        appendElm+= '<p class="ajaib-'+actor+'"><small>' + parsedTime + '</small>' + text + '</p><br />';
         timeSeparator = splitMoment[0];
     }
 
     $('.chat-conversation#cc_' + user).append(appendElm);
+}
+
+function displayCallback(m,e,c,d,f){
+    logging(JSON.stringify(m, null, 4));
 }
