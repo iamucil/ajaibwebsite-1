@@ -600,7 +600,7 @@
                             <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
                             <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
                                 kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
-                               <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
+                            <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
                             <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
                             <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
                             </div>
