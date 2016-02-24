@@ -1142,9 +1142,13 @@ ALERT
 
 .chat-conversation .ajaib-devider-chat {
     text-align: center;
-    font-size: 11px!important;
-    margin: 0 auto 40px auto;
+    font-size: 11px !important;
+    margin: 20px 0;
     position: relative;
+    display: list-item;
+    clear: both;
+    float: none;
+    list-style: none;
 }
 
 .chat-conversation .ajaib-devider-chat span {
@@ -1152,6 +1156,7 @@ ALERT
     padding: 4px 8px;
     position: relative;
     z-index: 2;
+    color: rgba(255, 102, 0, 0.48);
 }
 
 .chat-conversation .ajaib-devider-chat:before {
@@ -1161,7 +1166,7 @@ ALERT
     z-index: 2;
     width: 100%;
     height: 1px;
-    background: #ddd;
+    background: rgba(255, 102, 0, 0.2);
     top: 7px;
     left: 0;
 }
@@ -1200,7 +1205,7 @@ ALERT
     margin: 0;
     min-width: 60px;
     clear: both;
-    margin: 15px 0;
+    margin: 20px 0;
 }
 
 .chat-conversation .ajaib-operator small {
