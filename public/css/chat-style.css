@@ -188,3 +188,32 @@ body {
         opacity: 0.5;
     }
 }
+
+/*HISTORY CHAT*/
+
+.history-chat-time {
+    display: block!important;
+    text-align: center;
+    margin: 30px auto;
+}
+
+.history-chat-time span {
+    font-size: 12px;
+    position: relative;
+    background: #D8DBDB;
+    padding: 0 8px;
+    border-radius: 4px;
+    z-index: 1;
+    color: #939393;
+}
+
+.history-chat-time:before {
+    content: "";
+    width: 100%;
+    height: 1px;
+    display: block;
+    background: #bdbfbf;
+    position: relative;
+    z-index: 0;
+    top: 10px;
+}

@@ -1,7 +1,7 @@
 <div id="right_chat_menu" class="sidetogglemenu">
     <!-- Your right Slidebar content. -->
     <!-- Right Menu -->
-    <aside class="right-off-canvas-menu">
+    <aside class="right-off-canvas-menu"  id="right-chat">
         <!-- whatever you want goes here -->
         <ul class="off-canvas-list">
             <li class="online-status">
