@@ -770,20 +770,26 @@ function load_js() {
     var head = document.getElementsByTagName('head')[0];
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'https://ajaib-local/js/jquery.webui-popover.js';
+    script.src = 'https://'+domain+'/js/jquery.webui-popover.js';
     head.appendChild(script);
 
     $('.chat-pop-over').webuiPopover({
-        placement: 'auto',
+        placement: 'auto-top',
         padding: false,
         width: '300',//can be set with  number
         //height:'300',//can be set with  number
         height: '400',//can be set with  number
-        animation: '',
-        offsetTop: -18,  // offset the top of the popover
+        animation: 'pop',
+        offsetTop: -5,  // offset the top of the popover
         multi: true,//allow other popovers in page at same time
-        dismissible: false, // if popover can be dismissed by  outside click or escape key
-        closeable: true//display close button or not
+        dismissible: true, // if popover can be dismissed by  outside click or escape key
+        closeable: true, //display close button or not
+        onShow: function ($element) {
+            lmnt = $element;
+            //console.log(lmnt);
+            $(lmnt).find('.chat-conversation').scrollTop(9999);
+            //$("cc_85227052004").animate({ scrollTop: $("cc_85227052004").prop("scrollHeight")}, 1000)
+        }
     });
 }
 
@@ -1033,13 +1039,13 @@ function renderMessage(actor,text,time, user) {
             // add separator for the first time
             //elm.append('<li class="history-chat-time"><span>'+splitMoment[0]+'</span></li>');
             logging(splitMoment[0]);
-            appendElm+='<p class="history-chat-time"><span>'+splitMoment[0]+'</span></p>';
+            appendElm+='<p class="ajaib-devider-chat"><span>'+splitMoment[0]+'</span></p>';
 
         } else if (splitMoment[0] !== timeSeparator) {
             // add separator
             //elm.append('<li class="history-chat-time"><span>'+splitMoment[0]+'</span></li>');
             logging(splitMoment[0]);
-            appendElm+='<p class="history-chat-time"><span>'+splitMoment[0]+'</span></p>';
+            appendElm+='<p class="ajaib-devider-chat"><span>'+splitMoment[0]+'</span></p>';
         }
         appendElm+= '<p class="ajaib-'+actor+'"><small>' + parsedTime + '</small>' + text + '</p><br />';
         timeSeparator = splitMoment[0];
