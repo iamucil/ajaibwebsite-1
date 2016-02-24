@@ -1140,6 +1140,32 @@ ALERT
     background: #f5f5f5;
 }
 
+.chat-conversation .ajaib-devider-chat {
+    text-align: center;
+    font-size: 11px!important;
+    margin: 0 auto 40px auto;
+    position: relative;
+}
+
+.chat-conversation .ajaib-devider-chat span {
+    background: #F5F5F5;
+    padding: 4px 8px;
+    position: relative;
+    z-index: 2;
+}
+
+.chat-conversation .ajaib-devider-chat:before {
+    content: "";
+    display: block;
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    top: 7px;
+    left: 0;
+}
+
 .chat-conversation .ajaib-client {
     background: #fff;
     display: list-item;
@@ -1174,7 +1200,7 @@ ALERT
     margin: 0;
     min-width: 60px;
     clear: both;
-     margin: 15px 0;
+    margin: 15px 0;
 }
 
 .chat-conversation .ajaib-operator small {
