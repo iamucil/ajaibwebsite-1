@@ -463,6 +463,11 @@ function AppendListUsers(m, action) {
         var time = calendar(moment(m.time, "YYYY-MM-DD HH:mm").toDate());
         /*26/01/2016 07:00 am*/
     }
+
+    if (!m.user) {
+        m.user = m.user_name;
+    }
+
     if (action === 'join' || action === 'state-change') {
         // jika user ini ada di list offline user, maka hapus terlebih dahulu elementnya
         if (ElementIsExist('offline-user-' + m.user_name)) {
