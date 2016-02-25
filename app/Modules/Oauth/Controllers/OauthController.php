@@ -14,13 +14,17 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Exception\RequestException;
 
+// use App\Repositories\ChatRepository;
+
 class OauthController extends Controller {
 
     protected $User;
     protected $server = null;
-    public function __construct(User $user)
+    // protected $Pubnub;
+    public function __construct(User $user /*,ChatRepository $pubnub*/)
     {
         $this->User         = $user;
+        // $this->Pubnub       = $pubnub;
         $this->middleware('auth', ['except' => ['grantAccess', 'refreshToken']]);
     }
     /**
@@ -167,6 +171,11 @@ class OauthController extends Controller {
                 $username       = preg_replace($regexp, '${2}', $phone_number);
                 $password       = '+'.$phone_number;
                 $username       = $user->email;
+
+                // pubnub grant channel group users
+                // $this->Pubnub->channelGroup = $user->roles;
+                // $this->Pubnub->grantChannelGroup;
+
                 // return compact('username', 'password', 'phone_number');
                 $oauth              = OauthClient::where('id', $client_id)
                     ->where('secret', $client_secret);
