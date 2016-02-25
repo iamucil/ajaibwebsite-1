@@ -539,7 +539,10 @@ function SubscribeChat() {
                 chatFeature.channel_group_list_channels({
                     channel_group: "cg-" + m.sender_channel,
                     callback: function (cg) {
-
+                        var serviceSender = ServiceSenderDeviceId(m.sender_auth);
+                        serviceSender.success(function (success) {
+                            m.device_id = success.data.device_id;
+                        });
                         // cek channel group nya dia
                         // jika sudah ada operator yang handle maka hanya munculkan notifikasi di operator yang handle
 
@@ -549,10 +552,6 @@ function SubscribeChat() {
                         } else if (cg.channels.length === 0) {
                             // belum dihandle oleh operator lain
                             // broadcast ke semua operator
-                            var serviceSender = ServiceSenderDeviceId(m.sender_auth);
-                            serviceSender.success(function (success) {
-                                m.device_id = success.data.device_id;
-                            });
 
                             // notifications
                             $.playSound('audio/chat');
