@@ -525,7 +525,7 @@ function SubscribeChat() {
 
             if (m.sender_id === authUser.id) {
                 // operator it self
-                renderMessage('operator', m.message, m.time, m.user_name);
+                //renderMessage('operator', m.message, m.time, m.user_name);
             } else {
                 console.log("masuk sini");
                 console.log(m);
@@ -675,12 +675,13 @@ function GenerateChatBox(obj) {
             '<span class="fontello-camera"></span>' +
             '</div>' +
             '<div class="form-group">' +
-            '<textarea class="form-control chat-text" id="ct_' + obj.user_name + '" onkeyup="whileTyping(' + obj.sender_channel + ');" rows="3"></textarea>' +
+            '<textarea class="form-control chat-text" id="ct_' + obj.user_name + '" rows="3"></textarea>' +
             '</div>' +
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + obj.sender_id + '\')">Submit</button>' +
             '</div>' +
             '</div>' +
             '</div>';
+        //onkeyup="whileTyping(\'' + obj.sender_channel + '\');" isTyping method add it to the textarea property
         $('.chat-bottom').append(elm);
         RenderHistory(obj, obj.user_name);
         // reload js
@@ -890,13 +891,6 @@ function publish(senderId) {
                     //TODO: publish event -> don't forget to disable this debug when it goes online
                     //logging('publish event '+m);
                     //logging(m);
-
-                    // push notification
-                    //var pushParam = {
-                    //    "channel" : obj.sender_channel,
-                    //    "text" : text
-                    //};
-                    //pushNotification(pushParam);
                 }
             });
 
@@ -916,6 +910,8 @@ function publish(senderId) {
                     //logging(m);
                 }
             });
+
+            renderMessage('operator', text, datetime, obj.user_name);
 
             // append the text to conversation area
             //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
