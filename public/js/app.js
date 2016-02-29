@@ -1,5 +1,6 @@
 //responsive menu slicknav
-var server = window.location.host;
+var server      = window.location.host;
+var protocol    = 'https:' == document.location.protocol ? 'https:' : 'http:';
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -30,18 +31,18 @@ $(function() {
         height: "380px",
         alwaysVisible: true,
         size: "4px"
-    }); 
+    });
      $(".slim-scroll-chat").slimscroll({
         height: "400px",
         alwaysVisible: false,
         size: "3px"
-    });   
+    });
 
      $("#paper-bg").slimscroll({
         height: "600px",
         alwaysVisible: true,
         size: "5px"
-    });  
+    });
      $("#right-chat").slimscroll({
         height: "600px",
         alwaysVisible: true,

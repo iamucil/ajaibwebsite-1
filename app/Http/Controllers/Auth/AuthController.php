@@ -105,7 +105,11 @@ class AuthController extends Controller
     public function doRegister(Request $request)
     {
         $validator          = $this->validator($request->all());
-
+        return response()->json(['status' => [
+                'code' => 200,
+                'message' => 'Success'
+            ], 'data' => $request->all(), 'errors' => NULL]);
+        die();
         if ($validator->fails()) {
             if(request()->ajax()){
                 return response()->json([

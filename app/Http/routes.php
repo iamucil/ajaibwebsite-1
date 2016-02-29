@@ -102,27 +102,29 @@ Route::get('/api/random-user', function () {
 });
 
 Route::get('/geo-ip', function (App\Country $country) {
-    $url    = 'https//freegeoip.net/json/';
+    $url    = 'http://ipinfo.io';
     $client         = new Client([
-        'base_uri' => '//freegeoip.net',
+        'base_uri' => $url,
     ]);
-    $response       = $client->request('GET', '/json/', [
+    $response       = $client->request('GET', '/', [
         'header' => [
             'Content-Type' => 'application/json'
         ], 'Accept' => 'application/json'
     ]);
-
     $result         = json_decode($response->getBody()->getContents());
-    $countries      = $country->where('iso_3166_2', '=', $result->country_code)->first();
-    $country_code   = $result->country_code;
-    $country_name   = $result->country_name;
+    // return response()->json($result);
+    // die();
+    $countries      = $country->where('iso_3166_2', '=', $result->country)->first();
+    $country_code   = $countries->iso_3166_2;
+    $country_name   = $countries->name;
     $ip_address     = $result->ip;
-    $latitude       = $result->latitude;
-    $longitude      = $result->longitude;
+    // $latitude       = $result->latitude;
+    // $longitude      = $result->longitude;
     $call_code      = $countries->calling_code;
     $capital        = $countries->capital;
     $country_id     = $countries->id;
-    return response()->json(compact('country_code', 'country_name', 'ip_address', 'latitude', 'longitude', 'call_code', 'capital', 'country_id'));
+    // return response()->json(compact('countries'));
+    return response()->json(compact('country_code', 'country_name', 'ip_address', 'call_code', 'capital', 'country_id'));
 
 });
 
