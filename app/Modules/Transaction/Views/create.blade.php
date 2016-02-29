@@ -120,6 +120,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js" type="text/javascript"></script>
     <script language="javascript">
         $(function() {
+
+
             var btn         = document.getElementById('btn-add-details');
             var $form       = document.forms['frm-transaction'];
             var $quantity   = $form.quantity;
@@ -148,7 +150,11 @@
                         this.removeChild(childObj[i]);
                     }
                 }
+                var len             = childObj.length;
+                var nomor           = (len+1);
+
                 var row             = document.createElement('tr');
+                row.id              = 'row_'+len;
                 var colNumber       = document.createElement('td');
                 colNumber.innerHTML     = '#';
                 var colQuantity     = document.createElement('td');
@@ -168,6 +174,13 @@
                 inpCount.type       = 'text';
                 colCount.appendChild(inpCount);
                 var colAction       = document.createElement('td');
+                var deleteAction    = document.createElement('a');
+                deleteAction.href   = 'javascript:void(0);';
+                deleteAction.classList.add('btn', 'btn-danger');
+                var deleteIcon      = document.createElement('i');
+                deleteIcon.classList.add('glyphicon', 'glyphicon-trash');
+                deleteAction.appendChild(deleteIcon);
+                colAction.appendChild(deleteAction);
 
                 row.appendChild(colNumber);
                 row.appendChild(colQuantity);

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Modules\Transaction\Models\Transaction;
 use App\Modules\Transaction\Models\Category;
 use Validator;
+use DB;
 
 class TransactionsController extends Controller {
 
@@ -29,9 +30,18 @@ class TransactionsController extends Controller {
      */
     public function create()
     {
+        $satuan_qty     = DB::table('quantities')
+            ->orderBy('name', 'ASC')
+            ->get();
+            // ->lists('name', 'id');
+            // dd($satuan_qty);
+        // $satuan         = response()->json($satuan_qty);
+        // dd($satuan->getData());
+
         $categories     = Category::where('type', '=', 'transaction')
             ->orderBy('name', 'ASC')->lists('name', 'id');
-        return view('Transaction::create', compact('categories'));
+            // dd($satuan_qty);
+        return view('Transaction::create', compact('categories', 'satuan_qty'));
     }
 
     /**
