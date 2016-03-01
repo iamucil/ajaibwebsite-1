@@ -67,7 +67,8 @@ class UserRepository
                 }
             } else {
                 $exists = false;
-                $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                // $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                $input      = request()->only(['phone_number', 'channel', 'status', 'name', 'verification_code', 'password', 'email']);
                 $user = User::firstOrCreate($input);
                 $mail_template  = 'emails.greeting';
                 $sender         = env('EMAIL_FROM','noreply@getajaib.com');
@@ -76,7 +77,7 @@ class UserRepository
             /**
              * And finnaly send email greeting to registered user
              */
-            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user) {
+            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user, $sender) {
                 $mail->from($sender, 'Ajaib');
                 $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
             });

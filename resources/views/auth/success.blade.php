@@ -7,7 +7,7 @@
         <div class="content">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-offset-6 col-sm-6">
+                    <div class="topright-desc" style="position: absolute; z-index: 999">
                         <div class="topright-desc">
                             <div class="animated fadeInRight">
                                 <p class="lead">

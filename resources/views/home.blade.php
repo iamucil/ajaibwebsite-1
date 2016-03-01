@@ -312,8 +312,13 @@
             initialCountry: "auto",
             geoIpLookup: function(callback) {
                 $.get(url, function() {}, "jsonp").always(function(resp) {
-                    var result      = JSON.parse(resp.responseText);
-                    var countryCode = (result && result.country_code) ? result.country_code : "";
+                    var countryCode     = 'ID';
+                    var status          = (resp && resp.status) ? resp.status : 404;
+                    if(parseInt(resp.status) == 200){
+                        var result      = JSON.parse(resp.responseText);
+                        countryCode     = (result && result.country_code) ? result.country_code : "";
+                        console.log(countryCode);
+                    }
                     callback(countryCode);
                 });
             },
@@ -326,19 +331,50 @@
             validMsg.addClass("hide");
         };
 
+        var resetValidationMsg  = function (el) {
+            var icon        = el.getElementsByClassName('glyphicon form-control-feedback');
+            var label       = el.getElementsByClassName('sr-only');
+
+            if( icon.length > 0 ) {
+                for (var i = icon.length - 1; i >= 0; i--) {
+                    icon[i].parentNode.removeChild(icon[i]);
+                };
+            }
+
+            if( label.length > 0 ) {
+                for (var lb = label.length - 1; lb >= 0; lb--) {
+                    label[lb].parentNode.removeChild(label[lb]);
+                };
+            }
+        }
         // on blur: validate
         telInput.on('keyup change blur', function() {
             reset();
             var parent_child    = $(this).parents()[1];
+            parent_child.classList.remove('has-success', 'has-error');
+            var validationIcon  = document.createElement('span');
+            validationIcon.classList.add('glyphicon', 'form-control-feedback');
+            validationIcon.setAttribute('aria-hidden', true);
+            var elSpanStatus    = document.createElement('span');
+            elSpanStatus.classList.add('sr-only');
+            elSpanStatus.innerHTML  = '(error)';
+            resetValidationMsg(parent_child);
+
             // parent_child.removeClass('has-success has-error');
             if ($.trim(telInput.val())) {
                 if (telInput.intlTelInput("isValidNumber")) {
-                    parent_child.addClass('has-success');
-                    // validMsg.removeClass("hide");
+                    parent_child.classList.add('has-success');
+                    validationIcon.classList.remove('glyphicon-remove');
+                    validationIcon.classList.add('glyphicon-ok');
+                    elSpanStatus.innerHTML  = '(success)';
+                    parent_child.appendChild(validationIcon);
+                    parent_child.appendChild(elSpanStatus);
                 } else {
-                    parent_child.addClass('has-error');
-                    // telInput.addClass("error");
-                    // errorMsg.removeClass("hide");
+                    parent_child.classList.add('has-error');
+                    validationIcon.classList.remove('glyphicon-ok');
+                    validationIcon.classList.add('glyphicon-remove');
+                    parent_child.appendChild(validationIcon);
+                    parent_child.appendChild(elSpanStatus);
                 }
             }
         });
@@ -346,28 +382,32 @@
         // on keyup / change flag: reset
         telInput.on("keyup change", reset());
 
-        $.getJSON( url, function( data ) {
-            var form        = document.forms['form-register'];
-            var call_code   = document.createElement('span');
-            call_code.style.fontWeight  = 'bold';
-            call_code.innerHTML         = data.call_code;
-            var inpCountryId            = document.createElement('input');
-            inpCountryId.type           = 'hidden';
-            inpCountryId.value          = data.country_id;
-            inpCountryId.name           = 'country_id';
-            //document.getElementById('call-code-label').innerHTML    = '';
-            //document.getElementById('call-code-label').appendChild(call_code);
-            form.appendChild(inpCountryId);
-        }, 'json');
+        // $.getJSON( url, function( data ) {
+        //     var form        = document.forms['form-register'];
+        //     var call_code   = document.createElement('span');
+        //     call_code.style.fontWeight  = 'bold';
+        //     call_code.innerHTML         = data.call_code;
+        //     var inpCountryId            = document.createElement('input');
+        //     inpCountryId.type           = 'hidden';
+        //     inpCountryId.value          = data.country_id;
+        //     inpCountryId.name           = 'country_id';
+        //     //document.getElementById('call-code-label').innerHTML    = '';
+        //     //document.getElementById('call-code-label').appendChild(call_code);
+        //     form.appendChild(inpCountryId);
+        // }, 'json');
 
         $('.frm-signup').submit(function(evt) {
-            var Form    = this;
+            var countryData = telInput.intlTelInput("getSelectedCountryData");
+            var Form        = this;
             // var action  = '//'+ server + '/auth/register';
             var $action     = Form.action;
             var $data       = {};
             var $errors     = {};
-            var countryData = telInput.intlTelInput("getNumber");
-            console.log(countryData);
+            $data['phone_number']   = telInput.intlTelInput("getNumber").replace(/\+/g,"");
+            $data['phone_number']   = $data['phone_number'].replace(/\-/g,"");
+            $data['country_code']   = countryData.iso2;
+            $data['dial_code']      = countryData.dialCode;
+
             $.each(this.elements, function(i, v){
                 var input = $(v);
                 $data[input.attr("name")] = input.val();
@@ -382,20 +422,35 @@
                 data : $data,
                 context : Form,
                 beforeSend: function (jqXHR, settings) {
-                    // var countryData = $("#phone").intlTelInput("getSelectedCountryData");
-                    // console.log(settings.data);
-                    // var formData    = new FormData(Form);
-                    // $data.append('phone_number', 'xxx');
                     return true;
                 }
-            }).done(function(data) {
-                console.log(data);
-                // if(data.errors != null){
-                // }
+            }).done(function(data,  status, jqXHR) {
+                if(data.errors != null){
+                    // $('#modal__register').modal('hide');
+                    $.each(data.errors, function ( index, value) {
+                        var elSpanError     = document.createElement('span');
+                        elSpanError.classList.add('glyphicon', 'glyphicon-remove', 'form-control-feedback');
+                        elSpanError.setAttribute('aria-hidden', true);
+                        var elSpanStatus    = document.createElement('span');
+                        elSpanStatus.classList.add('sr-only');
+                        elSpanStatus.innerHTML  = '(error)';
+                        var parentIndex     = $('input[name="'+index+'"]').parent();
+                        if(index == 'phone_number' || index == 'ext_phone') {
+                            var parentIndex     = $('input[type="tel"]').parent();
+                        }
+                        parentIndex.children('.control-label').css('font-weight', 'bold');
+                        parentIndex.addClass('has-error has-feedback');
+                        parentIndex.append(elSpanError, elSpanStatus);
+                    });
+                    evt.preventDefault();
+                    return false;
+                }else{
+                    window.location.href = '{!! route("auth.success.get") !!}';
+                }
             });
 
             evt.preventDefault();
-            // return true;
+            return true;
         });
     </script>
     {{-- expr --}}
