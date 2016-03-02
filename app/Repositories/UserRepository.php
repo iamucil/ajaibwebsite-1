@@ -58,23 +58,27 @@ class UserRepository
                         // 'status' => false
                     ]);
                     $mail_template  = 'emails.authentication';
+                    $sender         = env('EMAIL_NOREPLY','noreply@getajaib.com');
                     $user           = $query->first();
                     Twilio::message('+'.$user->phone_number, 'Your Ajaib Verification code is '.$user->verification_code);
                 }else{
                     $mail_template  = 'emails.greeting';
+                    $sender         = env('EMAIL_FROM','noreply@getajaib.com');
                 }
             } else {
                 $exists = false;
-                $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                // $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                $input      = request()->only(['phone_number', 'channel', 'status', 'name', 'verification_code', 'password', 'email']);
                 $user = User::firstOrCreate($input);
                 $mail_template  = 'emails.greeting';
+                $sender         = env('EMAIL_FROM','noreply@getajaib.com');
             }
 
             /**
              * And finnaly send email greeting to registered user
              */
-            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user) {
-                $mail->from('noreply@getajaib.com', 'Ajaib');
+            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user, $sender) {
+                $mail->from($sender, 'Ajaib');
                 $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
             });
 

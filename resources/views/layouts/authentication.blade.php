@@ -19,6 +19,8 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('/fonts/font-awesome/css/font-awesome.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('/css/authentication.css') }}">
+    <link href="{{ asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
+    <link href="{{ asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
 </head>
 <body>
     @yield('content')
