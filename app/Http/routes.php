@@ -112,9 +112,7 @@ Route::get('/geo-ip', function (App\Country $country) {
         ], 'Accept' => 'application/json'
     ]);
     $result         = json_decode($response->getBody()->getContents());
-    dd($result);
-    // return response()->json($result);
-    // die();
+
     $countries      = $country->where('iso_3166_2', '=', $result->country)->first();
     $country_code   = $countries->iso_3166_2;
     $country_name   = $countries->name;

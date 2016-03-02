@@ -314,10 +314,9 @@
                 $.get(url, function() {}, "jsonp").always(function(resp) {
                     var countryCode     = 'ID';
                     var status          = (resp && resp.status) ? resp.status : 404;
-                    if(parseInt(resp.status) == 200){
+                    if(parseInt(status) == 200){
                         var result      = JSON.parse(resp.responseText);
-                        countryCode     = (result && result.country_code) ? result.country_code : "";
-                        console.log(countryCode);
+                        countryCode     = (result && result.country_code) ? result.country_code : "ID";
                     }
                     callback(countryCode);
                 });
@@ -380,7 +379,7 @@
         });
 
         // on keyup / change flag: reset
-        telInput.on("keyup change", reset());
+        // telInput.on("keyup change", reset());
 
         // $.getJSON( url, function( data ) {
         //     var form        = document.forms['form-register'];
