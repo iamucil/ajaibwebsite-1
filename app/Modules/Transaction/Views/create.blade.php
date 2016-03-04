@@ -153,6 +153,10 @@
             console.log('Total Amount '+total);
         }
 
+        function deleteItem (el, obj_id) {
+            console.log(el);
+        }
+
         $(function() {
             var $satuan     = JSON.parse('{!! $satuan_qty->content() !!}');
             var btn         = document.getElementById('btn-add-details');
@@ -225,6 +229,7 @@
                 var deleteAction    = document.createElement('a');
                 deleteAction.href   = 'javascript:void(0);';
                 deleteAction.classList.add('btn', 'btn-danger');
+                deleteAction.setAttribute('onclick', 'deleteItem(this, "'+this.id+'")');
                 var deleteIcon      = document.createElement('i');
                 deleteIcon.classList.add('glyphicon', 'glyphicon-trash');
                 deleteAction.appendChild(deleteIcon);
@@ -259,8 +264,6 @@
                 e.preventDefault();
                 return false;
             }
-
-
         });
     </script>
 @stop

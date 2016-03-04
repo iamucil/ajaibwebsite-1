@@ -31,71 +31,71 @@ var authk = $('meta[name="csrf-token"]').attr('content');
 
 $(function () {
     // check if user has assigned to roles ??
-    if (authRoles === undefined || authRoles.length == 0) {
-        alertify.set({delay: 10000});
-        alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
-    } else {
+    // if (authRoles === undefined || authRoles.length == 0) {
+    //     alertify.set({delay: 10000});
+    //     alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
+    // } else {
 
-        // get domain from accessed application url
-        domain = window.location.hostname;
+    //     // get domain from accessed application url
+    //     domain = window.location.hostname;
 
-        // testing purpose only
-        if (domain === 'localhost') {
-            domain = 'ajaib-local';
-        }
+    //     // testing purpose only
+    //     if (domain === 'localhost') {
+    //         domain = 'ajaib-local';
+    //     }
 
-        // Web Notification feature detection
-        if (!window.Notification) {
-            alert('Your browser does not support Web Notifications API.');
-            return;
-        }
+    //     // Web Notification feature detection
+    //     if (!window.Notification) {
+    //         alert('Your browser does not support Web Notifications API.');
+    //         return;
+    //     }
 
-        // Web Notification permission
-        Notification.requestPermission(function () {
-            if (Notification.permission !== 'granted') {
-                alert('Please allow Web Notifications feature to use Ajaib notifications.');
-                return;
-            }
-        });
+    //     // Web Notification permission
+    //     Notification.requestPermission(function () {
+    //         if (Notification.permission !== 'granted') {
+    //             alert('Please allow Web Notifications feature to use Ajaib notifications.');
+    //             return;
+    //         }
+    //     });
 
-        // initialize user properties
-        name = authUser.name;
-        firstname = authUser.firstname;
-        lastname = authUser.lastname;
-        roles = authUser.roles[0].name;
-        channel = authUser.channel;
-        phone = authUser.phone_number;
-        status = authUser.status;
+    //     // initialize user properties
+    //     name = authUser.name;
+    //     firstname = authUser.firstname;
+    //     lastname = authUser.lastname;
+    //     roles = authUser.roles[0].name;
+    //     channel = authUser.channel;
+    //     phone = authUser.phone_number;
+    //     status = authUser.status;
 
-        // initialize chat featre using PubNub
-        InitChat();
+    //     // initialize chat featre using PubNub
+    //     InitChat();
 
-        // operator grant access
-        // grant global channel (without auth)
-        GrantChat(roles, '', true, true, 0);
+    //     // operator grant access
+    //     // grant global channel (without auth)
+    //     GrantChat(roles, '', true, true, 0);
 
-        // grant operator private channel
-        GrantChat(channel, authk, true, true, 0);
+    //     // grant operator private channel
+    //     GrantChat(channel, authk, true, true, 0);
 
-        // grant global access to users
-        GrantChat("", "", true, true, 0);
+    //     // grant global access to users
+    //     GrantChat("", "", true, true, 0);
 
-        // listening to 'OPERATOR' channel for group and operator private's channel
-        SubscribeChat();
+    //     // listening to 'OPERATOR' channel for group and operator private's channel
+    //     SubscribeChat();
 
-        $('.btn-ajaib').click(function () {
+    //     $('.btn-ajaib').click(function () {
 
-        });
+    //     });
 
-        $('.chat-text').bind('keydown', function (event) {
-            if ((event.keyCode || event.charCode) !== 13) return true;
-            $('.chat-text').parent().siblings()[1].click();
-            return false;
-        });
+    //     $('.chat-text').bind('keydown', function (event) {
+    //         if ((event.keyCode || event.charCode) !== 13) return true;
+    //         $('.chat-text').parent().siblings()[1].click();
+    //         return false;
+    //     });
 
-        // init offline user
-        InitOfflineUser();
-    }
+    //     // init offline user
+    //     InitOfflineUser();
+    // }
 
 });
 
@@ -249,7 +249,7 @@ function GrantChat(channel, auth, read, write, ttl) {
                 //logging(m);
             },
             error: function (m) {
-                console.error(m)
+                console.error(m);
             }
         });
     } else if (auth === '') {
