@@ -106,6 +106,11 @@ function InitOfflineUser() {
         url: "https://" + domain + "/dashboard/users/list",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
+        beforeSend: function (xhr, settings){
+            if( xhr.status != 200 ){
+                return false;
+            }
+        },
         success: function (data) {
             if (data.status === 200) {
                 var items = data.data
@@ -128,7 +133,13 @@ function InitChat() {
         secret_key: skey,
         auth_key: authk,
         ssl: (('https:' == document.location.protocol) ? true : false),
-        uuid: roles + '-' + name
+        uuid: roles + '-' + name,
+        error: function (err) {
+            // console.log(err);
+            // alertify.set({delay: 10000});
+            // alertify.error("<strong>PUBNUB </strong>Error occured on initialize connection with server");
+            return false;
+        }
     });
 }
 

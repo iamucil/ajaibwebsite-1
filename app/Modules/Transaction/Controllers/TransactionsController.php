@@ -37,7 +37,9 @@ class TransactionsController extends Controller {
             // dd($satuan_qty);
         // $satuan         = response()->json($satuan_qty);
         // dd($satuan->getData());
-
+        // dd($satuan_qty);
+        $satuan_qty     = response()->json($satuan_qty);
+        // dd($satuan_qty->content());
         $categories     = Category::where('type', '=', 'transaction')
             ->orderBy('name', 'ASC')->lists('name', 'id');
             // dd($satuan_qty);
