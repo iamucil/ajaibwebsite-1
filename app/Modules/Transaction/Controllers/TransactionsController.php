@@ -28,7 +28,7 @@ class TransactionsController extends Controller {
      *
      * @return Response
      */
-    public function create()
+    public function create(Request $request)
     {
         $satuan_qty     = DB::table('quantities')
             ->orderBy('name', 'ASC')
@@ -38,12 +38,13 @@ class TransactionsController extends Controller {
         // $satuan         = response()->json($satuan_qty);
         // dd($satuan->getData());
         // dd($satuan_qty);
+        $transactions   = response()->json($request->old('transactions', []));
         $satuan_qty     = response()->json($satuan_qty);
         // dd($satuan_qty->content());
         $categories     = Category::where('type', '=', 'transaction')
             ->orderBy('name', 'ASC')->lists('name', 'id');
             // dd($satuan_qty);
-        return view('Transaction::create', compact('categories', 'satuan_qty'));
+        return view('Transaction::create', compact('categories', 'satuan_qty', 'transactions'));
     }
 
     /**
@@ -61,6 +62,9 @@ class TransactionsController extends Controller {
             'amount' => 'required',
         ]);
 
+        return redirect()->route('transactions.create')
+            ->withInput($request->except(['_token']));
+        // dd($request->all());
         if($validate->fails()){
             flash()->error($validate->errors()->first());
 
