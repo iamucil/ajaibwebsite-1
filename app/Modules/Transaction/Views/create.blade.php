@@ -55,7 +55,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="txt-amount">Amount</label>
                 <div class="col-sm-4">
-                    <input type="text" name="amount" class="form-control" id="txt-amount" />
+                    <input type="text" name="amount" class="form-control jqAmount" id="txt-amount" />
                 </div>
             </div>
             <div class="form-group">
@@ -117,19 +117,56 @@
 
 @section('script-bottom')
     @parent
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js" type="text/javascript"></script>
-    <script language="javascript">
+    <script type="text/javascript" src="{{ asset('/js/jqMaskMoney.js') }}"></script>
+    <script type="text/javascript">
+        function changeSubAmount (el, obj_id) {
+            var obj         = document.getElementById(obj_id);
+            var nominal     = 0;
+            var total       = 0;
+            var child_obj   = obj.getElementsByTagName('input');
+            var child       = [];
+
+            if(match = el.name.match(/(\w+)\[(\d+)\]\[(\w+)\]/)){
+                var id      = match[2];
+                var elem    = match[1];
+                var qty     = document.getElementsByName(elem+'['+id+'][quantity]')[0].value;
+                var amount  = document.getElementsByName(elem+'['+id+'][amount]')[0].value;
+                if(!isNaN(parseFloat(qty)*parseFloat(amount))){
+                    total   = parseFloat(qty)*parseFloat(amount);
+                }
+            }
+            // console.log(child_obj);
+            for (var i = child_obj.length - 1; i >= 0; i--) {
+                if(matches = child_obj[i].name.match(/(\w+)\[(\d+)\]\[(\w+)\]/)){
+                    switch (matches[3].toLowerCase()) {
+                        case 'quantity' :
+                            // console.log('Quantity = ' + matches[2] + ' => ' + child_obj[i].value);
+                            child   = child_obj[i].name;
+                            break;
+                        case 'amount' :
+                            console.log('Amount = ' + matches[2] + ' => ' + child_obj[i].value);
+                            break;
+                    }
+                }
+            };
+            console.log(child);
+            console.log('Total Amount '+total);
+        }
+
+        function deleteItem (el, obj_id) {
+            console.log(el);
+        }
+
         $(function() {
-
-
+            var $satuan     = JSON.parse('{!! $satuan_qty->content() !!}');
             var btn         = document.getElementById('btn-add-details');
             var $form       = document.forms['frm-transaction'];
             var $quantity   = $form.quantity;
             var $amount     = $form.amount;
             var $total      = $form.total;
             var $PlaceHolder    = document.getElementById('transaction_PlaceHolder');
-            $('#txt-quantity').maskMoney();
-            $('#txt-amount').maskMoney();
+            // $('#txt-quantity').maskMoney();
+            // $('#txt-amount').maskMoney();
 
             var changeAmount    = function () {
                 var qty     = parseFloat($quantity.value.replace(',', ''));
@@ -138,7 +175,7 @@
                 qty         = isNaN(qty) ? 1 : qty;
                 amnt        = isNaN(amnt) ? 0 : amnt;
                 $total.value    = qty*amnt;
-                $('#sub-total').maskMoney();
+                // $('#sub-total').maskMoney();
             }
             $quantity.onkeyup   = changeAmount;
             $amount.onkeyup     = changeAmount;
@@ -160,14 +197,29 @@
                 var colQuantity     = document.createElement('td');
                 var inpQuantity     = document.createElement('input');
                 inpQuantity.type    = 'text';
-                inpQuantity.name    = 'transactions[][quantity]';
+                inpQuantity.name    = 'transactions['+ len +'][quantity]';
+                inpQuantity.setAttribute('onkeyup', 'changeSubAmount(this, "'+ this.id +'");');
                 colQuantity.appendChild(inpQuantity);
                 var colSatuan       = document.createElement('td');
                 var cmbSatuan       = document.createElement('select');
+                var empOpt          = document.createElement('option');
+                empOpt.value        = '';
+                empOpt.text         = '(choose)';
+                cmbSatuan.appendChild(empOpt);
+                for (var i = $satuan.length - 1; i >= 0; i--) {
+                    // console.log($satuan[i]);
+                    o   = document.createElement('option');
+                    o.value     = $satuan[i].id;
+                    o.text      = $satuan[i].name;
+                    cmbSatuan.appendChild(o);
+                };
                 colSatuan.appendChild(cmbSatuan);
                 var colAmount       = document.createElement('td');
                 var inpAmount       = document.createElement('input');
                 inpAmount.type      = 'text';
+                inpAmount.name      = 'transactions['+ len +'][amount]';
+                inpAmount.id        = len;
+                inpAmount.setAttribute('onkeyup', 'changeSubAmount(this, "'+ this.id +'");');
                 colAmount.appendChild(inpAmount);
                 var colCount        = document.createElement('td');
                 var inpCount        = document.createElement('input');
@@ -177,6 +229,7 @@
                 var deleteAction    = document.createElement('a');
                 deleteAction.href   = 'javascript:void(0);';
                 deleteAction.classList.add('btn', 'btn-danger');
+                deleteAction.setAttribute('onclick', 'deleteItem(this, "'+this.id+'")');
                 var deleteIcon      = document.createElement('i');
                 deleteIcon.classList.add('glyphicon', 'glyphicon-trash');
                 deleteAction.appendChild(deleteIcon);
