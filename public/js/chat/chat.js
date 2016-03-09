@@ -5,9 +5,6 @@
  */
 <!-- Include the PubNub Library -->
 var chatParameter = [];
-var SenderDeviceId = [];
-var senderId = '';
-var receiverId = '';
 var chatFeature;
 
 // user properties
@@ -24,10 +21,11 @@ var timeSeparator = '';
 
 // model/service properties
 var sharedProperties = {};
-var logResponse = '';
 
 // pubnub init properties
 var authk = $('meta[name="csrf-token"]').attr('content');
+
+var a = "";
 
 $(function () {
     // check if user has assigned to roles ??
@@ -68,20 +66,16 @@ $(function () {
         status = authUser.status;
 
         // initialize chat featre using PubNub
-        InitChat();
+        var chat = initChat();
 
-        // operator grant access
-        // grant global channel (without auth)
-        GrantChat(roles, '', true, true, 0);
+        // grant permission
+        grantPermission(chat);
 
-        // grant operator private channel
-        GrantChat(channel, authk, true, true, 0);
-
-        // grant global access to users
-        GrantChat("", "", true, true, 0);
+        // subscribe on public channel
+        subscribe(chat);
 
         // listening to 'OPERATOR' channel for group and operator private's channel
-        SubscribeChat();
+        //SubscribeChat();
 
         $('.btn-ajaib').click(function () {
 
@@ -95,9 +89,622 @@ $(function () {
 
         // init offline user
         InitOfflineUser();
+        //InitOnlineUser();
     }
 
 });
+
+//==================== init chat ====================
+/**
+ * Initializing chat feature
+ * @constructor
+ */
+function initChat() {
+    return PUBNUB.init({
+        publish_key: pubnub_key,
+        subscribe_key: subnub_key,
+        secret_key: skey,
+        auth_key: authk,
+        ssl: (('https:' == document.location.protocol) ? true : false),
+        uuid: roles + '-' + name
+    });
+}
+//================== end of init chat ==================
+
+//==================== init chat function ====================
+/**
+ *
+ * @returns {{subscribe: subscribe, publish: publish}}
+ */
+var fnChat = function() {
+
+    /**
+     * Publish / send message PubNub function
+     * @param pubnub, instance of pubnub object
+     * @param channels, private channels, unique for each user AND public channels "ajaib", public for each user
+     * @param message
+     * @param callback
+     */
+    function publish(pubnub, channels, message,callback) {
+        return pubnub.publish({
+            channel:channels,
+            message:message,
+            callback:callback
+        });
+    };
+
+    /**
+     * Subscribe / receive message PubNub function
+     * @param pubnub
+     * @param channels
+     * @param callback
+     * @param connect
+     * @param reconnect
+     * @param error
+     */
+    function subscribe(pubnub, channels, presence, message, callback, connect, reconnect, error) {
+        pubnub.subscribe({
+            channel     : channels,
+            presence    : presence,
+            message     : message,
+            callback    : callback,
+            connect     : connect,
+            reconnect   : reconnect,
+            error       : error
+        });
+    };
+
+    /**
+     * Function to granting user using Pubnub Access Manager
+     * @param channel, specified channel to grant
+     * @param auth, specified auth to grant
+     * @param read, subscribe access
+     * @param write, publish access
+     * @param ttl, time to live => 0, forefer / without limit
+     */
+    function grant(pubnub, channel, auth, read, write, ttl) {
+        // channel-pnpres used because we are using pubnub presence
+        // grant pubnub access on global channel and private channel
+        if (channel === '') {
+            pubnub.grant({
+                read: read,
+                write: write,
+                ttl: ttl,
+                callback: function (m) {
+                    //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                    logging('grant chat on subsribe key level ');
+                    logging(m);
+                },
+                error: function (m) {
+                    console.error(m)
+                }
+            });
+        } else if (auth === '') {
+            // no need authentication
+            pubnub.grant({
+                channel: channel + ',' + channel + '-pnpres',
+                read: read,
+                write: write,
+                ttl: ttl,
+                callback: function (m) {
+                    //TODO: grant chat on channel level (without authentication) level -> don't forget to disable this debug when it goes online
+                    logging('grant chat on channel level (without authentication) ');
+                    logging(m);
+                }
+            });
+        } else {
+            // need authentication
+            pubnub.grant({
+                channel: channel + ',' + channel + '-pnpres',
+                auth_key: auth,
+                read: read,
+                write: write,
+                ttl: ttl,
+                callback: function (m) {
+                    //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                    logging('grant chat on user level (with authentication) ');
+                    logging(m);
+                }
+            });
+        }
+    }
+
+    return {
+        subscribe: function(pubnub, channels, presence, message, callback, connect, reconnect, error) {
+            subscribe(pubnub, channels, presence, message, callback, connect, reconnect, error);
+        },
+        publish: function(pubnub, channels, message,callback) {
+            publish(pubnub, channels, message,callback);
+        },
+        grant: function(pubnub, channel, auth, read, write, ttl) {
+            grant(pubnub, channel, auth, read, write, ttl);
+        }
+    }
+};
+//==================== init chat function ====================
+
+//================== grant permission ==================
+function grantPermission(pubnub) {
+    // operator grant access
+    // grant global channel (without auth)
+    // kenapa harus listen di channel operator?
+    //fnChat().grant(pubnub,roles, '', true, true, 0);
+
+    // grant operator private channel
+    fnChat().grant(pubnub,channel, authk, true, true, 0);
+
+    // grant global access to users
+    fnChat().grant(pubnub,"ajaib", "", true, true, 0);
+}
+//================== end of grant permission ==================
+
+//===================== subscribe ======================
+function subscribe(pubnub) {
+    var public_channel = "ajaib";
+    fnChat().subscribe(
+        pubnub,
+        public_channel,
+        presence,
+        function(m){console.log(m)},
+        function(){},
+        connect(pubnub,public_channel),
+        function(){}
+    );
+}
+//================== end of subscribe chat ==================
+
+//================== presence function ===================
+// The State of User Occupancy has Changed.
+// This Function is Called when Someone Joins/Leaves.
+function presence(details) {
+    console.log(details);
+    var uuid = 'uuid' in details && (''+details.uuid).toLowerCase();
+    AppendListUsers(details.data,details.action);
+
+    //
+    //if ('action' in details && uuid) p.events.fire(
+    //    'presence-user-' + details.action, uuid
+    //);
+    //
+    //// Here Now (only)
+    //if ('uuids' in details) p.each( details.uuids, function(uuid) {
+    //    p.events.fire( 'presence-user-join', uuid.toLowerCase() );
+    //} );
+    //
+    //// Here Now (too)
+    //online.innerHTML = 'occupancy' in details && details.occupancy || 1;
+}
+
+function bindingPresence(p) {
+// This event Fires when a new User has Joined.
+    p.events.bind( 'presence-user-join', function(uuid) {
+        update.add({ uuid : uuid, message : 'Joined' });
+        people.online(uuid);
+    } );
+
+// This event Fires when a new User has timeout.
+    p.events.bind( 'presence-user-timeout', function(uuid) {
+        update.add({ uuid : uuid, message : 'Timeout' });
+        people.offline(uuid);
+    } );
+
+// This event Fires when a new User has Left.
+    p.events.bind( 'presence-user-leave', function(uuid) {
+        update.add({ uuid : uuid, message : 'Left' });
+        people.offline(uuid);
+    } );
+
+// This event Fires when a new User has state changed.
+    p.events.bind( 'presence-user-state-change', function(uuid) {
+        update.add({ uuid : uuid, message : 'Online' });
+        people.online(uuid);
+    } );
+}
+
+function connect(pubnub,channel) {
+    pubnub.here_now({
+        channel  : channel,
+        callback : presence
+    });
+}
+//================== end presence function ===================
+
+
+//==================== right bar list users ====================
+/**
+ * Fungsi yang digunakan untuk membuat list online/offline user pada sidebar di kanan aplikasi
+ * sekali user terdaftar maka selamanya dia akan leave dari sebuah channel, karena kita btuh datanya
+ * yang diperlukan hanyalah status online dan offline
+ * @param m, object passing from pubnub state
+ * @param action, join || leave || timeout
+ */
+function AppendListUsers(m, action) {
+    //console.log(m);
+    // show online users
+    if (m.time === "undefined") {
+        console.log("undefined time");
+        //console.log(m.time);
+        var time = calendar(moment(getDate(), "YYYY-MM-DD HH:mm").toDate());
+    } else {
+        console.log("defined time");
+        console.log(m.time);
+        var time = calendar(moment(m.time, "YYYY-MM-DD HH:mm").toDate());
+        /*26/01/2016 07:00 am*/
+    }
+console.log(time);
+    if (!m.user) {
+        m.user = m.user_name;
+    }
+
+    if (typeof m.user !== "undefined") {
+        if (action === 'join' /*pertama kali user join di sebuah channel*/ || action === 'state-change' /*selanjutnya berubah dari join jadi state-change*/) {
+            switch (m.status) {
+                case "isOnline":
+                    ShowOnlineElement(m,time);
+                    break;
+                case "isOffline":
+                    ShowOfflineElement(m,time);
+                    break;
+                default:
+                    ShowOnlineElement(m,time);
+            }
+        } else {
+            ShowOfflineElement(m,time);
+        }
+    }
+}
+
+function ShowOnlineElement(m, time) {
+    // jika user ini ada di list offline user, maka hapus terlebih dahulu elementnya
+    if (ElementIsExist('offline-user-' + m.user_name)) {
+        $('#offline-user-' + m.user_name).remove();
+    }
+
+    // pada saat join, jika element list online user untuk username ini tidak ada, maka akan dibuat
+    if (!ElementIsExist('online-user-' + m.user_name)) {
+        var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel + '" data="' + m.sender_id + '-' + m.user_name + '-' + m.user + '" id="online-user-' + m.user_name + '"><img alt="" class="chat-pic" src="https://randomuser.me/api/portraits/thumb/men/25.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        $('.online-list').append(elm);
+    }
+
+    // register list-online class to click event
+    TriggerChatOnline(m);
+}
+
+function ShowOfflineElement(m, time) {
+    // jika user leave || timeout, cek apakah user tersebut ada di list online user?
+    // jika ada maka hapus terlebih dahulu dari list online user
+    if (ElementIsExist('online-user-' + m.user_name)) {
+        $('#online-user-' + m.user_name).remove();
+    }
+
+    // jika belum ada di list offline user maka akan dibuat
+    if (!ElementIsExist('offline-user-' + m.user_name)) {
+        var elm = '<li><a href="#" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="https://randomuser.me/api/portraits/thumb/men/30.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        $('.offline-list').append(elm);
+    }
+
+    // jika chat box
+}
+
+/**
+ * Fungsi yang digunakan untuk mengetahui apakah sebuah element exist or not (by id)
+ * @param idname, nama id dari element
+ * @returns {boolean}, true : jika element exist || false : jika element not exist
+ */
+function ElementIsExist(idname) {
+    if ($('#' + idname).length === 0 || !$('#' + idname)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+//==================== end right bar list users ====================
+
+
+/**
+ * Initializing for subscribe on group channel and private channel
+ * @constructor
+ */
+function subscribeChat(pubnub) {
+    // Subscribe/listen to the OPERATOR channel
+    pubnub.subscribe({
+        channel: [channel],
+        heartbeat: 10,
+        //presence: function (p) {
+        //    GenerateListUsers(p);
+        //},
+        message: function (m) {
+            //TODO: subscribe chat -> don't forget to disable this debug when it goes online
+            //logging('subscribe chat '+m);
+            //logging(m);
+
+            if (m.sender_id === authUser.id) {
+                // operator it self
+                //renderMessage('operator', m.message, m.time, m.user_name);
+            } else {
+                console.log("masuk sini");
+                console.log(m);
+                GrantChannelGroup(m.sender_channel);
+                // get other operators that handle this users
+                chatFeature.channel_group_list_channels({
+                    channel_group: "cg-" + m.sender_channel,
+                    callback: function (cg) {
+                        var serviceSender = ServiceSenderDeviceId(m.sender_auth);
+                        serviceSender.success(function (success) {
+                            m.device_id = success.data.device_id;
+                        });
+                        // cek channel group nya dia
+                        // jika sudah ada operator yang handle maka hanya munculkan notifikasi di operator yang handle
+
+                        //console.log("FRIENDLIST: ", cg);
+                        if (cg.channels.length > 1) {
+                            //logging('impossible !');
+                        } else if (cg.channels.length === 0) {
+                            // belum dihandle oleh operator lain
+                            // broadcast ke semua operator
+
+                            // notifications
+                            $.playSound('audio/chat');
+                            $('.edumix-noft').html('*');
+
+                            // Grant user access
+                            GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
+
+                            // if users have been chat with this operator, then just change the style
+                            if ($('#ss_' + m.user_name).length !== 0) {
+                                // users has old notification then remove it
+                                // alert($('#ss_'+ m.sender_id).length);
+                                $('div#ss_' + m.user_name).remove();
+                            }
+
+                            // Set parameter for the next usage of AppendChat function
+                            SetParam(m.sender_id, m);
+                            if ($('#cn_' + m.user_name) !== 0) {
+                                $('#cn_' + m.user_name).remove();
+                            }
+
+                            // create new notification
+                            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+
+                            // append chat to chat-conversation div
+                            if (ElementIsExist('cb_' + m.user_name)) {
+                                renderMessage('client', m.message, m.time, m.user_name);
+                            }
+
+                            showNotification(m, false);
+                        } else if (cg.channels.length === 1 && cg.channels[0] === authUser.channel) {
+                            if ($('#ss_' + m.user_name).length !== 0) {
+                                // users has old notification then remove it
+                                $('div#ss_' + m.user_name).remove();
+                            }
+
+                            // operator itu sendiri
+                            $.playSound('audio/chat');
+                            $('.edumix-noft').html('*');
+                            // Set parameter for the next usage of AppendChat function
+                            SetParam(m.sender_id, m);
+                            if ($('#cn_' + m.user_name) !== 0) {
+                                $('#cn_' + m.user_name).remove();
+                                $('#cn_' + m.user_name).remove();
+                            }
+
+                            // create new notification
+                            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+
+                            // append chat to chat-conversation div
+                            if (ElementIsExist('cb_' + m.user_name)) {
+                                renderMessage('client', m.message, m.time, m.user_name);
+                            }
+
+                            showNotification(m, true);
+                        } else {
+                            // operator yang melayani lebih dari satu
+                            // cek channel groupnya
+
+                        }
+                    },
+                    error: function (m) {//logging('error on channel group list');
+                        console.log(m)
+                    }
+                });
+            }
+        },
+        /**
+         * using callback
+         */
+        connect: connect,
+        disconnect: function () {
+            console.log("Disconnected")
+        },
+        reconnect: function () {
+            console.log("Reconnected")
+        },
+        error: function () {
+            console.log("Network Error")
+        }
+    });
+}
+
+
+
+
+/**
+// --------------------------------------------------------------------------
+//
+// GET USER DETAILS (PICTURE, NAME, ETC)
+//
+// --------------------------------------------------------------------------
+function get_user(args) {
+    var uuid     = args.uuid
+        ,   callback = args.callback;
+
+    if (uuid in users) return callback(users[uuid]);
+
+    function success(tuser) {
+        tuser[0].uuid = uuid;
+        users[uuid] = tuser[0];
+        p.db.set( channel+'-users', JSON.stringify(users) );
+        callback(tuser[0]);
+    }
+
+    function errorback() {
+        success(JSON.parse(p.$('default-user').innerHTML));
+    }
+
+    request({
+        url       : 'http://api.twitter.com/1/users/lookup.json',
+        params    : { screen_name : uuid },
+        callback  : success,
+        errorback : errorback
+    });
+}
+
+// --------------------------------------------------------------------------
+//
+// PEOPLE
+//
+// --------------------------------------------------------------------------
+var people = (function() {
+    var people         = {}
+        ,   list_of_people = p.$('list-of-people');
+
+    function get_person_div(uuid) {
+        return people[uuid] || (function(uuid){
+                var person = p.create('div');
+
+                list_of_people.insertBefore(
+                    person,
+                    first_div(list_of_people)
+                );
+
+                return (people[uuid] = person);
+            })(uuid);
+    }
+
+    function online(user) {
+        supplant( get_person_div(user.uuid), person_template, {
+            bg     : user.profile_image_url || '#555',
+            color  : '#2e3',
+            name   : user.name,
+            uuid   : user.uuid,
+            status : 'online'
+        } );
+    }
+
+    function offline(user) {
+        supplant( get_person_div(user.uuid), person_template, {
+            bg     : user.profile_image_url || '#555',
+            color  : '#e42',
+            name   : user.name,
+            uuid   : user.uuid,
+            status : 'offline'
+        } );
+    }
+
+    return {
+        online : function(uuid) {
+            get_user({ uuid : uuid, callback : online });
+        },
+        offline : function(uuid) {
+            get_user({ uuid : uuid, callback : offline });
+        }
+    };
+})();
+
+// --------------------------------------------------------------------------
+//
+// UPDATES
+//
+// --------------------------------------------------------------------------
+var update = (function() {
+    var updates     = []
+        ,   update_area = p.$('update-area');
+
+    return {
+        add : function(args) {
+            // Prevent Duplicate Events
+            var previous = updates.slice(-1);
+            previous = previous.length && previous[0];
+
+            if (previous && (
+                    (previous.uuid + previous.message) ==
+                    (args.uuid + args.message)
+                ) ) return;
+
+            // Do nothing for a NULL UUID
+            if (!args.uuid) return;
+
+            var entry = p.create('div')
+                ,   msg   = args.message
+                ,   user  = get_user({
+                uuid     : args.uuid,
+                callback : function(user) {
+                    supplant( entry, update_template, {
+                        time    : time.innerHTML,
+                        name    : user.name,
+                        message : msg
+                    } );
+
+                    update_area.insertBefore(
+                        entry,
+                        first_div(update_area)
+                    );
+                }
+            });
+
+            updates.push(args);
+        }
+    };
+})();
+
+
+ */
+
+//=========================================
+
+var ListUsersOnlineOffline = (function(){
+    function online() {
+        var people = [];
+
+        return chatFeature.here_now( {
+            channel: "ajaib",
+            callback: function(m){
+                a = m.uuids;
+                //for (i=0;i< m.uuids.length;i++) {
+                //    if (m.uuids[i].split("-",1) !== "operator")
+                //        console.log(m.uuids[i]);
+                //}
+            }
+        });
+    }
+
+    function offline() {
+
+    }
+
+    return {
+
+    }
+})
+
+function InitOnlineUser() {
+    //var a = function(){
+
+           chatFeature.here_now( {
+                channel: "ajaib",
+                callback: function(m){
+                    a = m.uuids;
+                    //for (i=0;i< m.uuids.length;i++) {
+                    //    if (m.uuids[i].split("-",1) !== "operator")
+                    //        console.log(m.uuids[i]);
+                    //}
+                }
+            });
+return a;
+
+    //}
+    //return a;
+}
 
 function InitOfflineUser() {
     // https://ajaib-local/dashboard/users/list
@@ -117,24 +724,9 @@ function InitOfflineUser() {
     });
 }
 
-/**
- * Initializing chat feature
- * @constructor
- */
-function InitChat() {
-    chatFeature = PUBNUB.init({
-        publish_key: pubnub_key,
-        subscribe_key: subnub_key,
-        secret_key: skey,
-        auth_key: authk,
-        ssl: (('https:' == document.location.protocol) ? true : false),
-        uuid: roles + '-' + name
-    });
-}
-
 function UsersOnline() {
     chatFeature.here_now({
-        channel: 'users',
+        channel: 'ajaib',
         callback: function (m) {
             console.log(m)
         }
@@ -216,71 +808,6 @@ function ManipulateChannelGroupList(channel) {
 }
 //=========================== channel group purpose ==================//
 
-/**
- * Function to granting user using Pubnub Access Manager
- * @param channel, specified channel to grant
- * @param auth, specified auth to grant
- * @param read, subscribe access
- * @param write, publish access
- * @param ttl, time to live => 0, forefer / without limit
- */
-function GrantChat(channel, auth, read, write, ttl) {
-    // channel-pnpres used because we are using pubnub presence
-    // grant pubnub access on global channel and private channel
-    if (channel === '') {
-        chatFeature.grant({
-            read: read,
-            write: write,
-            ttl: ttl,
-            callback: function (m) {
-                //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
-                //logging('grant chat on subsribe key level ');
-                //logging(m);
-            },
-            error: function (m) {
-                console.error(m)
-            }
-        });
-    } else if (auth === '') {
-        // no need authentication
-        chatFeature.grant({
-            channel: channel + ',' + channel + '-pnpres',
-            read: read,
-            write: write,
-            ttl: ttl,
-            callback: function (m) {
-                //TODO: grant chat on channel level (without authentication) level -> don't forget to disable this debug when it goes online
-                //logging('grant chat on channel level (without authentication) ');
-                //logging(m);
-            }
-        });
-    } else {
-        // need authentication
-        chatFeature.grant({
-            channel: channel + ',' + channel + '-pnpres',
-            auth_key: auth,
-            read: read,
-            write: write,
-            ttl: ttl,
-            callback: function (m) {
-                //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
-                //logging('grant chat on user level (with authentication) ');
-                //logging(m);
-            }
-        });
-    }
-}
-
-function RevokeChat(channel, auth) {
-    pubnub.revoke({
-        channel: channel,
-        auth_key: auth,
-        //callback: function(m){
-        //    console.log(m);
-        //}
-    });
-}
-
 function getDate() {
     var d = new Date();
 
@@ -345,25 +872,41 @@ function GetSharedProperties(key) {
     return sharedProperties[key];
 }
 
+function test() {
+    var z = 0;
+    for (var i = 0;i< 5;i++) {
+        var c = b(i);
+        if (c === 3){
+            z = c;
+        }
+    }
+    console.log(z);
+}
+
+function b(a) {
+    return a+1;
+}
+
 /**
  * Fungsi untuk retrieve state dari user
  * @param p, pubnub presence api
  */
 function GenerateListUsers(p) {
-    //logging(p);
     if (p.uuid.split('-')[0] !== 'operator' || p.uuid.split('-')[0] !== 'admin') {
-        chatFeature.state({
-            channel: p.uuid,
-            uuid: p.uuid,
-            callback: function (m) {
-                if (!jQuery.isEmptyObject(m))
-                // if not exist then create it
-                    AppendListUsers(m, p.action);
-            },
-            error: function (m) {
-                console.log(m)
-            }
-        });
+        AppendListUsers(p.data, p.action);
+        //chatFeature.state({
+        //    channel: p.uuid,
+        //    uuid: p.uuid,
+        //    callback: function (c) {
+        //        //if (!jQuery.isEmptyObject(m)) {
+        //        //    // if not exist then create it
+        //        //    AppendListUsers(m, p.action);
+        //        //}
+        //    },
+        //    error: function (m) {
+        //        console.log(m)
+        //    }
+        //});
     }
 }
 
@@ -450,192 +993,9 @@ function TriggerChatOnline() {
     });
 }
 
-/**
- * Fungsi yang digunakan untuk membuat list online/offline user pada sidebar di kanan aplikasi
- * @param m, object passing from pubnub state
- * @param action, join || leave || timeout
- */
-function AppendListUsers(m, action) {
-    // show online users
-    if (!m.time) {
-        var time = '';
-    } else {
-        var time = calendar(moment(m.time, "YYYY-MM-DD HH:mm").toDate());
-        /*26/01/2016 07:00 am*/
-    }
 
-    if (!m.user) {
-        m.user = m.user_name;
-    }
 
-    if (action === 'join' || action === 'state-change') {
-        // jika user ini ada di list offline user, maka hapus terlebih dahulu elementnya
-        if (ElementIsExist('offline-user-' + m.user_name)) {
-            $('#offline-user-' + m.user_name).remove();
-        }
 
-        // pada saat join, jika element list online user untuk username ini tidak ada, maka akan dibuat
-        if (!ElementIsExist('online-user-' + m.user_name)) {
-            var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel + '" data="' + m.sender_id + '-' + m.user_name + '-' + m.user + '" id="online-user-' + m.user_name + '"><img alt="" class="chat-pic" src="https://randomuser.me/api/portraits/thumb/men/25.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
-            $('.online-list').append(elm);
-        }
-
-        // register list-online class to click event
-        TriggerChatOnline(m);
-
-    } else {
-        // jika user leave || timeout, cek apakah user tersebut ada di list online user?
-        // jika ada maka hapus terlebih dahulu dari list online user
-        if (ElementIsExist('online-user-' + m.user_name)) {
-            $('#online-user-' + m.user_name).remove();
-        }
-
-        // jika belum ada di list offline user maka akan dibuat
-        if (!ElementIsExist('offline-user-' + m.user_name)) {
-            var elm = '<li><a href="#" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="https://randomuser.me/api/portraits/thumb/men/30.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
-            $('.offline-list').append(elm);
-        }
-    }
-}
-
-/**
- * Fungsi yang digunakan untuk mengetahui apakah sebuah element exist or not (by id)
- * @param idname, nama id dari element
- * @returns {boolean}, true : jika element exist || false : jika element not exist
- */
-function ElementIsExist(idname) {
-    if ($('#' + idname).length === 0 || !$('#' + idname)) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-/**
- * Initializing for subscribe on group channel and private channel
- * @constructor
- */
-function SubscribeChat() {
-    // Subscribe/listen to the OPERATOR channel
-    chatFeature.subscribe({
-        channel: ['users', channel],
-        presence: function (p) {
-            GenerateListUsers(p);
-        },
-        //presence: function(m){console.log(m)},
-        message: function (m) {
-            //TODO: subscribe chat -> don't forget to disable this debug when it goes online
-            //logging('subscribe chat '+m);
-            //logging(m);
-
-            if (m.sender_id === authUser.id) {
-                // operator it self
-                //renderMessage('operator', m.message, m.time, m.user_name);
-            } else {
-                console.log("masuk sini");
-                console.log(m);
-                GrantChannelGroup(m.sender_channel);
-                // get other operators that handle this users
-                chatFeature.channel_group_list_channels({
-                    channel_group: "cg-" + m.sender_channel,
-                    callback: function (cg) {
-                        var serviceSender = ServiceSenderDeviceId(m.sender_auth);
-                        serviceSender.success(function (success) {
-                            m.device_id = success.data.device_id;
-                        });
-                        // cek channel group nya dia
-                        // jika sudah ada operator yang handle maka hanya munculkan notifikasi di operator yang handle
-
-                        console.log("FRIENDLIST: ", cg);
-                        if (cg.channels.length > 1) {
-                            //logging('impossible !');
-                        } else if (cg.channels.length === 0) {
-                            // belum dihandle oleh operator lain
-                            // broadcast ke semua operator
-
-                            // notifications
-                            $.playSound('audio/chat');
-                            $('.edumix-noft').html('*');
-
-                            // Grant user access
-                            GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
-
-                            // if users have been chat with this operator, then just change the style
-                            if ($('#ss_' + m.user_name).length !== 0) {
-                                // users has old notification then remove it
-                                // alert($('#ss_'+ m.sender_id).length);
-                                $('div#ss_' + m.user_name).remove();
-                            }
-
-                            // Set parameter for the next usage of AppendChat function
-                            SetParam(m.sender_id, m);
-                            if ($('#cn_' + m.user_name) !== 0) {
-                                $('#cn_' + m.user_name).remove();
-                            }
-
-                            // create new notification
-                            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
-
-                            // append chat to chat-conversation div
-                            if (ElementIsExist('cb_' + m.user_name)) {
-                                renderMessage('client', m.message, m.time, m.user_name);
-                            }
-
-                            showNotification(m, false);
-                        } else if (cg.channels.length === 1 && cg.channels[0] === authUser.channel) {
-                            if ($('#ss_' + m.user_name).length !== 0) {
-                                // users has old notification then remove it
-                                $('div#ss_' + m.user_name).remove();
-                            }
-
-                            // operator itu sendiri
-                            $.playSound('audio/chat');
-                            $('.edumix-noft').html('*');
-                            // Set parameter for the next usage of AppendChat function
-                            SetParam(m.sender_id, m);
-                            if ($('#cn_' + m.user_name) !== 0) {
-                                $('#cn_' + m.user_name).remove();
-                                $('#cn_' + m.user_name).remove();
-                            }
-
-                            // create new notification
-                            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
-
-                            // append chat to chat-conversation div
-                            if (ElementIsExist('cb_' + m.user_name)) {
-                                renderMessage('client', m.message, m.time, m.user_name);
-                            }
-
-                            showNotification(m, true);
-                        } else {
-                            // operator yang melayani lebih dari satu
-                            // cek channel groupnya
-
-                        }
-                    },
-                    error: function (m) {//logging('error on channel group list');
-                        console.log(m)
-                    }
-                });
-            }
-        },
-        /**
-         * using callback
-         */
-        connect: function () {
-            console.log("Connected");
-        },
-        disconnect: function () {
-            console.log("Disconnected")
-        },
-        reconnect: function () {
-            console.log("Reconnected")
-        },
-        error: function () {
-            console.log("Network Error")
-        }
-    });
-}
 
 function ChatBoxToggle(elm) {
     // if chat-box already shown then blink it

@@ -8,13 +8,20 @@ use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 use Illuminate\Http\Request;
 
+use App\Repositories\ChatRepository;
+
 class ChatController extends Controller {
 
-    public function __construct()
+    protected $pubnub;
+
+    public function __construct(ChatRepository $pubnub)
     {
-        $this->middleware("oauth", ['only' => ['index', 'store']]);
-        $this->middleware("oauth-user", ['only' => ['index', 'store']]);
-        $this->middleware('auth', ['except' => ['index', 'store', 'insertLog']]);
+        $this->pubnub = $pubnub;
+        // end user access
+        $this->middleware("oauth", ['only' => ['index', 'store', 'grantChannelGroup', 'addChannelToGroup','removeChannelFromGroup']]);
+        $this->middleware("oauth-user", ['only' => ['index', 'store', 'grantChannelGroup', 'addChannelToGroup','removeChannelFromGroup']]);
+        // backend acces
+        $this->middleware('auth', ['except' => ['index', 'store', 'insertLog', 'grantChannelGroup', 'addChannelToGroup','removeChannelFromGroup']]);
     }
 
     /**
@@ -218,5 +225,72 @@ class ChatController extends Controller {
             'data'=>$chat
         ),200);
     }
+
+    //===================== PUBNUB PROSES =====================
+    /**
+     * grant channel group to be accessed
+     * @param Request $request
+     * @return mixed
+     */
+    public function grantChannelGroup(Request $request) {
+        // _set magic method (ex: role = users)
+        $this->pubnub->channelGroup = "cg-".$request->role;
+        // _get magic method
+        $response = $this->pubnub->grantChannelGroup;
+        // $data['token'] = csrf_token();
+        return $this->responseChannelRequest($response);
+    }
+
+    /**
+     * add user channel to specific group channel
+     * @param Request $request
+     * @return mixed
+     */
+    public function addChannelToGroup(Request $request) {
+        // _set magic method (ex: role = users)
+        $this->pubnub->channelGroup = "cg-".$request->role;
+        // set static variabel channel on chat repository to $request->channel
+        $this->pubnub->channel = $request->channel;
+        // response action using _get magic method
+        $response = $this->pubnub->groupAddChannel();
+        return $this->responseChannelRequest($response);
+    }
+
+    /**
+     * remove user channel from group channel
+     * @param Request $request
+     * @return mixed
+     */
+    public function removeChannelFromGroup(Request $request) {
+        // _set magic method (ex: role = users)
+        $this->pubnub->channelGroup = "cg-".$request->role;
+        // set static variabel channel on chat repository to $request->channel
+        $this->pubnub->channel = $request->channel;
+        // response action using _get magic method
+        $response = $this->pubnub->groupRemoveChannel();
+        return $this->responseChannelRequest($response);
+    }
+
+    /**
+     * used to return response from pubnub proses
+     * @param $response
+     * @return mixed
+     */
+    private function responseChannelRequest($response) {
+        $code = $response['status'];
+        return response()->json(array(
+            'status'=>$code,
+            'message'=>$response['message']."-".$response['service'],
+            'error'=>$response['error']
+        ),$code);
+    }
+    //=================== END PUBNUB PROSES ===================
+
+
+
+
+
+
+
 
 }

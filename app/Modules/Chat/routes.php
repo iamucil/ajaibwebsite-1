@@ -9,7 +9,10 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
         Route::get('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.index', 'uses' => 'ChatController@index']);
         // api for insert data chat
         Route::post('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.store', 'uses' => 'ChatController@store']);
-
+        // add user to channel group
+        //Route::post('/chat/addChannelToGroup', ['as'=>'api.chat.addChannelToGroup','uses' => 'ChatController@addChannelToGroup']);
+        //Route::post('/chat/removeChannelFromGroup', ['as'=>'api.chat.removeChannelFromGroup','uses' => 'ChatController@removeChannelFromGroup']);
+        //Route::post('/chat/grantChannelGroup', ['as'=>'api.chat.grantChannelGroup','uses' => 'ChatController@grantChannelGroup']);
     });
 
     Route::group(['prefix' => 'dashboard'], function () {
