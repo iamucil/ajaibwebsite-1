@@ -25,8 +25,6 @@ var sharedProperties = {};
 // pubnub init properties
 var authk = $('meta[name="csrf-token"]').attr('content');
 
-var a = "";
-
 $(function () {
     // check if user has assigned to roles ??
     if (authRoles === undefined || authRoles.length == 0) {
@@ -713,6 +711,12 @@ function InitOfflineUser() {
         url: "https://" + domain + "/dashboard/users/list",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
+        beforeSend: function (xhr, settings){
+            // check if url is accessible
+            if( xhr.status != 200 ){
+                return false;
+            }
+        },
         success: function (data) {
             if (data.status === 200) {
                 var items = data.data
@@ -726,7 +730,7 @@ function InitOfflineUser() {
 
 function UsersOnline() {
     chatFeature.here_now({
-        channel: 'ajaib',
+        channel: 'users',
         callback: function (m) {
             console.log(m)
         }
@@ -870,21 +874,6 @@ function SetSharedProperties(key, value) {
 
 function GetSharedProperties(key) {
     return sharedProperties[key];
-}
-
-function test() {
-    var z = 0;
-    for (var i = 0;i< 5;i++) {
-        var c = b(i);
-        if (c === 3){
-            z = c;
-        }
-    }
-    console.log(z);
-}
-
-function b(a) {
-    return a+1;
 }
 
 /**

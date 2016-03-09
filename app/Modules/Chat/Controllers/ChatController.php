@@ -67,10 +67,11 @@ class ChatController extends Controller {
         }
         $chat=Chat::create($param);
         if($chat){
+			$data = array("chat_id"=>$chat["id"]);
             return response()->json(array(
                 'status'=>201,
                 'message'=>'Success Saving',
-                'data'=>$chat
+                'data'=>$data
             ),201);
         }else{
             return response()->json(array(

@@ -58,23 +58,27 @@ class UserRepository
                         // 'status' => false
                     ]);
                     $mail_template  = 'emails.authentication';
+                    $sender         = env('EMAIL_NOREPLY','noreply@getajaib.com');
                     $user           = $query->first();
                     Twilio::message('+'.$user->phone_number, 'Your Ajaib Verification code is '.$user->verification_code);
                 }else{
                     $mail_template  = 'emails.greeting';
+                    $sender         = env('EMAIL_FROM','noreply@getajaib.com');
                 }
             } else {
                 $exists = false;
-                $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                // $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                $input      = request()->only(['phone_number', 'channel', 'status', 'name', 'verification_code', 'password', 'email']);
                 $user = User::firstOrCreate($input);
                 $mail_template  = 'emails.greeting';
+                $sender         = env('EMAIL_FROM','noreply@getajaib.com');
             }
 
             /**
              * And finnaly send email greeting to registered user
              */
-            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user) {
-                $mail->from('noreply@getajaib.com', 'Ajaib');
+            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user, $sender) {
+                $mail->from($sender, 'Ajaib');
                 $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
             });
 
@@ -114,23 +118,24 @@ class UserRepository
 
     protected function generateVerificationCode()
     {
-        $length = 6;
-        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $arrVerificationCode = [];
-        for ($i = 0; $i < $length; $i++) {
-            $char = $characters[rand(0, $charactersLength - 1)];
-            if($char == '0' OR $char == '1' OR in_array($char, $arrVerificationCode)){
-                $char = $characters[rand(0, $charactersLength - 1)];
-            }
-            $arrVerificationCode[] = $char;
-        }
-        $verificationCode  = implode("",$arrVerificationCode);
-        $query = User::where('verification_code', $verificationCode);
-        if($query->exists()){
-            $verificationCode  = self::generateVerificationCode();
-        }
-        return $verificationCode;
+        // $length = 6;
+        // $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        // $charactersLength = strlen($characters);
+        // $arrVerificationCode = [];
+        // for ($i = 0; $i < $length; $i++) {
+        //     $char = $characters[rand(0, $charactersLength - 1)];
+        //     if($char == '0' OR $char == '1' OR in_array($char, $arrVerificationCode)){
+        //         $char = $characters[rand(0, $charactersLength - 1)];
+        //     }
+        //     $arrVerificationCode[] = $char;
+        // }
+        // $verificationCode  = implode("",$arrVerificationCode);
+        // $query = User::where('verification_code', $verificationCode);
+        // if($query->exists()){
+        //     $verificationCode  = self::generateVerificationCode();
+        // }
+        // return $verificationCode;
+        return mt_rand(1000, 9999);
     }
 }
 
