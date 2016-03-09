@@ -66,27 +66,31 @@ $(function () {
         // initialize chat featre using PubNub
         var chat = initChat();
 
+        // initialize public channel
+        var pub_channel = "ajaib";
+
+        InitOfflineUser(chat);
+
         // grant permission
         grantPermission(chat);
 
         // subscribe on public channel
-        subscribe(chat);
+        subscribe(chat,pub_channel);
 
         // listening to 'OPERATOR' channel for group and operator private's channel
-        //SubscribeChat();
+        subscribeChat(chat);
 
-        $('.btn-ajaib').click(function () {
-
-        });
-
-        $('.chat-text').bind('keydown', function (event) {
-            if ((event.keyCode || event.charCode) !== 13) return true;
-            $('.chat-text').parent().siblings()[1].click();
-            return false;
-        });
+        //$('.btn-ajaib').click(function () {
+        //
+        //});
+        //
+        //$('.chat-text').bind('keydown', function (event) {
+        //    if ((event.keyCode || event.charCode) !== 13) return true;
+        //    $('.chat-text').parent().siblings()[1].click();
+        //    return false;
+        //});
 
         // init offline user
-        InitOfflineUser();
         //InitOnlineUser();
     }
 
@@ -143,6 +147,7 @@ var fnChat = function() {
     function subscribe(pubnub, channels, presence, message, callback, connect, reconnect, error) {
         pubnub.subscribe({
             channel     : channels,
+            //heartbeat   : 10,
             presence    : presence,
             message     : message,
             callback    : callback,
@@ -170,8 +175,8 @@ var fnChat = function() {
                 ttl: ttl,
                 callback: function (m) {
                     //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
-                    logging('grant chat on subsribe key level ');
-                    logging(m);
+                    //logging('grant chat on subsribe key level ');
+                    //logging(m);
                 },
                 error: function (m) {
                     console.error(m)
@@ -186,8 +191,8 @@ var fnChat = function() {
                 ttl: ttl,
                 callback: function (m) {
                     //TODO: grant chat on channel level (without authentication) level -> don't forget to disable this debug when it goes online
-                    logging('grant chat on channel level (without authentication) ');
-                    logging(m);
+                    //logging('grant chat on channel level (without authentication) ');
+                    //logging(m);
                 }
             });
         } else {
@@ -200,8 +205,8 @@ var fnChat = function() {
                 ttl: ttl,
                 callback: function (m) {
                     //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
-                    logging('grant chat on user level (with authentication) ');
-                    logging(m);
+                    //logging('grant chat on user level (with authentication) ');
+                    //logging(m);
                 }
             });
         }
@@ -237,15 +242,14 @@ function grantPermission(pubnub) {
 //================== end of grant permission ==================
 
 //===================== subscribe ======================
-function subscribe(pubnub) {
-    var public_channel = "ajaib";
+function subscribe(pubnub,schannel) {
     fnChat().subscribe(
         pubnub,
-        public_channel,
+        schannel,
         presence,
         function(m){console.log(m)},
         function(){},
-        connect(pubnub,public_channel),
+        function(){},
         function(){}
     );
 }
@@ -255,48 +259,16 @@ function subscribe(pubnub) {
 // The State of User Occupancy has Changed.
 // This Function is Called when Someone Joins/Leaves.
 function presence(details) {
-    console.log(details);
     var uuid = 'uuid' in details && (''+details.uuid).toLowerCase();
-    AppendListUsers(details.data,details.action);
-
-    //
-    //if ('action' in details && uuid) p.events.fire(
-    //    'presence-user-' + details.action, uuid
-    //);
-    //
-    //// Here Now (only)
-    //if ('uuids' in details) p.each( details.uuids, function(uuid) {
-    //    p.events.fire( 'presence-user-join', uuid.toLowerCase() );
-    //} );
-    //
-    //// Here Now (too)
-    //online.innerHTML = 'occupancy' in details && details.occupancy || 1;
-}
-
-function bindingPresence(p) {
-// This event Fires when a new User has Joined.
-    p.events.bind( 'presence-user-join', function(uuid) {
-        update.add({ uuid : uuid, message : 'Joined' });
-        people.online(uuid);
-    } );
-
-// This event Fires when a new User has timeout.
-    p.events.bind( 'presence-user-timeout', function(uuid) {
-        update.add({ uuid : uuid, message : 'Timeout' });
-        people.offline(uuid);
-    } );
-
-// This event Fires when a new User has Left.
-    p.events.bind( 'presence-user-leave', function(uuid) {
-        update.add({ uuid : uuid, message : 'Left' });
-        people.offline(uuid);
-    } );
-
-// This event Fires when a new User has state changed.
-    p.events.bind( 'presence-user-state-change', function(uuid) {
-        update.add({ uuid : uuid, message : 'Online' });
-        people.online(uuid);
-    } );
+    if (uuid && uuid.split("-",1)[0]!=="operator") {
+        console.log(details);
+        if (typeof details.data === "undefined") {
+            var splitted = uuid.split(":");
+            details.data.user_name = splitted[0];
+            details.data.channel = splitted[1]
+        }
+        AppendListUsers(details.data,details.action);
+    }
 }
 
 function connect(pubnub,channel) {
@@ -317,19 +289,15 @@ function connect(pubnub,channel) {
  * @param action, join || leave || timeout
  */
 function AppendListUsers(m, action) {
-    //console.log(m);
+    var time = "";
     // show online users
-    if (m.time === "undefined") {
-        console.log("undefined time");
-        //console.log(m.time);
+    if (typeof m.time === "undefined") {
         var time = calendar(moment(getDate(), "YYYY-MM-DD HH:mm").toDate());
     } else {
-        console.log("defined time");
-        console.log(m.time);
         var time = calendar(moment(m.time, "YYYY-MM-DD HH:mm").toDate());
         /*26/01/2016 07:00 am*/
     }
-console.log(time);
+
     if (!m.user) {
         m.user = m.user_name;
     }
@@ -352,6 +320,12 @@ console.log(time);
     }
 }
 
+/**
+ * Show list online users on the rightbar chat modules
+ * @param m
+ * @param time
+ * @constructor
+ */
 function ShowOnlineElement(m, time) {
     // jika user ini ada di list offline user, maka hapus terlebih dahulu elementnya
     if (ElementIsExist('offline-user-' + m.user_name)) {
@@ -368,7 +342,14 @@ function ShowOnlineElement(m, time) {
     TriggerChatOnline(m);
 }
 
+/**
+ * Show list offline users on the rightbar chat modules
+ * @param m
+ * @param time
+ * @constructor
+ */
 function ShowOfflineElement(m, time) {
+    time = "";
     // jika user leave || timeout, cek apakah user tersebut ada di list online user?
     // jika ada maka hapus terlebih dahulu dari list online user
     if (ElementIsExist('online-user-' + m.user_name)) {
@@ -377,7 +358,7 @@ function ShowOfflineElement(m, time) {
 
     // jika belum ada di list offline user maka akan dibuat
     if (!ElementIsExist('offline-user-' + m.user_name)) {
-        var elm = '<li><a href="#" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="https://randomuser.me/api/portraits/thumb/men/30.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="https://randomuser.me/api/portraits/thumb/men/30.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.offline-list').append(elm);
     }
 
@@ -407,7 +388,7 @@ function subscribeChat(pubnub) {
     // Subscribe/listen to the OPERATOR channel
     pubnub.subscribe({
         channel: [channel],
-        heartbeat: 10,
+        //heartbeat: 10,
         //presence: function (p) {
         //    GenerateListUsers(p);
         //},
@@ -422,7 +403,7 @@ function subscribeChat(pubnub) {
             } else {
                 console.log("masuk sini");
                 console.log(m);
-                GrantChannelGroup(m.sender_channel);
+                GrantChannelGroup(pubnub,m.sender_channel);
                 // get other operators that handle this users
                 chatFeature.channel_group_list_channels({
                     channel_group: "cg-" + m.sender_channel,
@@ -523,206 +504,152 @@ function subscribeChat(pubnub) {
     });
 }
 
-
-
-
 /**
-// --------------------------------------------------------------------------
-//
-// GET USER DETAILS (PICTURE, NAME, ETC)
-//
-// --------------------------------------------------------------------------
-function get_user(args) {
-    var uuid     = args.uuid
-        ,   callback = args.callback;
+ * function to publish message/chat text to users
+ * @param senderId
+ */
+function publish(senderId) {
+    // get user chat object
+    var obj = GetParam(senderId);
 
-    if (uuid in users) return callback(users[uuid]);
+    //TODO: sender object -> don't forget to disable this debug when it goes online
+    //logging('sender object '+obj);
+    //logging(obj);
 
-    function success(tuser) {
-        tuser[0].uuid = uuid;
-        users[uuid] = tuser[0];
-        p.db.set( channel+'-users', JSON.stringify(users) );
-        callback(tuser[0]);
+    // adding device
+    addDeviceToChannel(obj);
+
+    // get message to publish
+    var text = $('.chat-text#ct_' + obj.user_name).val();
+    if (typeof Cookies.get('geoip') !== "undefined") {
+        var geoip = JSON.parse(Cookies.get('geoip'));
+        var ip = geoip.ip_address;
+    } else {
+        var ip = "null";
     }
 
-    function errorback() {
-        success(JSON.parse(p.$('default-user').innerHTML));
-    }
+    var param = {
+        sender_id: authUser.id,
+        receiver_id: obj.sender_id,
+        message: text,
+        ip: ip,
+        useragent: navigator.userAgent,
+        read: getDate(),
+        sender_auth: obj.sender_auth
+    };
 
-    request({
-        url       : 'http://api.twitter.com/1/users/lookup.json',
-        params    : { screen_name : uuid },
-        callback  : success,
-        errorback : errorback
+    //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
+    //logging('parameter to insert chat log '+param);
+    //logging(param);
+
+    var logResponse = InsertLogChat(param);
+
+    // valid user permit to chat
+    logResponse.success(function (data) {
+
+        if (data.status == '201') {
+            // success then publish message
+            var datetime = getDate();
+
+            logging({
+                channel: obj.sender_channel,
+                "user_name": firstname,
+                "message": text,
+                "ip": geoip.ip_address,
+                "sender_id": authUser.id,
+                "sender_channel": channel,
+                "receiver_id": obj.sender_id,
+                "time": datetime,
+                "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
+            });
+
+            chatFeature.publish({
+                channel: obj.sender_channel,
+                message: {
+                    "user_name": firstname,
+                    "message": text,
+                    "ip": geoip.ip_address,
+                    "sender_id": authUser.id,
+                    "sender_channel": channel,
+                    "receiver_id": obj.sender_id,
+                    "time": datetime,
+                    "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
+                },
+                callback: function (m) {
+                    //TODO: publish event -> don't forget to disable this debug when it goes online
+                    //logging('publish event '+m);
+                    //logging(m);
+                }
+            });
+
+            // publish message to my channel
+            // used to: if operator use difference device/browser
+            chatFeature.publish({
+                channel: authUser.channel,
+                message: {
+                    "user_name": obj.user_name,
+                    "sender_id": authUser.id,
+                    "message": text,
+                    "time": datetime
+                },
+                callback: function (m) {
+                    //TODO: publish event -> don't forget to disable this debug when it goes online
+                    //logging('publish event '+m);
+                    //logging(m);
+                }
+            });
+
+            renderMessage('operator', text, datetime, obj.user_name);
+
+            // append the text to conversation area
+            //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
+            //$('.chat-conversation#cc_'+obj.user_name).append(appendElm);
+
+            // set chat text to null
+            $('.chat-text#ct_' + obj.user_name).val('');
+        } else {
+            // fail
+            alertify.error("Gagal insert log chat. Periksa koneksi database!");
+        }
     });
 }
 
-// --------------------------------------------------------------------------
-//
-// PEOPLE
-//
-// --------------------------------------------------------------------------
-var people = (function() {
-    var people         = {}
-        ,   list_of_people = p.$('list-of-people');
 
-    function get_person_div(uuid) {
-        return people[uuid] || (function(uuid){
-                var person = p.create('div');
-
-                list_of_people.insertBefore(
-                    person,
-                    first_div(list_of_people)
-                );
-
-                return (people[uuid] = person);
-            })(uuid);
-    }
-
-    function online(user) {
-        supplant( get_person_div(user.uuid), person_template, {
-            bg     : user.profile_image_url || '#555',
-            color  : '#2e3',
-            name   : user.name,
-            uuid   : user.uuid,
-            status : 'online'
-        } );
-    }
-
-    function offline(user) {
-        supplant( get_person_div(user.uuid), person_template, {
-            bg     : user.profile_image_url || '#555',
-            color  : '#e42',
-            name   : user.name,
-            uuid   : user.uuid,
-            status : 'offline'
-        } );
-    }
-
-    return {
-        online : function(uuid) {
-            get_user({ uuid : uuid, callback : online });
-        },
-        offline : function(uuid) {
-            get_user({ uuid : uuid, callback : offline });
-        }
-    };
-})();
-
-// --------------------------------------------------------------------------
-//
-// UPDATES
-//
-// --------------------------------------------------------------------------
-var update = (function() {
-    var updates     = []
-        ,   update_area = p.$('update-area');
-
-    return {
-        add : function(args) {
-            // Prevent Duplicate Events
-            var previous = updates.slice(-1);
-            previous = previous.length && previous[0];
-
-            if (previous && (
-                    (previous.uuid + previous.message) ==
-                    (args.uuid + args.message)
-                ) ) return;
-
-            // Do nothing for a NULL UUID
-            if (!args.uuid) return;
-
-            var entry = p.create('div')
-                ,   msg   = args.message
-                ,   user  = get_user({
-                uuid     : args.uuid,
-                callback : function(user) {
-                    supplant( entry, update_template, {
-                        time    : time.innerHTML,
-                        name    : user.name,
-                        message : msg
-                    } );
-
-                    update_area.insertBefore(
-                        entry,
-                        first_div(update_area)
-                    );
-                }
-            });
-
-            updates.push(args);
-        }
-    };
-})();
-
-
- */
-
-//=========================================
-
-var ListUsersOnlineOffline = (function(){
-    function online() {
-        var people = [];
-
-        return chatFeature.here_now( {
-            channel: "ajaib",
-            callback: function(m){
-                a = m.uuids;
-                //for (i=0;i< m.uuids.length;i++) {
-                //    if (m.uuids[i].split("-",1) !== "operator")
-                //        console.log(m.uuids[i]);
-                //}
-            }
-        });
-    }
-
-    function offline() {
-
-    }
-
-    return {
-
-    }
-})
-
-function InitOnlineUser() {
-    //var a = function(){
-
-           chatFeature.here_now( {
-                channel: "ajaib",
-                callback: function(m){
-                    a = m.uuids;
-                    //for (i=0;i< m.uuids.length;i++) {
-                    //    if (m.uuids[i].split("-",1) !== "operator")
-                    //        console.log(m.uuids[i]);
-                    //}
-                }
-            });
-return a;
-
-    //}
-    //return a;
-}
-
-function InitOfflineUser() {
+function InitOfflineUser(pubnub) {
     // https://ajaib-local/dashboard/users/list
     $.ajax({
         type: "GET",
         url: "https://" + domain + "/dashboard/users/list",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        beforeSend: function (xhr, settings){
-            // check if url is accessible
-            if( xhr.status != 200 ){
-                return false;
-            }
-        },
+        //beforeSend: function (xhr, settings){
+        //    // check if url is accessible
+        //    if( xhr.status != 200 ){
+        //        return false;
+        //    }
+        //},
         success: function (data) {
             if (data.status === 200) {
-                var items = data.data
-                for (var i = 0; i < items.length; i++) {
-                    AppendListUsers(items[i], 'offline');
-                }
+                var items = data.data;
+
+                // check who are users online on this channel
+                pubnub.here_now( {
+                    channel: "ajaib",
+                    callback: function(m){
+                        // check every users who is online
+                        for (var i = 0; i < items.length; i++) {
+
+                            var contains = $.inArray(items[i].channel, m.uuids);
+
+                            // if users has subscribed on this public channel then show it as online users
+                            if (contains > -1) {
+                                AppendListUsers(items[i], 'join');
+                            } else {
+                                AppendListUsers(items[i], 'leave');
+                            }
+                        }
+                    }
+                });
             }
         }
     });
@@ -738,8 +665,8 @@ function UsersOnline() {
 }
 
 //=========================== channel group purpose ==================//
-function GrantChannelGroup(channel) {
-    chatFeature.grant({
+function GrantChannelGroup(pubnub,channel) {
+    pubnub.grant({
         channel_group: "cg-" + channel,
         //auth_key      : authk,
         channel: authUser.channel,
@@ -812,6 +739,12 @@ function ManipulateChannelGroupList(channel) {
 }
 //=========================== channel group purpose ==================//
 
+//=========================== custom function =======================//
+
+/**
+ *
+ * @returns {string}
+ */
 function getDate() {
     var d = new Date();
 
@@ -830,6 +763,12 @@ function getDate() {
     return output;
 }
 
+/**
+ *
+ * @param param
+ * @returns {*}
+ * @constructor
+ */
 function InsertLogChat(param) {
     var datetime = getDate();
     if (param.receiver_id === '') {
@@ -981,10 +920,6 @@ function TriggerChatOnline() {
         //});
     });
 }
-
-
-
-
 
 function ChatBoxToggle(elm) {
     // if chat-box already shown then blink it
@@ -1168,117 +1103,7 @@ function load_js() {
         }
     });
 }
-
-/**
- * function to publish message/chat text to users
- * @param senderId
- */
-function publish(senderId) {
-    // get user chat object
-    var obj = GetParam(senderId);
-
-    //TODO: sender object -> don't forget to disable this debug when it goes online
-    //logging('sender object '+obj);
-    //logging(obj);
-
-    // adding device
-    addDeviceToChannel(obj);
-
-    // get message to publish
-    var text = $('.chat-text#ct_' + obj.user_name).val();
-    if (typeof Cookies.get('geoip') !== "undefined") {
-        var geoip = JSON.parse(Cookies.get('geoip'));
-        var ip = geoip.ip_address;
-    } else {
-        var ip = "null";
-    }
-
-    var param = {
-        sender_id: authUser.id,
-        receiver_id: obj.sender_id,
-        message: text,
-        ip: ip,
-        useragent: navigator.userAgent,
-        read: getDate(),
-        sender_auth: obj.sender_auth
-    };
-
-    //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
-    //logging('parameter to insert chat log '+param);
-    //logging(param);
-
-    var logResponse = InsertLogChat(param);
-
-    // valid user permit to chat
-    logResponse.success(function (data) {
-
-        if (data.status == '201') {
-            // success then publish message
-            var datetime = getDate();
-
-            logging({
-                channel: obj.sender_channel,
-                "user_name": firstname,
-                "message": text,
-                "ip": geoip.ip_address,
-                "sender_id": authUser.id,
-                "sender_channel": channel,
-                "receiver_id": obj.sender_id,
-                "time": datetime,
-                "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
-            });
-
-            chatFeature.publish({
-                channel: obj.sender_channel,
-                message: {
-                    "user_name": firstname,
-                    "message": text,
-                    "ip": geoip.ip_address,
-                    "sender_id": authUser.id,
-                    "sender_channel": channel,
-                    "receiver_id": obj.sender_id,
-                    "time": datetime,
-                    "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
-                },
-                callback: function (m) {
-                    //TODO: publish event -> don't forget to disable this debug when it goes online
-                    //logging('publish event '+m);
-                    //logging(m);
-                }
-            });
-
-            // publish message to my channel
-            // used to: if operator use difference device/browser
-            chatFeature.publish({
-                channel: authUser.channel,
-                message: {
-                    "user_name": obj.user_name,
-                    "sender_id": authUser.id,
-                    "message": text,
-                    "time": datetime
-                },
-                callback: function (m) {
-                    //TODO: publish event -> don't forget to disable this debug when it goes online
-                    //logging('publish event '+m);
-                    //logging(m);
-                }
-            });
-
-            renderMessage('operator', text, datetime, obj.user_name);
-
-            // append the text to conversation area
-            //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
-            //$('.chat-conversation#cc_'+obj.user_name).append(appendElm);
-
-            // set chat text to null
-            $('.chat-text#ct_' + obj.user_name).val('');
-        } else {
-            // fail
-            alertify.error("Gagal insert log chat. Periksa koneksi database!");
-        }
-    });
-}
-
+//=========================== custom function =======================//
 
 function ServiceSenderDeviceId(sender_auth) {
     var domain = window.location.hostname;
