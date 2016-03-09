@@ -173,7 +173,7 @@
                                             </li>
                                             <li>
                                                 <a href="typography.html" title="Typography">
-                                                
+
                                                 Typography
                                             </a>
                                             </li>
@@ -321,7 +321,7 @@
                                 </ul>
                             </li>
 
-                      
+
                         </ul>
                         <form class="navbar-form navbar-left" style="position:relative" role="search">
                             <!-- Search | has-form wrapper -->
@@ -391,19 +391,19 @@
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
                                     </li>
-                     
+
                                     <li>
                                         <div class="slim-scroll">
                                             <div class="unread-notf">
-                                               
+
                                                 <a href="#">
-                                                    <h3>0809272382 
+                                                    <h3>0809272382
                                                     </h3>
                                                     <p>Just Now !</p>
                                                 </a>
                                             </div>
                                             <div class="read-notf">
-                                                
+
                                                 <a href="#">
                                                     <h3>+62 082347823473
                                                     </h3>
@@ -411,7 +411,7 @@
                                                 </a>
                                             </div>
                                             <div class="read-notf">
-                                        
+
                                                 <a href="#">
                                                     <h3>+62 3453454353
                                                     </h3>
@@ -419,7 +419,7 @@
                                                 </a>
                                             </div>
                                             <div class="read-notf">
-                                               
+
                                                 <a href="#">
                                                     <h3>+62 34542524553454
                                                     </h3>
@@ -427,7 +427,7 @@
                                                 </a>
                                             </div>
                                             <div class="read-notf">
-                                  
+
                                                 <a href="#">
                                                     <h3>+62 656577657657
                                                     </h3>
@@ -516,7 +516,7 @@
 
                         <br>
                         <br>
-                        
+
                         <div class="btn-group" role="group" aria-label="...">
                           <button type="button" class="btn btn-default">Left</button>
                           <button type="button" class="btn btn-default">Middle</button>
@@ -539,7 +539,7 @@
                         <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Blink</a>
                         <div class="webui-popover-content">
-                          
+
                                 <div class="chat-conversation slim-scroll-chat">
                                      <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
                                     <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
@@ -548,12 +548,12 @@
                                     <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
                                     <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
                                 </div>
-                          
+
                             <div class="textarea-nest">
                                 <div class="form-group">
                                     <span class="fontello-attach"></span>
                                     <span class="fontello-camera"></span>
-                                </div>  
+                                </div>
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
@@ -562,31 +562,31 @@
                             <!-- /input-group -->
                         </div>
                 </div>
-         
+
                <div class="chat-list chat-active">
                         <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Aktif</a>
                         <div class="webui-popover-content">
                             <div class="chat-conversation slim-scroll-chat">
-                                          <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
-                            <p class="ajaib-client"><small>Sat 7:19 PM</small>ha</p>
-                            <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat .</p>
-                            <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya </p>
-                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
-                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
-                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                                <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ha</p>
+                                <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat .</p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya </p>
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
                             </div>
                             <div class="textarea-nest">
                                 <div class="form-group">
                                     <span class="fontello-attach"></span>
                                     <span class="fontello-camera"></span>
-                                </div>  
+                                </div>
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
-                           
+
                         </div>
                 </div>
 
@@ -596,7 +596,6 @@
                         <div class="webui-popover-content">
                             <div class="chat-conversation slim-scroll-chat">
                             <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
-                            
                             <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
                             <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
                                 kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
@@ -608,15 +607,15 @@
                                 <div class="form-group">
                                     <span class="fontello-attach"></span>
                                     <span class="fontello-camera"></span>
-                                </div>  
+                                </div>
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
-                      
+
                         </div>
-                </div> 
+                </div>
 
             </div>
             <!-- Chat bottom -->
@@ -634,7 +633,7 @@
 
         <!-- End of Container Begin -->
 
-    
+
     </div>
     <!-- end paper bg -->
 

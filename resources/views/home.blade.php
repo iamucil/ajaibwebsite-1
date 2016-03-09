@@ -11,12 +11,15 @@
 
                     <!-- right description -->
                     <div class="col-md-6 col-md-offset-6">
-                        <div class="topright-desc">
+                        <div class="topright-desc" style="position: absolute; z-index: 999">
                             <h3><strong>Ajaib</strong> adalah asisten pribadi anda<br>Keperluan apapun yang anda butuhkan kami akan membantu anda.</h3>
                             <hr style="opacity:0.25">
+                            <p>
+                            <a class="btn btn-default btn-ajaib btn-lg" data-toggle="modal" data-target="#modal__register">Daftar Akun di Ajaib!</a>
+                            </p>
+                            <!--
                             <p>Masukan email dan no hp untuk menjadikan Ajaib
                                 <br> sebagai asisten anda.</p>
-                            <!--  Subscribe form -->
                             <form class="form-inline frm-signup" method="POST" action="/auth/register" novalidate name="form-register" id="form-register">
                                 {{ csrf_field() }}
                                 <div class="form-group">
@@ -30,7 +33,7 @@
                                 </div>
                                 <button type="submit" class="btn btn-default btn-ajaib">Sign Up</button>
                             </form>
-                            <!--  end of Subscribe form -->
+                            -->
                             <ul>
                                 <li><img src="{{ secure_asset('img/playstore.png') }}"></li>
                                 <li><img src="{{ secure_asset('img/appstore.png') }}"></li>
@@ -261,33 +264,149 @@
             </div>
         </div>
     </div>
-
+<!-- Modal -->
+<div class="modal fade" id="modal__register" tabindex="-1" role="dialog" aria-labelledby="register">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="register" style="font-size: 1.1em; font-weight: normal;">
+                    Masukan email dan no hp untuk menjadikan Ajaib sebagai asisten Anda! Gratis.
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form class="frm-signup" method="POST" action="/auth/register" novalidate name="form-register" id="form-register">
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <label for="inpEmailRegister" style="float: none !important; font-weight: 400;">Email</label>
+                        <input type="email" class="form-control" id="inpEmailRegister" placeholder="Eg: name@example.com" name="email">
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="inpPhoneRegister" style="float: none !important; font-weight: 400;">Nomor Telephon</label>
+                        {{-- <div class="input-group"> --}}
+                            <input type="tel" id="phone" class="form-control">
+                            <span id="valid-msg" class="hide">✓ Valid</span>
+                            <span id="error-msg" class="hide">Invalid number</span>
+                        {{-- </div> --}}
+                    </div>
+                    <p>
+                        <button type="submit" class="btn btn-default btn-ajaib btn-lg btn-block">Sign Up</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script-bottom')
     @parent
     <script type="text/javascript">
+        // $('.intl-tel-input').addClass('input-group');
+
         var url     = '{!! url("/geo-ip") !!}';
-        $.getJSON( url, function( data ) {
-            var form        = document.forms['form-register'];
-            var call_code   = document.createElement('span');
-            call_code.style.fontWeight  = 'bold';
-            call_code.innerHTML         = data.call_code;
-            var inpCountryId            = document.createElement('input');
-            inpCountryId.type           = 'hidden';
-            inpCountryId.value          = data.country_id;
-            inpCountryId.name           = 'country_id';
-            //document.getElementById('call-code-label').innerHTML    = '';
-            //document.getElementById('call-code-label').appendChild(call_code);
-            form.appendChild(inpCountryId);
-        }, 'json');
+        var telInput = $("#phone"), errorMsg = $("#error-msg"), validMsg = $("#valid-msg");
+        telInput.intlTelInput({
+            numberType : 'MOBILE',
+            separateDialCode : true,
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                $.get(url, function() {}, "jsonp").always(function(resp) {
+                    var countryCode     = 'ID';
+                    var status          = (resp && resp.status) ? resp.status : 404;
+                    if(parseInt(status) == 200){
+                        var result      = JSON.parse(resp.responseText);
+                        countryCode     = (result && result.country_code) ? result.country_code : "ID";
+                    }
+                    callback(countryCode);
+                });
+            },
+            utilsScript: protocol + '//' + server + '/js/utils.js' // just for formatting/placeholders etc
+        });
+
+        var reset = function() {
+            telInput.removeClass("error");
+            errorMsg.addClass("hide");
+            validMsg.addClass("hide");
+        };
+
+        var resetValidationMsg  = function (el) {
+            var icon        = el.getElementsByClassName('glyphicon form-control-feedback');
+            var label       = el.getElementsByClassName('sr-only');
+
+            if( icon.length > 0 ) {
+                for (var i = icon.length - 1; i >= 0; i--) {
+                    icon[i].parentNode.removeChild(icon[i]);
+                };
+            }
+
+            if( label.length > 0 ) {
+                for (var lb = label.length - 1; lb >= 0; lb--) {
+                    label[lb].parentNode.removeChild(label[lb]);
+                };
+            }
+        }
+        // on blur: validate
+        telInput.on('keyup change blur', function() {
+            reset();
+            var parent_child    = $(this).parents()[1];
+            parent_child.classList.remove('has-success', 'has-error');
+            var validationIcon  = document.createElement('span');
+            validationIcon.classList.add('glyphicon', 'form-control-feedback');
+            validationIcon.setAttribute('aria-hidden', true);
+            var elSpanStatus    = document.createElement('span');
+            elSpanStatus.classList.add('sr-only');
+            elSpanStatus.innerHTML  = '(error)';
+            resetValidationMsg(parent_child);
+
+            // parent_child.removeClass('has-success has-error');
+            if ($.trim(telInput.val())) {
+                if (telInput.intlTelInput("isValidNumber")) {
+                    parent_child.classList.add('has-success');
+                    validationIcon.classList.remove('glyphicon-remove');
+                    validationIcon.classList.add('glyphicon-ok');
+                    elSpanStatus.innerHTML  = '(success)';
+                    parent_child.appendChild(validationIcon);
+                    parent_child.appendChild(elSpanStatus);
+                } else {
+                    parent_child.classList.add('has-error');
+                    validationIcon.classList.remove('glyphicon-ok');
+                    validationIcon.classList.add('glyphicon-remove');
+                    parent_child.appendChild(validationIcon);
+                    parent_child.appendChild(elSpanStatus);
+                }
+            }
+        });
+
+        // on keyup / change flag: reset
+        // telInput.on("keyup change", reset());
+
+        // $.getJSON( url, function( data ) {
+        //     var form        = document.forms['form-register'];
+        //     var call_code   = document.createElement('span');
+        //     call_code.style.fontWeight  = 'bold';
+        //     call_code.innerHTML         = data.call_code;
+        //     var inpCountryId            = document.createElement('input');
+        //     inpCountryId.type           = 'hidden';
+        //     inpCountryId.value          = data.country_id;
+        //     inpCountryId.name           = 'country_id';
+        //     //document.getElementById('call-code-label').innerHTML    = '';
+        //     //document.getElementById('call-code-label').appendChild(call_code);
+        //     form.appendChild(inpCountryId);
+        // }, 'json');
 
         $('.frm-signup').submit(function(evt) {
-            var Form    = this;
+            var countryData = telInput.intlTelInput("getSelectedCountryData");
+            var Form        = this;
             // var action  = '//'+ server + '/auth/register';
             var $action     = Form.action;
             var $data       = {};
             var $errors     = {};
+            $data['phone_number']   = telInput.intlTelInput("getNumber").replace(/\+/g,"");
+            $data['phone_number']   = $data['phone_number'].replace(/\-/g,"");
+            $data['country_code']   = countryData.iso2;
+            $data['dial_code']      = countryData.dialCode;
+
             $.each(this.elements, function(i, v){
                 var input = $(v);
                 $data[input.attr("name")] = input.val();
@@ -301,19 +420,37 @@
                 dataType : "json",
                 data : $data,
                 context : Form,
-                beforeSend: function () {
-                    // do nothing
+                beforeSend: function (jqXHR, settings) {
+                    return true;
                 }
-            }).done(function(data) {
+            }).done(function(data,  status, jqXHR) {
                 if(data.errors != null){
-                    console.log(data.errors);
+                    // $('#modal__register').modal('hide');
+                    $.each(data.errors, function ( index, value) {
+                        var elSpanError     = document.createElement('span');
+                        elSpanError.classList.add('glyphicon', 'glyphicon-remove', 'form-control-feedback');
+                        elSpanError.setAttribute('aria-hidden', true);
+                        var elSpanStatus    = document.createElement('span');
+                        elSpanStatus.classList.add('sr-only');
+                        elSpanStatus.innerHTML  = '(error)';
+                        var parentIndex     = $('input[name="'+index+'"]').parent();
+                        if(index == 'phone_number' || index == 'ext_phone') {
+                            var parentIndex     = $('input[type="tel"]').parent();
+                        }
+                        parentIndex.children('.control-label').css('font-weight', 'bold');
+                        parentIndex.addClass('has-error has-feedback');
+                        parentIndex.append(elSpanError, elSpanStatus);
+                    });
+                    evt.preventDefault();
+                    return false;
+                }else{
+                    window.location.href = '{!! route("auth.success.get") !!}';
                 }
             });
 
-            console.log($errors);
-            // evt.preventDefault();
+            evt.preventDefault();
             return true;
-        })
+        });
     </script>
     {{-- expr --}}
 @stop
