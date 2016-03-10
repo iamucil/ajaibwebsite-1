@@ -21,7 +21,8 @@
         "laracasts/utilities": "~2.0",
         "davejamesmiller/laravel-breadcrumbs": "^3.0",
         "aloha/twilio": "^2.0",
-        "pubnub/pubnub": "3.8.*"
+        "pubnub/pubnub": "3.8.*",
+        "dompdf/dompdf": "^0.6.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

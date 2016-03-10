@@ -7,6 +7,11 @@
 @section('script')
     @parent
 @stop
+
+@section('script-lib')
+    @parent
+    <script type="text/javascript" src="{{ secure_asset('/js/vendor/bootstrap3-typeahead.min.js') }}"></script>
+@stop
 @section('content')
 <div class="box bg-white">
     <div class="box-body pad-forty" style="display: block;">
@@ -29,15 +34,17 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">Acoount Payable</label>
+                <label class="col-sm-2 control-label">Account Payable</label>
                 <div class="col-sm-4">
-                    <input class="form-control" type="text" />
+                    <input type="hidden" name="user_id" value="{{ old('user_id') }}" />
+                    <input type="hidden" name="user_name" value="{{ old('user_name') }}" />
+                    <input class="form-control" type="text" class="typehead" id="acount-payable" autocomplete="off" placeholder="eg: 85640427774" value="{{ old('user_name') }}" />
                 </div>
             </div>
             <div class="form-group">
                 <label for="tanggal" class="col-sm-2 control-label">Tanggal</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="txt-date" placeholder="DD/MM/YYYY" name="tanggal" />
+                    <input type="text" class="form-control" id="txt-date" placeholder="DD/MM/YYYY" name="tanggal" value="{{ old('tanggal') }}" />
                 </div>
             </div>
             <div class="form-group">
@@ -108,11 +115,29 @@
     @parent
     <script type="text/javascript" src="{{ asset('/js/jqMaskMoney.js') }}"></script>
     <script type="text/javascript">
+        $input          = $('.typeahead');
+        $user_id     = $("input[name='user_id']");
+        $user_name   = $("input[name='user_name']");
+        var url     = '{{ route("member.lists") }}';
+        $.getJSON( url, function( data ) {
+            $("#acount-payable").typeahead({
+                source:data,
+                updater: function (item) {
+                    console.log(item);
+                    return item;
+                },
+                afterSelect: function(item){
+                    $input.val(item.name);
+                    $user_id.val(item.id);
+                    $user_name.val(item.name);
+                    // console.log(item);
+                }
+            });
+        }, 'json');
         function changeSubAmount (el, obj_id) {
             var obj         = document.getElementById(obj_id);
             var nominal     = 0;
             var total       = 0;
-
 
             if(match = el.name.match(/(\w+)\[(\d+)\]\[(\w+)\]/)){
                 var id      = match[2];

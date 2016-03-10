@@ -131,3 +131,17 @@ Route::get('/country/{name?}', ['as' => 'country.list', function(App\Country $co
     $countries      = $country->where(DB::raw('LOWER(name)'), 'LIKE', '%'.strtolower($name).'%')->get();
     return $countries;
 }]);
+
+Route::get('/users/{name?}', ['as' => 'member.lists', 'middleware' => ['auth'], function (DB $database, $name = null) {
+    $members            = $database::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', function($join) {
+            $join->on('role_user.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', ['users']);
+        })->select('users.id', 'users.name', 'users.phone_number', 'users.email')
+        ->where(DB::raw('LOWER(users.name)'), 'LIKE', '%'.strtolower($name).'%')
+        ->orWhere(DB::raw('LOWER(users.email)'), 'LIKE', '%'.strtolower($name).'%')
+        ->get();
+
+    return $members;
+}]);

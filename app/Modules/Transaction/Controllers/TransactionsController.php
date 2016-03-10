@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Modules\Transaction\Models\Transaction;
 use App\Modules\Transaction\Models\Category;
+use App\Modules\Transaction\Models\TransactionDetail;
 use Validator;
 use DB;
 
@@ -33,14 +34,9 @@ class TransactionsController extends Controller {
         $satuan_qty     = DB::table('quantities')
             ->orderBy('name', 'ASC')
             ->get();
-            // ->lists('name', 'id');
-            // dd($satuan_qty);
-        // $satuan         = response()->json($satuan_qty);
-        // dd($satuan->getData());
-        // dd($satuan_qty);
         $transactions   = response()->json($request->old('transactions', []));
         $satuan_qty     = response()->json($satuan_qty);
-        // dd($satuan_qty->content());
+
         $categories     = Category::where('type', '=', 'transaction')
             ->orderBy('name', 'ASC')->lists('name', 'id');
             // dd($satuan_qty);
@@ -54,6 +50,46 @@ class TransactionsController extends Controller {
      */
     public function store(Request $request)
     {
+        /*
+        field :
+            tanggal
+            category_id
+            quantity
+            amount
+            keterangan
+            status
+            created_at
+            updated_at
+            number
+            customer_id
+            operator_id
+        */
+        $quantity       = 0;
+        $amount         = 0;
+        $index          = 0;
+        $details        = [];
+
+        if($request->transactions AND is_array($request->transactions)) {
+            foreach ($request->transactions as $trans) {
+                $quantity+=$trans['quantity'];
+                $amount+=$trans['amount'];
+                $details[$index]    = new TransactionDetail([
+                    'quantity' => $trans['quantity'],
+                    'quantity_id' => $trans['satuan'],
+                    'amount' => $trans['amount'],
+                    'keterangan' => $trans['keterangan'],
+                    'item' => 'detail-#'.$index,
+                ]);
+                $index++;
+            }
+        }
+
+        $request->merge([
+            'invoice_number' => rand(100000,999999),
+            'quantity' => $quantity,
+            'amount' => $amount,
+        ]);
+
         $transaction    = new Transaction;
         $validate       = Validator::make($request->all(), [
             'tanggal' => 'required',
@@ -62,9 +98,6 @@ class TransactionsController extends Controller {
             'amount' => 'required',
         ]);
 
-        return redirect()->route('transactions.create')
-            ->withInput($request->except(['_token']));
-        // dd($request->all());
         if($validate->fails()){
             flash()->error($validate->errors()->first());
 
@@ -77,10 +110,16 @@ class TransactionsController extends Controller {
             $transaction->quantity      = str_replace(',', '', $request->quantity);
             $transaction->amount        = str_replace(',', '', $request->amount);
             $transaction->keterangan    = $request->keterangan;
+            $transaction->customer_id   = $request->user_id;
+            $transaction->operator_id   = auth()->user()->id;
+            $transaction->invoice_number    = $request->invoice_number;
+            $transaction->number        = $request->invoice_number;
 
             if($transaction->save()){
+                $transaction->TransactionDetails()->saveMany($details);
                 flash()->success('Penyimpanan data berhasil');
-                return redirect()->route('transactions.index');
+                return redirect()->route('transactions.index')
+                    ->withInput($request->except(['_token']));
             }else{
                 flash()->error('Penyimpanan data gagal');
                 return redirect()->route('transactions.create')

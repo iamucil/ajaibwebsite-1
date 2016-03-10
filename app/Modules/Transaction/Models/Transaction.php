@@ -11,4 +11,9 @@ class Transaction extends Model {
         return $this->belongsTo('App\Modules\Transaction\Models\Category');
     }
 
+    public function TransactionDetails()
+    {
+        return $this->hasMany('App\Modules\Transaction\Models\TransactionDetail');
+    }
+
 }
