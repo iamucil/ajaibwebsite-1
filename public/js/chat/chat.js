@@ -5,7 +5,6 @@
  */
 <!-- Include the PubNub Library -->
 var chatParameter = [];
-var chatFeature;
 
 // user properties
 var name = '';
@@ -24,6 +23,8 @@ var sharedProperties = {};
 
 // pubnub init properties
 var authk = $('meta[name="csrf-token"]').attr('content');
+
+var pubnub = '';
 
 $(function () {
     // check if user has assigned to roles ??
@@ -64,21 +65,20 @@ $(function () {
         status = authUser.status;
 
         // initialize chat featre using PubNub
-        var chat = initChat();
+        //var chat = initChat();
+        pubnub = initChat();
 
-        // initialize public channel
-        var pub_channel = "ajaib";
-
-        InitOfflineUser(chat);
+        InitOfflineUser();
 
         // grant permission
-        grantPermission(chat);
+        grantPermission();
 
         // subscribe on public channel
-        subscribe(chat,pub_channel);
+        subscribe(public_channel);
 
-        // listening to 'OPERATOR' channel for group and operator private's channel
-        subscribeChat(chat);
+        // subscribe on private channel
+        subscribe(channel);
+
 
         //$('.btn-ajaib').click(function () {
         //
@@ -89,9 +89,6 @@ $(function () {
         //    $('.chat-text').parent().siblings()[1].click();
         //    return false;
         //});
-
-        // init offline user
-        //InitOnlineUser();
     }
 
 });
@@ -144,14 +141,14 @@ var fnChat = function() {
      * @param reconnect
      * @param error
      */
-    function subscribe(pubnub, channels, presence, message, callback, connect, reconnect, error) {
+    function subscribe(channels, presence, message, callback, connect, reconnect, error) {
         pubnub.subscribe({
             channel     : channels,
             //heartbeat   : 10,
             presence    : presence,
             message     : message,
             callback    : callback,
-            connect     : connect,
+            connect     : connect(pubnub,channels),
             reconnect   : reconnect,
             error       : error
         });
@@ -165,7 +162,7 @@ var fnChat = function() {
      * @param write, publish access
      * @param ttl, time to live => 0, forefer / without limit
      */
-    function grant(pubnub, channel, auth, read, write, ttl) {
+    function grant(channel, auth, read, write, ttl) {
         // channel-pnpres used because we are using pubnub presence
         // grant pubnub access on global channel and private channel
         if (channel === '') {
@@ -212,46 +209,206 @@ var fnChat = function() {
         }
     }
 
+    //=========================== channel group purpose ==================//
+    function GrantChannelGroup(channel) {
+        pubnub.grant({
+            channel_group: "cg-" + channel,
+            //auth_key      : authk,
+            channel: authUser.channel,
+            read: true,
+            write: true,
+            manage: true,      // <-- Manage Permission TRUE
+            callback: function (c) {
+                console.log(c);
+            },
+            error: function (c) {
+                displayCallback(c)
+            }
+        });
+    }
+
+    function AddChannelToGroupChannel(channel) {
+        pubnub.channel_group_add_channel({
+            channel_group: "cg-" + channel,
+            channel: authUser.channel,
+            callback: function (m) {
+                console.log("CG-Add: ", m);
+            }
+        });
+    }
+
+    function RemoveChannelGroupList(channel) {
+        pubnub.channel_group_remove_channel({
+            channel: authUser.channel,
+            channel_group: "cg-" + channel,
+            callback: function (c) {
+                displayCallback(c)
+            },
+            error: function (c) {
+                displayCallback(c)
+            }
+        });
+    }
+    //======================== end ofchannel group purpose =================//
+
+    function connect(channel) {
+        pubnub.here_now({
+            channel  : channel,
+            callback : presence
+        });
+    }
+
     return {
-        subscribe: function(pubnub, channels, presence, message, callback, connect, reconnect, error) {
-            subscribe(pubnub, channels, presence, message, callback, connect, reconnect, error);
+        subscribe: function(channels, presence, message, callback, connect, reconnect, error) {
+            subscribe(channels, presence, message, callback, connect, reconnect, error);
         },
         publish: function(pubnub, channels, message,callback) {
             publish(pubnub, channels, message,callback);
         },
-        grant: function(pubnub, channel, auth, read, write, ttl) {
-            grant(pubnub, channel, auth, read, write, ttl);
+        grant: function(channel, auth, read, write, ttl) {
+            grant(channel, auth, read, write, ttl);
+        },
+        connect: function(channel) {
+            connect(channel);
+        },
+        grantChannelGroup: function(channel) {
+            GrantChannelGroup(channel);
+        },
+        addChannelToGroup: function(channel) {
+            AddChannelToGroupChannel(channel);
+        },
+        removeChannelGroupList: function(channel) {
+            RemoveChannelGroupList(channel);
         }
     }
 };
 //==================== init chat function ====================
 
 //================== grant permission ==================
-function grantPermission(pubnub) {
+function grantPermission() {
     // operator grant access
     // grant global channel (without auth)
     // kenapa harus listen di channel operator?
     //fnChat().grant(pubnub,roles, '', true, true, 0);
 
     // grant operator private channel
-    fnChat().grant(pubnub,channel, authk, true, true, 0);
+    fnChat().grant(channel, authk, true, true, 0);
 
     // grant global access to users
-    fnChat().grant(pubnub,"ajaib", "", true, true, 0);
+    fnChat().grant(public_channel, "", true, true, 0);
 }
 //================== end of grant permission ==================
 
 //===================== subscribe ======================
-function subscribe(pubnub,schannel) {
+function subscribe(schannel) {
     fnChat().subscribe(
-        pubnub,
         schannel,
         presence,
         function(m){console.log(m)},
-        function(){},
+        subscribeCallback,
         function(){},
         function(){}
     );
+}
+
+function subscribeCallback(m) {
+    //return function (m) {
+    //console.log(m);return false;
+    //TODO: subscribe chat -> don't forget to disable this debug when it goes online
+    //logging('subscribe chat '+m);
+    //logging(m);
+
+    if (m.sender_id === authUser.id) {
+        // operator it self
+        //renderMessage('operator', m.message, m.time, m.user_name);
+    } else {
+        //GrantChannelGroup(pubnub,m.sender_channel);
+        fnChat().grantChannelGroup(m.sender_channel);
+        // get other operators that handle this users
+        pubnub.channel_group_list_channels({
+            channel_group: "cg-" + m.sender_channel,
+            callback: function (cg) {
+                var serviceSender = ServiceSenderDeviceId(m.sender_auth);
+                serviceSender.success(function (success) {
+                    m.device_id = success.data.device_id;
+                });
+                // cek channel group nya dia
+                // jika sudah ada operator yang handle maka hanya munculkan notifikasi di operator yang handle
+
+                //console.log("FRIENDLIST: ", cg);
+                if (cg.channels.length > 1) {
+                    //logging('impossible !');
+                } else if (cg.channels.length === 0) {
+                    // belum dihandle oleh operator lain
+                    // broadcast ke semua operator
+
+                    // notifications
+                    $.playSound('audio/chat');
+                    $('.edumix-noft').html('*');
+
+                    // Grant user access
+                    fnChat().grant(m.sender_channel, m.sender_auth, true, true, 0);
+                    //GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
+
+                    // if users have been chat with this operator, then just change the style
+                    if ($('#ss_' + m.user_name).length !== 0) {
+                        // users has old notification then remove it
+                        // alert($('#ss_'+ m.sender_id).length);
+                        $('div#ss_' + m.user_name).remove();
+                    }
+
+                    // Set parameter for the next usage of AppendChat function
+                    SetParam(m.sender_id, m);
+                    if ($('#cn_' + m.user_name) !== 0) {
+                        $('#cn_' + m.user_name).remove();
+                    }
+
+                    // create new notification
+                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+
+                    // append chat to chat-conversation div
+                    if (ElementIsExist('cb_' + m.user_name)) {
+                        renderMessage('client', m.message, m.time, m.user_name);
+                    }
+
+                    showNotification(m, false);
+                } else if (cg.channels.length === 1 && cg.channels[0] === authUser.channel) {
+                    if ($('#ss_' + m.user_name).length !== 0) {
+                        // users has old notification then remove it
+                        $('div#ss_' + m.user_name).remove();
+                    }
+
+                    // operator itu sendiri
+                    $.playSound('audio/chat');
+                    $('.edumix-noft').html('*');
+                    // Set parameter for the next usage of AppendChat function
+                    SetParam(m.sender_id, m);
+                    if ($('#cn_' + m.user_name) !== 0) {
+                        $('#cn_' + m.user_name).remove();
+                        $('#cn_' + m.user_name).remove();
+                    }
+
+                    // create new notification
+                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+
+                    // append chat to chat-conversation div
+                    if (ElementIsExist('cb_' + m.user_name)) {
+                        renderMessage('client', m.message, m.time, m.user_name);
+                    }
+
+                    showNotification(m, true);
+                } else {
+                    // operator yang melayani lebih dari satu
+                    // cek channel groupnya
+
+                }
+            },
+            error: function (m) {//logging('error on channel group list');
+                console.log(m)
+            }
+        });
+    }
+    //}
 }
 //================== end of subscribe chat ==================
 
@@ -261,21 +418,8 @@ function subscribe(pubnub,schannel) {
 function presence(details) {
     var uuid = 'uuid' in details && (''+details.uuid).toLowerCase();
     if (uuid && uuid.split("-",1)[0]!=="operator") {
-        console.log(details);
-        if (typeof details.data === "undefined") {
-            var splitted = uuid.split(":");
-            details.data.user_name = splitted[0];
-            details.data.channel = splitted[1]
-        }
         AppendListUsers(details.data,details.action);
     }
-}
-
-function connect(pubnub,channel) {
-    pubnub.here_now({
-        channel  : channel,
-        callback : presence
-    });
 }
 //================== end presence function ===================
 
@@ -291,10 +435,11 @@ function connect(pubnub,channel) {
 function AppendListUsers(m, action) {
     var time = "";
     // show online users
+    // here still has undefined error on console
     if (typeof m.time === "undefined") {
-        var time = calendar(moment(getDate(), "YYYY-MM-DD HH:mm").toDate());
+        time = calendar(moment(getDate(), "YYYY-MM-DD HH:mm").toDate());
     } else {
-        var time = calendar(moment(m.time, "YYYY-MM-DD HH:mm").toDate());
+        time = calendar(moment(m.time, "YYYY-MM-DD HH:mm").toDate());
         /*26/01/2016 07:00 am*/
     }
 
@@ -327,6 +472,15 @@ function AppendListUsers(m, action) {
  * @constructor
  */
 function ShowOnlineElement(m, time) {
+    // trapping if undefined id & channel
+    if (m.sender_id === undefined) {
+        m.sender_id = m.id;
+    }
+
+    if (m.sender_channel === undefined) {
+        m.sender_channel = m.channel;
+    }
+
     // jika user ini ada di list offline user, maka hapus terlebih dahulu elementnya
     if (ElementIsExist('offline-user-' + m.user_name)) {
         $('#offline-user-' + m.user_name).remove();
@@ -340,6 +494,9 @@ function ShowOnlineElement(m, time) {
 
     // register list-online class to click event
     TriggerChatOnline(m);
+
+    // if chat box already shown then give it active class
+    toggleChatBox(m.user_name,"active");
 }
 
 /**
@@ -349,6 +506,15 @@ function ShowOnlineElement(m, time) {
  * @constructor
  */
 function ShowOfflineElement(m, time) {
+    // trapping if undefined id & channel
+    if (m.id === undefined) {
+        m.id = m.sender_id;
+    }
+
+    if (m.channel === undefined) {
+        m.channel = m.sender_channel;
+    }
+
     time = "";
     // jika user leave || timeout, cek apakah user tersebut ada di list online user?
     // jika ada maka hapus terlebih dahulu dari list online user
@@ -362,7 +528,8 @@ function ShowOfflineElement(m, time) {
         $('.offline-list').append(elm);
     }
 
-    // jika chat box
+    // if chat box already shown then give it idle class
+    toggleChatBox(m.user_name,"idle");
 }
 
 /**
@@ -380,128 +547,22 @@ function ElementIsExist(idname) {
 //==================== end right bar list users ====================
 
 
-/**
- * Initializing for subscribe on group channel and private channel
- * @constructor
- */
-function subscribeChat(pubnub) {
-    // Subscribe/listen to the OPERATOR channel
-    pubnub.subscribe({
-        channel: [channel],
-        //heartbeat: 10,
-        //presence: function (p) {
-        //    GenerateListUsers(p);
-        //},
-        message: function (m) {
-            //TODO: subscribe chat -> don't forget to disable this debug when it goes online
-            //logging('subscribe chat '+m);
-            //logging(m);
-
-            if (m.sender_id === authUser.id) {
-                // operator it self
-                //renderMessage('operator', m.message, m.time, m.user_name);
-            } else {
-                console.log("masuk sini");
-                console.log(m);
-                GrantChannelGroup(pubnub,m.sender_channel);
-                // get other operators that handle this users
-                chatFeature.channel_group_list_channels({
-                    channel_group: "cg-" + m.sender_channel,
-                    callback: function (cg) {
-                        var serviceSender = ServiceSenderDeviceId(m.sender_auth);
-                        serviceSender.success(function (success) {
-                            m.device_id = success.data.device_id;
-                        });
-                        // cek channel group nya dia
-                        // jika sudah ada operator yang handle maka hanya munculkan notifikasi di operator yang handle
-
-                        //console.log("FRIENDLIST: ", cg);
-                        if (cg.channels.length > 1) {
-                            //logging('impossible !');
-                        } else if (cg.channels.length === 0) {
-                            // belum dihandle oleh operator lain
-                            // broadcast ke semua operator
-
-                            // notifications
-                            $.playSound('audio/chat');
-                            $('.edumix-noft').html('*');
-
-                            // Grant user access
-                            GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
-
-                            // if users have been chat with this operator, then just change the style
-                            if ($('#ss_' + m.user_name).length !== 0) {
-                                // users has old notification then remove it
-                                // alert($('#ss_'+ m.sender_id).length);
-                                $('div#ss_' + m.user_name).remove();
-                            }
-
-                            // Set parameter for the next usage of AppendChat function
-                            SetParam(m.sender_id, m);
-                            if ($('#cn_' + m.user_name) !== 0) {
-                                $('#cn_' + m.user_name).remove();
-                            }
-
-                            // create new notification
-                            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
-
-                            // append chat to chat-conversation div
-                            if (ElementIsExist('cb_' + m.user_name)) {
-                                renderMessage('client', m.message, m.time, m.user_name);
-                            }
-
-                            showNotification(m, false);
-                        } else if (cg.channels.length === 1 && cg.channels[0] === authUser.channel) {
-                            if ($('#ss_' + m.user_name).length !== 0) {
-                                // users has old notification then remove it
-                                $('div#ss_' + m.user_name).remove();
-                            }
-
-                            // operator itu sendiri
-                            $.playSound('audio/chat');
-                            $('.edumix-noft').html('*');
-                            // Set parameter for the next usage of AppendChat function
-                            SetParam(m.sender_id, m);
-                            if ($('#cn_' + m.user_name) !== 0) {
-                                $('#cn_' + m.user_name).remove();
-                                $('#cn_' + m.user_name).remove();
-                            }
-
-                            // create new notification
-                            $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
-
-                            // append chat to chat-conversation div
-                            if (ElementIsExist('cb_' + m.user_name)) {
-                                renderMessage('client', m.message, m.time, m.user_name);
-                            }
-
-                            showNotification(m, true);
-                        } else {
-                            // operator yang melayani lebih dari satu
-                            // cek channel groupnya
-
-                        }
-                    },
-                    error: function (m) {//logging('error on channel group list');
-                        console.log(m)
-                    }
-                });
-            }
-        },
-        /**
-         * using callback
-         */
-        connect: connect,
-        disconnect: function () {
-            console.log("Disconnected")
-        },
-        reconnect: function () {
-            console.log("Reconnected")
-        },
-        error: function () {
-            console.log("Network Error")
+// togle chat box
+function toggleChatBox(user_name,status) {
+    if (ElementIsExist('cb_' + user_name)) {
+        switch (status) {
+            case "active":
+                $("#cb_"+ user_name).removeClass("chat-idle");
+                $("#cb_"+ user_name).addClass("chat-active");
+                break;
+            case "idle":
+                $("#cb_"+ user_name).removeClass("chat-active");
+                $("#cb_"+ user_name).addClass("chat-idle");
+                break;
+            default:
+                ShowOnlineElement(m,time);
         }
-    });
+    }
 }
 
 /**
@@ -563,7 +624,7 @@ function publish(senderId) {
                 "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
             });
 
-            chatFeature.publish({
+            pubnub.publish({
                 channel: obj.sender_channel,
                 message: {
                     "user_name": firstname,
@@ -584,7 +645,7 @@ function publish(senderId) {
 
             // publish message to my channel
             // used to: if operator use difference device/browser
-            chatFeature.publish({
+            pubnub.publish({
                 channel: authUser.channel,
                 message: {
                     "user_name": obj.user_name,
@@ -615,7 +676,7 @@ function publish(senderId) {
 }
 
 
-function InitOfflineUser(pubnub) {
+function InitOfflineUser() {
     // https://ajaib-local/dashboard/users/list
     $.ajax({
         type: "GET",
@@ -634,7 +695,7 @@ function InitOfflineUser(pubnub) {
 
                 // check who are users online on this channel
                 pubnub.here_now( {
-                    channel: "ajaib",
+                    channel: public_channel,
                     callback: function(m){
                         // check every users who is online
                         for (var i = 0; i < items.length; i++) {
@@ -654,90 +715,6 @@ function InitOfflineUser(pubnub) {
         }
     });
 }
-
-function UsersOnline() {
-    chatFeature.here_now({
-        channel: 'users',
-        callback: function (m) {
-            console.log(m)
-        }
-    });
-}
-
-//=========================== channel group purpose ==================//
-function GrantChannelGroup(pubnub,channel) {
-    pubnub.grant({
-        channel_group: "cg-" + channel,
-        //auth_key      : authk,
-        channel: authUser.channel,
-        read: true,
-        write: true,
-        manage: true,      // <-- Manage Permission TRUE
-        callback: function (c) {
-            console.log(c);
-        },
-        error: function (c) {
-            displayCallback(c)
-        }
-    });
-}
-
-function AddChannelToGroupChannel(channel) {
-    chatFeature.channel_group_add_channel({
-        channel_group: "cg-" + channel,
-        channel: authUser.channel,
-        callback: function (m) {
-            console.log("CG-Add: ", m);
-        }
-    });
-}
-
-function RemoveChannelGroupList(channel) {
-    chatFeature.channel_group_remove_channel({
-        channel: authUser.channel,
-        channel_group: "cg-" + channel,
-        callback: function (c) {
-            displayCallback(c)
-        },
-        error: function (c) {
-            displayCallback(c)
-        }
-    });
-}
-
-function ManipulateChannelGroupList(channel) {
-    chatFeature.channel_group_list_channels({
-        channel_group: "cg-" + channel,
-        callback: function (m) {
-            console.log("FRIENDLIST: ", m);
-
-            var list = {};
-
-            if (m.channels.length > 1) {
-                list.status = '0';
-                list.data = m;
-                //logging('impossible !');
-            } else if (m.channels.length === 0) {
-                // belum dihandle oleh operator lain
-                AddChannelToGroupChannel(channel);
-                list.status = '1';
-                list.data = m;
-            } else {
-                list.status = '0';
-                list.data = m;
-                //alertify.error("This user is chatting by other operator");
-                //return false;
-            }
-            SetSharedProperties("cg-" + channel, list);
-        }
-        //error: function(){
-        //displayCallback();
-        //alertify.error("This user is chatting by other operator");
-        //return false;
-        //}
-    });
-}
-//=========================== channel group purpose ==================//
 
 //=========================== custom function =======================//
 
@@ -815,33 +792,9 @@ function GetSharedProperties(key) {
     return sharedProperties[key];
 }
 
-/**
- * Fungsi untuk retrieve state dari user
- * @param p, pubnub presence api
- */
-function GenerateListUsers(p) {
-    if (p.uuid.split('-')[0] !== 'operator' || p.uuid.split('-')[0] !== 'admin') {
-        AppendListUsers(p.data, p.action);
-        //chatFeature.state({
-        //    channel: p.uuid,
-        //    uuid: p.uuid,
-        //    callback: function (c) {
-        //        //if (!jQuery.isEmptyObject(m)) {
-        //        //    // if not exist then create it
-        //        //    AppendListUsers(m, p.action);
-        //        //}
-        //    },
-        //    error: function (m) {
-        //        console.log(m)
-        //    }
-        //});
-    }
-}
-
+//================ end chat ===============
 function TriggerCloseChat() {
     $('.close-box').click(function () {
-        //alertify.confirm('Are you sure want to close this conversation?',RemoveChannelGroupList());
-        //alertify.confirm('Are you sure want to close this conversation?',);
         var elm = $(this);
         return alertify.confirm("Are you sure want to close this conversation?", function (e) {
             if (e) {
@@ -854,9 +807,10 @@ function TriggerCloseChat() {
 }
 
 function CloseChatBox(elm) {
-    RemoveChannelGroupList(elm.siblings("a").attr("data-cn"));
+    fnChat().removeChannelGroupList(elm.siblings("a").attr("data-cn"));
     elm.parent().remove();
 }
+//================ end chat ===============
 
 /**
  * fungsi untuk handle ketika list online user diklik
@@ -872,18 +826,18 @@ function TriggerChatOnline() {
         var channel = $(this).attr('cn-data');
 
         // grant this operator
-        GrantChannelGroup(channel);
+        fnChat().grantChannelGroup(channel);
 
         // get other operators that handle this users
-        chatFeature.channel_group_list_channels({
+        pubnub.channel_group_list_channels({
             channel_group: "cg-" + channel,
             callback: function (m) {
-                console.log("FRIENDLIST: ", m);
+                //console.log("FRIENDLIST: ", m);
                 if (m.channels.length > 1) {
                     //logging('impossible !');
                 } else if (m.channels.length === 0) {
                     // belum dihandle oleh operator lain
-                    AddChannelToGroupChannel(channel);
+                    fnChat().addChannelToGroup(channel);
                     var obj = {
                         sender_id: arrData[0],
                         user_name: arrData[1],
@@ -908,24 +862,7 @@ function TriggerChatOnline() {
                 }
             }
         });
-
-        // check if this user is not handled by other operator
-        //chatFeature.where_now({
-        //    channel  : channel,
-        //    uuid: channel,
-        //    callback : function(m){
-        //        logging('here now');
-        //        logging(m);
-        //    }
-        //});
     });
-}
-
-function ChatBoxToggle(elm) {
-    // if chat-box already shown then blink it
-    if (elm.length !== 0) {
-        elm.addClass('chat-blink');
-    }
 }
 
 function ValidateValue(value) {
@@ -979,6 +916,7 @@ function GenerateChatBox(obj) {
         //
         //    (e.keyCode || e.charCode) === 13 && publish('\'' + obj.sender_id + '\'');
         //});
+
         TriggerCloseChat();
         //logging($("#cc_"+obj.user_name));
         $("#cc_" + obj.user_name).animate({scrollTop: $("#cc_" + obj.user_name).prop("scrollHeight")}, 1000);
@@ -1039,8 +977,8 @@ function AppendChat(senderId) {
         success: function (data) {
             console.log(data);
             if (data.status === 201) {
-                GrantChannelGroup(obj.sender_channel);
-                AddChannelToGroupChannel(obj.sender_channel);
+                fnChat().grantChannelGroup(obj.sender_channel);
+                fnChat().addChannelToGroup(obj.sender_channel);
 
                 // move to div slim scroll
                 $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>' + parseTime(obj.time) + '</p></a></div>');
@@ -1123,7 +1061,7 @@ function ServiceSenderDeviceId(sender_auth) {
 }
 
 function addDeviceToChannel(obj) {
-    chatFeature.mobile_gw_provision ({
+    pubnub.mobile_gw_provision ({
         device_id: obj.device_id, // Reg ID you got on your device
         channel: obj.sender_channel,
         op: 'add',
@@ -1137,42 +1075,12 @@ function addDeviceToChannel(obj) {
     });
 }
 
-function whileTyping(ch) {
-    chatFeature.state({
-        channel: ch,
-        uuid: roles + '-' + name,
-        state: {"action": "isTyping"},
-        callback: function (m) {
-            console.log(JSON.stringify(m))
-        }
-    });
-}
-
-// For todays date;
-Date.prototype.today = function () {
-    return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
-}
-
-// For the time now
-Date.prototype.timeNow = function () {
-    return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
-}
-
 function SetParam(senderId, messageObject) {
     chatParameter[senderId] = messageObject;
 }
 
 function GetParam(senderId) {
     return chatParameter[senderId];
-}
-
-function DiffTheTimes() {
-    var now = "04/09/2013 15:00:00";
-    var then = "02/09/2013 14:20:30";
-
-    var ms = moment(now, "DD/MM/YYYY HH:mm:ss").diff(moment(then, "DD/MM/YYYY HH:mm:ss"));
-    var d = moment.duration(ms);
-    var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
 }
 
 function logging(m) {
@@ -1229,27 +1137,22 @@ function renderMessage(actor, text, time, user) {
     // time to parse
     var parsedTime = '';
 
-    // get local time
-    //var localTime  = moment(time,       "YYYY-MM-DD HH:mm").toDate();
-
     // whatsapp wannabe
     var momentTime = calendar(moment(time));
     /*26/01/2016 07:00 am*/
+
     var splitMoment = momentTime.split(' ');
     /*['26/01/2016','07:00','am']*/
+
     if (splitMoment.length > 2) {
         parsedTime = splitMoment[1] + ' ' + splitMoment[2];
         var appendElm = '';
         if (timeSeparator === '') {
             // add separator for the first time
-            //elm.append('<li class="history-chat-time"><span>'+splitMoment[0]+'</span></li>');
-            //logging(splitMoment[0]);
             appendElm += '<p class="ajaib-devider-chat"><span>' + splitMoment[0] + '</span></p>';
 
         } else if (splitMoment[0] !== timeSeparator) {
             // add separator
-            //elm.append('<li class="history-chat-time"><span>'+splitMoment[0]+'</span></li>');
-            //logging(splitMoment[0]);
             appendElm += '<p class="ajaib-devider-chat"><span>' + splitMoment[0] + '</span></p>';
         }
         appendElm += '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
