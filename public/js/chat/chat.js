@@ -74,10 +74,14 @@ $(function () {
         grantPermission();
 
         // subscribe on public channel
-        subscribe(public_channel);
+        if(public_channel !== undefined || public_channel != null){
+            subscribe(public_channel);
+        }
 
         // subscribe on private channel
-        subscribe(channel);
+        if(channel !== undefined || channel != null){
+            subscribe(channel);
+        }
 
 
         //$('.btn-ajaib').click(function () {
@@ -165,47 +169,54 @@ var fnChat = function() {
     function grant(channel, auth, read, write, ttl) {
         // channel-pnpres used because we are using pubnub presence
         // grant pubnub access on global channel and private channel
-        if (channel === '') {
-            pubnub.grant({
-                read: read,
-                write: write,
-                ttl: ttl,
-                callback: function (m) {
-                    //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
-                    //logging('grant chat on subsribe key level ');
-                    //logging(m);
-                },
-                error: function (m) {
-                    console.error(m)
-                }
-            });
-        } else if (auth === '') {
-            // no need authentication
-            pubnub.grant({
-                channel: channel + ',' + channel + '-pnpres',
-                read: read,
-                write: write,
-                ttl: ttl,
-                callback: function (m) {
-                    //TODO: grant chat on channel level (without authentication) level -> don't forget to disable this debug when it goes online
-                    //logging('grant chat on channel level (without authentication) ');
-                    //logging(m);
-                }
-            });
+        if(pubnub !== undefined || pubnub != null){
+            // console.log(pubnub);
+            // console.log(channel + ' -- ' + auth);
+            // return false;
+            if (channel === '') {
+                pubnub.grant({
+                    read: read,
+                    write: write,
+                    ttl: ttl,
+                    callback: function (m) {
+                        //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                        //logging('grant chat on subsribe key level ');
+                        //logging(m);
+                    },
+                    error: function (m) {
+                        console.error(m)
+                    }
+                });
+            } else if (auth === '') {
+                // no need authentication
+                pubnub.grant({
+                    channel: channel + ',' + channel + '-pnpres',
+                    read: read,
+                    write: write,
+                    ttl: ttl,
+                    callback: function (m) {
+                        //TODO: grant chat on channel level (without authentication) level -> don't forget to disable this debug when it goes online
+                        //logging('grant chat on channel level (without authentication) ');
+                        //logging(m);
+                    }
+                });
+            } else {
+                // need authentication
+                pubnub.grant({
+                    channel: channel + ',' + channel + '-pnpres',
+                    auth_key: auth,
+                    read: read,
+                    write: write,
+                    ttl: ttl,
+                    callback: function (m) {
+                        //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
+                        //logging('grant chat on user level (with authentication) ');
+                        //logging(m);
+                    }
+                });
+            }
         } else {
-            // need authentication
-            pubnub.grant({
-                channel: channel + ',' + channel + '-pnpres',
-                auth_key: auth,
-                read: read,
-                write: write,
-                ttl: ttl,
-                callback: function (m) {
-                    //TODO: grant chat on subsribe key level -> don't forget to disable this debug when it goes online
-                    //logging('grant chat on user level (with authentication) ');
-                    //logging(m);
-                }
-            });
+            return false;
         }
     }
 
@@ -436,33 +447,37 @@ function AppendListUsers(m, action) {
     var time = "";
     // show online users
     // here still has undefined error on console
-    if (typeof m.time === "undefined") {
-        time = calendar(moment(getDate(), "YYYY-MM-DD HH:mm").toDate());
-    } else {
-        time = calendar(moment(m.time, "YYYY-MM-DD HH:mm").toDate());
-        /*26/01/2016 07:00 am*/
-    }
-
-    if (!m.user) {
-        m.user = m.user_name;
-    }
-
-    if (typeof m.user !== "undefined") {
-        if (action === 'join' /*pertama kali user join di sebuah channel*/ || action === 'state-change' /*selanjutnya berubah dari join jadi state-change*/) {
-            switch (m.status) {
-                case "isOnline":
-                    ShowOnlineElement(m,time);
-                    break;
-                case "isOffline":
-                    ShowOfflineElement(m,time);
-                    break;
-                default:
-                    ShowOnlineElement(m,time);
-            }
+    if(m !== undefined){
+        if(m.time === undefined || m.time == null) {
+        // if (typeof(m.time) === "undefined") {
+            time = calendar(moment(getDate(), "YYYY-MM-DD HH:mm").toDate());
         } else {
-            ShowOfflineElement(m,time);
+            time = calendar(moment(m.time, "YYYY-MM-DD HH:mm").toDate());
+            /*26/01/2016 07:00 am*/
+        }
+
+        if (!m.user) {
+            m.user = m.user_name;
+        }
+
+        if (typeof m.user !== "undefined") {
+            if (action === 'join' /*pertama kali user join di sebuah channel*/ || action === 'state-change' /*selanjutnya berubah dari join jadi state-change*/) {
+                switch (m.status) {
+                    case "isOnline":
+                        ShowOnlineElement(m,time);
+                        break;
+                    case "isOffline":
+                        ShowOfflineElement(m,time);
+                        break;
+                    default:
+                        ShowOnlineElement(m,time);
+                }
+            } else {
+                ShowOfflineElement(m,time);
+            }
         }
     }
+
 }
 
 /**
@@ -683,12 +698,12 @@ function InitOfflineUser() {
         url: "https://" + domain + "/dashboard/users/list",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        //beforeSend: function (xhr, settings){
-        //    // check if url is accessible
-        //    if( xhr.status != 200 ){
-        //        return false;
-        //    }
-        //},
+        beforeSend: function (xhr, settings){
+           // check if url is accessible
+           if( xhr.status != 200 ){
+               return false;
+           }
+        },
         success: function (data) {
             if (data.status === 200) {
                 var items = data.data;

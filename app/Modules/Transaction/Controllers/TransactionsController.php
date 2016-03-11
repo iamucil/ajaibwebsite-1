@@ -20,7 +20,7 @@ class TransactionsController extends Controller {
     public function index()
     {
         $transactions   = Transaction::orderBy('created_at', 'DESC')
-            ->paginate(10);
+            ->paginate(3);
         return view("Transaction::index", compact('transactions'));
     }
 
