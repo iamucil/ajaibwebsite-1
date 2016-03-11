@@ -46,6 +46,7 @@ class ComposerServiceProvider extends ServiceProvider
                 'pubnub_key' => env('PAM_PUBNUB_KEY'),
                 'subnub_key' => env('PAM_SUBNUB_KEY'),
                 'skey' => env('PAM_SECRET_KEY'),
+                'public_channel' => env('PUBLIC_CHANNEL')
             ]);
 
             $view->with(['authUser' => $user, 'country' => $country, 'routing' => $routing]);
