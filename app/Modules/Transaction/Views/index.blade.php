@@ -47,8 +47,10 @@ Transaction
                             <td>
                             </td>
                             <td>
+                                {{ date('d F, Y', strtotime($transaction->tanggal)) }}
                             </td>
                             <td>
+                                {{ $transaction->invoice_number }}
                             </td>
                             <td>
                                 {{ $transaction->category->name }}
@@ -63,6 +65,7 @@ Transaction
                     @endforelse
                 </tbody>
             </table>
+            {!! $transactions->render() !!}
         </div>
     </div>
 @stop
