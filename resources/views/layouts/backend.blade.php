@@ -482,52 +482,88 @@
 
             <!-- Content Begin -->
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-4">
                        <!-- Bootstrap Content -->
+                       <ul class="history-chat">
+                         <li class="devider"></li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/29.jpg">
+                            <h4>Putera Kahfi <small>2 Maret 2016</small></h4>
+                            <p>Bookmark gan..</p>
 
-                        <a class="btn btn-default" href="#" role="button">Link</a>
-                        <button class="btn btn-default" type="submit">Button</button>
-                        <input class="btn btn-default" type="button" value="Input">
-                        <input class="btn btn-default" type="submit" value="Submit">
-                        <br>
-                        <br>
+                        </li>
+                        <li class="devider"></li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/women/29.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016</small></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
 
+                        </li>
+                         <li class="devider"></li>
+                          <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/women/30.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016</small></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
 
-                        <!-- Standard button -->
-                        <button type="button" class="btn btn-default">Default</button>
+                        </li>
+                         <li class="devider"></li>
+                          <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/31.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016</small></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
 
-                        <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                        <button type="button" class="btn btn-primary">Primary</button>
+                        </li>
+                         <li class="devider"></li>
+                          <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/32.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016</small></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
 
-                        <!-- Indicates a successful or positive action -->
-                        <button type="button" class="btn btn-success">Success</button>
+                        </li>
+                         <li class="devider"></li>
+                       </ul>
 
-                        <!-- Contextual button for informational alert messages -->
-                        <button type="button" class="btn btn-info">Info</button>
-
-                        <!-- Indicates caution should be taken with this action -->
-                        <button type="button" class="btn btn-warning">Warning</button>
-
-                        <!-- Indicates a dangerous or potentially negative action -->
-                        <button type="button" class="btn btn-danger">Danger</button>
-
-                        <!-- Deemphasize a button by making it look like a link while maintaining button behavior -->
-                        <button type="button" class="btn btn-link">Link</button>
-
-                        <br>
-                        <br>
-
-                        <div class="btn-group" role="group" aria-label="...">
-                          <button type="button" class="btn btn-default">Left</button>
-                          <button type="button" class="btn btn-default">Middle</button>
-                          <button type="button" class="btn btn-default">Right</button>
-                        </div>
 
 
                        <!-- End of Bootstrap Content -->
 
 
                     @yield('content')
+                </div>
+                <div class="col-md-8">
+                    <div class="history-chat-detail-nest">
+                    <ul class="history-chat-detail">
+                      
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/29.jpg">
+                            <h4>Putera Kahfi <small>2 Maret 2016</small></h4>
+                            <p>Bookmark gan..</p>
+
+                        </li>
+                        <li class="devider"><span>12 Februari 2016</span></li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/women/29.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016 </small><span>11:20 PM</span></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
+
+                        </li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/29.jpg">
+                            <h4>Putera Kahfi <small>2 Maret 2016 </small><span>10:05 PM</span></h4>
+                            <p>mengikuti mimpinya untuk bertanding di ajang Asia</p>
+
+                        </li>
+                         <li class="devider"><span>11 Februari 2016</span></li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/women/29.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016 </small><span>09:10 PM</span></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch </p>
+
+                        </li>
+                      
+                     
+                       </ul>
+                       </div>
                 </div>
             </div>
             <!-- end of content -->
