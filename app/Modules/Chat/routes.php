@@ -9,6 +9,8 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
         Route::get('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.index', 'uses' => 'ChatController@index']);
         // api for insert data chat
         Route::post('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.store', 'uses' => 'ChatController@store']);
+        // api for update read chat
+        Route::put('/chat/{chat}', ['middleware' => 'oauth', 'as' => 'api.chat.oauthUpdateChat', 'uses' => 'ChatController@oauthUpdateChat']);
         // add user to channel group
         //Route::post('/chat/addChannelToGroup', ['as'=>'api.chat.addChannelToGroup','uses' => 'ChatController@addChannelToGroup']);
         //Route::post('/chat/removeChannelFromGroup', ['as'=>'api.chat.removeChannelFromGroup','uses' => 'ChatController@removeChannelFromGroup']);
@@ -16,13 +18,17 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
     });
 
     Route::group(['prefix' => 'dashboard'], function () {
-        // logging chat from backend
+        // logging chat from backend by user id
         Route::get('chat/{user}', ['as'=>'dashboard.chat.history','uses' => 'ChatController@chatLog']);
+        // chat history by action => seen & unseen message
+        Route::get('chat/list/{action}', ['as'=>'dashboard.chat.list','uses' => 'ChatController@authHistory']);
 //        Route::put('chat/{msgid}', ['as' => 'dashboard.chat.update', 'uses' => 'ChatController@update']);
+        Route::put('chat/{msgid}', ['as' => 'dashboard.chat.authUpdateChat', 'uses' => 'ChatController@authUpdateChat']);
         Route::post('chat/insertlog', ['as'=>'dashboard.chat.insertlog','uses' => 'ChatController@insertLog']);
         Route::resource('chat', 'ChatController',[
             'names' => [
                 'insertlog'    => 'dashboard.chat.insertlog',
+                'authUpdateChat' => 'dashboard.chat.authUpdateChat'
             ]
         ]);
     });
