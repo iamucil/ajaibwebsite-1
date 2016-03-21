@@ -70,6 +70,8 @@ $(function () {
 
         InitOfflineUser();
 
+        InitUnseenChat();
+
         // grant permission
         grantPermission();
 
@@ -423,6 +425,19 @@ function subscribeCallback(m) {
 }
 //================== end of subscribe chat ==================
 
+//================== element functions ==================
+/**
+ * fungsi untuk create chat notif element
+ * @param user_name, phone number ex: 85227052004
+ * @param sender_id, sender user id
+ * @param user, firstname === '' ? user_name : firstname
+ * @param time, 2016-
+ */
+function appendChatNotifications(user_name,sender_id,user,time) {
+    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + user_name + '"><a href="#" onclick="AppendChat(\'' + sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + time + '</p></a></li>');
+}
+//================ end element functions ================
+
 //================== presence function ===================
 // The State of User Occupancy has Changed.
 // This Function is Called when Someone Joins/Leaves.
@@ -610,7 +625,6 @@ function publish(senderId) {
         message: text,
         ip: ip,
         useragent: navigator.userAgent,
-        read: getDate(),
         sender_auth: obj.sender_auth
     };
 
@@ -642,14 +656,15 @@ function publish(senderId) {
             pubnub.publish({
                 channel: obj.sender_channel,
                 message: {
-                    "user_name": firstname,
-                    "message": text,
-                    "ip": geoip.ip_address,
-                    "sender_id": authUser.id,
+                    "message_id"    : data.data.id,
+                    "user_name"     : firstname,
+                    "message"       : text,
+                    "ip"            : geoip.ip_address,
+                    "sender_id"     : authUser.id,
                     "sender_channel": channel,
-                    "receiver_id": obj.sender_id,
-                    "time": datetime,
-                    "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
+                    "receiver_id"   : obj.sender_id,
+                    "time"          : datetime,
+                    "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
                 },
                 callback: function (m) {
                     //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -698,12 +713,12 @@ function InitOfflineUser() {
         url: "https://" + domain + "/dashboard/users/list",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        beforeSend: function (xhr, settings){
-           // check if url is accessible
-           if( xhr.status != 200 ){
-               return false;
-           }
-        },
+        //beforeSend: function (xhr, settings){
+        //   // check if url is accessible
+        //   if( xhr.status != 200 ){
+        //       return false;
+        //   }
+        //},
         success: function (data) {
             if (data.status === 200) {
                 var items = data.data;
@@ -731,6 +746,33 @@ function InitOfflineUser() {
     });
 }
 
+function InitUnseenChat() {
+    $.ajax({
+        type: "GET",
+        url: "https://" + domain + "/dashboard/chat/list/0",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            // sender_channel
+            // sender_id
+            // message_id
+            // user_name
+            // user
+            // time
+            // message
+            var messages = data.data;
+            if (messages.length > 0) {
+                $('.edumix-noft').html('*');
+                for (var i = 0; i < messages.length; i++) {
+                    SetParam(messages[i].sender_id, messages[i]);
+
+                    appendChatNotifications(messages[i].name,messages[i].sender_id,messages[i].user,messages[i].created_at);
+                }
+            }
+
+        }
+    });
+}
 //=========================== custom function =======================//
 
 /**
@@ -762,7 +804,7 @@ function getDate() {
  * @constructor
  */
 function InsertLogChat(param) {
-    var datetime = getDate();
+    //var datetime = getDate();
     if (param.receiver_id === '') {
         param.receiver_id = authUser.id;
     }
@@ -784,7 +826,7 @@ function InsertLogChat(param) {
             message: param.message,
             ip_address: param.ip,
             useragent: param.useragent,
-            read: datetime
+            //read: datetime
         }),
         beforeSend: function (xhr) {
             // Set the OAuth header from the session ID
