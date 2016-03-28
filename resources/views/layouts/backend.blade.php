@@ -332,7 +332,7 @@
                         <ul class="nav navbar-nav navbar-right">
                             <!--  message end -->
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-bell"></i>&nbsp;&nbsp;<span class="label edumix-msg-noft">999</span><span class="caret"></span></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat"></i>&nbsp;&nbsp;<span class="label edumix-msg-noft">999</span><span class="caret"></span></a>
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-green">MESSAGE</span>
                                     </li>
@@ -387,7 +387,7 @@
                             <!-- message end -->
                             <!--  notification nest -->
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat-alt"></i>&nbsp;&nbsp;<span class="label edumix-noft">45</span><span class="caret"></span></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-comment"></i>&nbsp;&nbsp;<span class="label edumix-noft">45</span><span class="caret"></span></a>
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
                                     </li>
@@ -685,7 +685,7 @@
                         </label>
                     </li>
                     <li>
-                        <a href="#"><img alt="" class="chat-pic" src="http://api.randomuser.me/portraits/thumb/men/25.jpg"><b>Walter M. Reed</b>
+                        <a href="#"><img alt="" class="chat-pic" src="http://api.randomuser.me/portraits/thumb/men/27.jpg"><b>Walter M. Reed</b>
                             <br>Hi, there...</a>
                     </li>
                     <li>
