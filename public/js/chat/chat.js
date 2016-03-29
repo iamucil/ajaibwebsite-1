@@ -357,27 +357,27 @@ function subscribeCallback(m) {
 
                     // notifications
                     $.playSound('audio/chat');
-                    $('.edumix-noft').html('*');
+                    $('.edumix-msg-noft').html('*');
 
                     // Grant user access
                     fnChat().grant(m.sender_channel, m.sender_auth, true, true, 0);
                     //GrantChat(m.sender_channel, m.sender_auth, true, true, 0);
 
                     // if users have been chat with this operator, then just change the style
-                    if ($('#ss_' + m.user_name).length !== 0) {
+                    if ($('#ss_pb_' + m.user_name).length !== 0) {
                         // users has old notification then remove it
                         // alert($('#ss_'+ m.sender_id).length);
-                        $('div#ss_' + m.user_name).remove();
+                        $('div#ss_pb_' + m.user_name).remove();
                     }
 
                     // Set parameter for the next usage of AppendChat function
-                    SetParam(m.sender_id, m);
-                    if ($('#cn_' + m.user_name) !== 0) {
-                        $('#cn_' + m.user_name).remove();
+                    SetParam(m.sender_id+".public", m);
+                    if ($('#cn_pb_' + m.user_name) !== 0) {
+                        $('#cn_pb_' + m.user_name).remove();
                     }
 
                     // create new notification
-                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+                    appendChatNotificationsPublic(m.user_name, m.sender_id, m.user, m.time);
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
@@ -386,23 +386,24 @@ function subscribeCallback(m) {
 
                     showNotification(m, false);
                 } else if (cg.channels.length === 1 && cg.channels[0] === authUser.channel) {
-                    if ($('#ss_' + m.user_name).length !== 0) {
+                    if ($('#ss_pr_' + m.user_name).length !== 0) {
                         // users has old notification then remove it
-                        $('div#ss_' + m.user_name).remove();
+                        $('div#ss_pr_' + m.user_name).remove();
                     }
 
                     // operator itu sendiri
                     $.playSound('audio/chat');
                     $('.edumix-noft').html('*');
+
                     // Set parameter for the next usage of AppendChat function
-                    SetParam(m.sender_id, m);
-                    if ($('#cn_' + m.user_name) !== 0) {
-                        $('#cn_' + m.user_name).remove();
-                        $('#cn_' + m.user_name).remove();
+                    SetParam(m.sender_id+".private", m);
+                    if ($('#cn_pr_' + m.user_name) !== 0) {
+                        $('#cn_pr_' + m.user_name).remove();
                     }
 
                     // create new notification
-                    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
+                    appendChatNotifications(m.user_name, m.sender_id, m.user, m.time);
+                    //$('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + m.user_name + '"><a href="#" onclick="AppendChat(\'' + m.sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + m.user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(m.time) + '</p></a></li>');
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
@@ -434,7 +435,19 @@ function subscribeCallback(m) {
  * @param time, 2016-
  */
 function appendChatNotifications(user_name,sender_id,user,time) {
-    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_' + user_name + '"><a href="#" onclick="AppendChat(\'' + sender_id + '\')"><h3 class="text-black "> <i class="icon-warning"></i>' + user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + time + '</p></a></li>');
+    $('#chat-notification ul').prepend('<li class="edumix-sticky-title" id="cn_pr_' + user_name + '"><a href="#" data="0-' + sender_id + '" onclick="AppendChat($(this))"><h3 class="text-black "> <i class="icon-warning"></i>' + user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(time) + '</p></a></li>');
+}
+
+function appendChatNotificationsPublic(user_name,sender_id,user,time) {
+    $('#chat-notification-public ul').prepend('<li class="edumix-sticky-title" id="cn_pb_' + user_name + '"><a href="#" data="1-' + sender_id + '" onclick="AppendChat($(this))"><h3 class="text-black "> <i class="icon-warning"></i>' + user + '<span class="text-red fontello-record" ></span></h3><p class="text-black">' + parseTime(time) + '</p></a></li>');
+}
+
+function prependChatNotifications(user_name,sender_id,user,time) {
+    $('#chat-notification').find(".slim-scroll").prepend('<div id="ss_pr_' + user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + user + ' <span class="text-green fontello-record"></span></h3><p>' + parseTime(time) + '</p></a></div>');
+}
+
+function prependChatNotificationsPublic(user_name,sender_id,user,time) {
+    $('#chat-notification-public').find(".slim-scroll").prepend('<div id="ss_pb_' + user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + user + ' <span class="text-green fontello-record"></span></h3><p>' + parseTime(time) + '</p></a></div>');
 }
 //================ end element functions ================
 
@@ -609,6 +622,7 @@ function publish(senderId) {
 
     // adding device
     addDeviceToChannel(obj);
+    console.log(obj);
 
     // get message to publish
     var text = $('.chat-text#ct_' + obj.user_name).val();
@@ -747,9 +761,21 @@ function InitOfflineUser() {
 }
 
 function InitUnseenChat() {
+    // render unseen public message
+    RenderUnseenChat("https://" + domain + "/dashboard/chat/public/0","1");
+    // render unseen private message
+    RenderUnseenChat("https://" + domain + "/dashboard/chat/private/0","0");
+}
+
+/**
+ * Used to render private (flag=>0) & public chat (flag=>1)
+ * @param flag, flagging for public/private chat (1,0)
+ * @constructor
+ */
+function RenderUnseenChat(url,flag) {
     $.ajax({
         type: "GET",
-        url: "https://" + domain + "/dashboard/chat/list/0",
+        url: url,
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (data) {
@@ -762,17 +788,29 @@ function InitUnseenChat() {
             // message
             var messages = data.data;
             if (messages.length > 0) {
-                $('.edumix-noft').html('*');
                 for (var i = 0; i < messages.length; i++) {
-                    SetParam(messages[i].sender_id, messages[i]);
+                    // created_at is a UTC format, so need to convert it to local timezone
+                    messages[i].time = moment(moment.utc(messages[i].time).toDate()).format('YYYY-MM-DD HH:mm:ss');
 
-                    appendChatNotifications(messages[i].name,messages[i].sender_id,messages[i].user,messages[i].created_at);
+                    if (flag === "1") {
+                        SetParam(messages[i].user_id+".public", messages[i]);
+                        // public
+                        $('.edumix-msg-noft').html('*');
+                        appendChatNotificationsPublic(messages[i].user_name,messages[i].user_id,messages[i].user,messages[i].time);
+                    } else {
+                        SetParam(messages[i].user_id+".private", messages[i]);
+                        // private
+                        $('.edumix-noft').html('*');
+                        appendChatNotifications(messages[i].user_name,messages[i].user_id,messages[i].user,messages[i].time);
+                    }
                 }
             }
 
         }
     });
 }
+
+
 //=========================== custom function =======================//
 
 /**
@@ -865,6 +903,7 @@ function TriggerCloseChat() {
 
 function CloseChatBox(elm) {
     fnChat().removeChannelGroupList(elm.siblings("a").attr("data-cn"));
+    $("#"+elm.siblings("a").attr("data-target")).remove();
     elm.parent().remove();
 }
 //================ end chat ===============
@@ -901,8 +940,8 @@ function TriggerChatOnline() {
                         user: arrData[2],
                         sender_channel: channel
                     };
-                    SetParam(obj.sender_id, obj);
-                    GenerateChatBox(obj);
+                    SetParam(obj.sender_id+".private", obj);
+                    GenerateChatBox(obj,0);
                 } else if (m.channels.length === 1 && m.channels[0] === authUser.channel) {
                     // operator itu sendiri
                     var obj = {
@@ -911,11 +950,12 @@ function TriggerChatOnline() {
                         user: arrData[2],
                         sender_channel: channel
                     };
-                    SetParam(obj.sender_id, obj);
-                    GenerateChatBox(obj);
+                    SetParam(obj.sender_id+".private", obj);
+                    GenerateChatBox(obj,0);
                 } else {
                     // operator yang melayani lebih dari satu
                     // cek channel groupnya
+                    return alertify.error("Handled by others");
                 }
             }
         });
@@ -930,13 +970,17 @@ function ValidateValue(value) {
     }
 }
 
-function GenerateChatBox(obj) {
+function GenerateChatBox(obj,public) {
     // user_name : 085227052004
     // user : firstname is exist or phone number if firstname not exist
     // time : to parsing time
     // message : chat text
     // sender_id : user id
-
+    if (public === 1) {
+        var publish_object = obj.sender_id+".public";
+    } else {
+        var publish_object = obj.sender_id+".private";
+    }
     // if chat box exist then leave it, if not exist then generate
     //cb_85227052004
     if (!ElementIsExist('cb_' + obj.user_name)) {
@@ -959,7 +1003,7 @@ function GenerateChatBox(obj) {
             '<div class="form-group">' +
             '<textarea class="form-control chat-text" id="ct_' + obj.user_name + '" rows="3"></textarea>' +
             '</div>' +
-            '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + obj.sender_id + '\')">Submit</button>' +
+            '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
             '</div>' +
             '</div>' +
             '</div>';
@@ -975,8 +1019,9 @@ function GenerateChatBox(obj) {
         //});
 
         TriggerCloseChat();
+        $("#cb_" + obj.user_name).find("a").click();
         //logging($("#cc_"+obj.user_name));
-        $("#cc_" + obj.user_name).animate({scrollTop: $("#cc_" + obj.user_name).prop("scrollHeight")}, 1000);
+        $("#cc_" + obj.user_name).animate({scrollTop: $("#cc_" + obj.user_name).prop("scrollHeight")}, 500);
     }
 }
 
@@ -1018,19 +1063,44 @@ function RenderHistory(obj, username) {
  * @param senderId
  * @constructor
  */
-function AppendChat(senderId) {
-    $('.edumix-noft').html('');
+function AppendChat(elm) {
+    var attr = elm.attr("data").split("-");
+    var senderId = attr[1];
+    var is_public = attr[0];
 
-    var obj = GetParam(senderId);
+    if (is_public === "1") {
+        var obj = GetParam(senderId+".public");
+        var data =
+        {
+            "data":{
+                "message_id":obj.message_id,
+                "receiver_id":"",
+                "sender_id":obj.sender_id,
+                "read":getDate(),
+                "action":"0"
+            }
+        }
+    } else {
+        var obj = GetParam(senderId+".private");
+        var data =
+        {
+            "data":{
+                "message_id":obj.message_id,
+                "receiver_id":authUser.id,
+                "sender_id":obj.sender_id,
+                "read":getDate(),
+                "action":"0"
+            }
+        }
+    }
 
     // update receiver id and read timestamp
     $.ajax({
-        type: "PUT",
-        url: "https://" + domain + "/dashboard/chat/" + obj.message_id,
-        data: {
-            "receiver_id": authUser.id,
-            "read": getDate()
-        },
+        url: "https://" + domain + "/dashboard/chat/update",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        method:"POST",
+        data: JSON.stringify(data),
         success: function (data) {
             console.log(data);
             if (data.status === 201) {
@@ -1038,23 +1108,48 @@ function AppendChat(senderId) {
                 fnChat().addChannelToGroup(obj.sender_channel);
 
                 // move to div slim scroll
-                $('.slim-scroll').prepend('<div id="ss_' + obj.user_name + '"><i class="fontello-megaphone"></i><a href="#"><h3>' + obj.user + ' <span class="text-green fontello-record"></span></h3><p>' + parseTime(obj.time) + '</p></a></div>');
+                if (is_public === "1") {
+                    // remove notification sign
+                    $('.edumix-msg-noft').html('');
 
-                // remove old notification
-                $('#cn_' + obj.user_name).remove();
+                    // remove old notification
+                    $('#cn_pb_' + obj.user_name).remove();
+
+                    // mark notification as read
+                    prependChatNotificationsPublic(obj.user_name,obj.sender_id,obj.user,obj.time);
+                } else {
+                    // remove notification sign
+                    $('.edumix-noft').html('');
+
+                    // remove old notification
+                    $('#cn_pr_' + obj.user_name).remove();
+
+                    // mark notification as read
+                    prependChatNotifications(obj.user_name,obj.sender_id,obj.user,obj.time);
+                }
 
                 if ($('#cb_' + obj.user_name).length === 0 || !$('#cb_' + obj.user_name)) {
-                    GenerateChatBox(obj);
+                    GenerateChatBox(obj, parseInt(is_public));
                 } else {
                     // if chat bottom with this id exist, then just append text
                     //$('#cb_'+obj.sender_id);
 
                     // blinking chat bottom
                     $('#cb_' + obj.user_name).addClass('');
+                    $("#cb_" + obj.user_name).find("a").click();
                 }
             } else {
-                // remove old notification
-                $('#cn_' + obj.user_name).remove();
+                // move to div slim scroll
+                if (is_public === "1") {
+                    $('.edumix-msg-noft').html('');
+                    // remove old notification
+                    $('#cn_pb_' + obj.user_name).remove();
+                } else {
+                    $('.edumix-noft').html('');
+                    // remove old notification
+                    $('#cn_pr_' + obj.user_name).remove();
+                }
+                return alertify.error(data.message);
             }
         }
     });
@@ -1101,7 +1196,6 @@ function load_js() {
 //=========================== custom function =======================//
 
 function ServiceSenderDeviceId(sender_auth) {
-    var domain = window.location.hostname;
     // Send to API chat
     var ajaxResponse = $.ajax({
         type: "GET",
