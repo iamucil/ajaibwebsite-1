@@ -25,7 +25,7 @@ class UserController extends Controller {
     {
         $this->User     = $user;
         $this->Asset    = $asset;
-        $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
+        $this->middleWare('auth', ['except' => ['index', 'store', 'update', 'getPhotoApiService']]);
         $this->beforeFilter(function() {
             $country        = Country::where('iso_3166_2', '=', 'ID')
                 ->get(['calling_code', 'id'])
@@ -384,6 +384,15 @@ class UserController extends Controller {
 
     public function getPhoto($id)
     {
+        $user       = User::find($id);
+        $pathPhoto  = storage_path() . '/' . $user->photo;
+
+        return $this->Asset->downloadFile($pathPhoto);
+    }
+
+    public function getPhotoApiService()
+    {
+        $id =  Authorizer::getResourceOwnerId();
         $user       = User::find($id);
         $pathPhoto  = storage_path() . '/' . $user->photo;
 

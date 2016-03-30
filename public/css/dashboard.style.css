@@ -1091,12 +1091,12 @@ ALERT
     cursor: pointer;
     width: 15px;
     height: 15px;
-    background: #FF4800;
+    background: rgba(0, 0, 0, 0.5);
     font-size: 8px;
     text-align: center;
     line-height: 15px;
     color: #fff;
-    border-radius: 3px;
+    border-radius: 50%;
 }
 
 .chat-list {
@@ -1126,8 +1126,8 @@ ALERT
 
 .chat-active {
     position: relative;
-    background-color: #ff6600;
-    border-top: 1px solid #ff6600;
+    background-color: #057dee;
+    border-top: 1px solid #057dee;
     color: #fff;
     border-right: 1px solid rgba(255, 255, 255, 0.3);
     /*   top: -1px;
@@ -1194,7 +1194,7 @@ ALERT
 }
 
 .chat-conversation .ajaib-operator {
-    background: #FF6600;
+    background: #057dee;
     display: list-item;
     padding: 5px 10px;
     border-radius: 4px;
@@ -1223,7 +1223,7 @@ ALERT
     height: 0;
     border-style: solid;
     border-width: 20px 20px 0 0;
-    border-color: #FF6600 transparent transparent transparent;
+    border-color: #057dee transparent transparent transparent;
     position: absolute;
     right: -10px;
     top: 0;
@@ -1297,13 +1297,153 @@ ALERT
 
 .btn.btn-ajaib {
     background-color: #ffffff;
-    color: #FF6600;
-    border-color: #FBAF7C;
-    border-bottom-color: #FBAF7C;
+    color: #057dee;
+    border-color: #057dee;
+    border-bottom-color: #057dee;
 }
 
 .chat-active a {
     color: #fff;
+}
+
+.history-chat {
+    list-style: none;
+    background: #fff;
+    margin: 0;
+    padding: 20px 0;
+    border-radius: 4px;
+}
+
+.history-chat p {
+    margin: 5px 0 0 -1px;
+    display: inline-block;
+    width: 75%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.history-chat li {
+    padding: 10px 20px;
+}
+
+.history-chat .devider {
+    height: 1px;
+    min-height: 1px;
+    width: 100%;
+    background: #ddd;
+    display: block;
+    padding: 0;
+}
+
+.history-chat img {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+    float: left;
+    margin: 0 10px 0 0;
+    border-radius: 50%;
+}
+
+.history-chat h4 {
+    font-weight: normal;
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif!important;
+    margin: 5px 0;
+    font-weight: bold;
+    color: #057dee;
+}
+
+.history-chat h4 small {
+    text-align: right;
+    float: right;
+    padding: 0;
+    border-radius: 5px;
+    font-style: italic;
+    color: #999;
+}
+
+.history-chat-detail {
+    list-style: none;
+    background: #fff;
+    margin: 0;
+    padding: 20px 15px;
+    border-radius: 4px;
+}
+
+.history-chat-detail p {
+    margin: 5px 0 0 -1px;
+    display: inline-block;
+    width: 90%;
+    overflow: hidden;
+}
+
+.history-chat-detail li {
+    padding: 10px 20px;
+}
+
+.history-chat-detail .devider {
+    height: 1px;
+    min-height: 1px;
+    background: #ddd;
+    display: block;
+    padding: 0;
+    text-align: center;
+    z-index: 0;
+    position: relative;
+    margin: 20px;
+}
+
+.history-chat-detail .devider span {
+    background: #fff;
+    font-size: 11px;
+    z-index: 1;
+    position: relative;
+    top: -9px;
+    padding: 10px;
+    color: #999;
+}
+
+.history-chat-detail img {
+    height: 30px;
+    width: 30px;
+    display: inline-block;
+    float: left;
+    margin: 8px 15px 0 0;
+    border-radius: 50%;
+}
+
+.history-chat-detail h4 {
+    font-weight: normal;
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif!important;
+    margin: 5px 0;
+    font-weight: bold;
+    color: #057dee;
+}
+
+.history-chat-detail h4 small {
+    text-align: right;
+    float: right;
+    padding: 0;
+    border-radius: 5px;
+    color: #bbb;
+}
+
+.history-chat-detail h4 span {
+    text-align: right;
+    float: right;
+    padding: 0;
+    border-radius: 5px;
+    font-size: 11px;
+    margin: 0;
+    color: #bbb;
+    font-weight: normal;
+}
+
+.history-chat-detail h4 span:after {
+    content: "/";
+    padding: 0 5px;
 }
 
 .dropdown-menu > .active > a,
@@ -1311,6 +1451,6 @@ ALERT
 .dropdown-menu > .active > a:focus {
     color: #fff;
     text-decoration: none;
-    background-color: #ff6600;
+    background-color: #057dee;
     outline: 0;
 }
