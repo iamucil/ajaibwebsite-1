@@ -26,7 +26,7 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::PUT('/users/{user}', ['as' => 'user.update', 'uses' => 'UserController@updateProfile']);
     });
 
-    Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:operator']], function() {
+    Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:operator|admin|root']], function() {
         Route::get('/users/list', ['as' => 'user.list.operator', 'uses' => 'UserController@getListUsersOperator']);
     });
 

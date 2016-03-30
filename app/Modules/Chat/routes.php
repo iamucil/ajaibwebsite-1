@@ -21,9 +21,10 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
         // logging chat from backend by user id
         Route::get('chat/{user}', ['as'=>'dashboard.chat.history','uses' => 'ChatController@chatLog']);
         // chat history by action => seen & unseen message
-        Route::get('chat/list/{action}', ['as'=>'dashboard.chat.list','uses' => 'ChatController@authHistory']);
+        Route::get('chat/public/{read}', ['as'=>'dashboard.chat.public','uses' => 'ChatController@authHistoryPublic']);
+        Route::get('chat/private/{read}', ['as'=>'dashboard.chat.private','uses' => 'ChatController@authHistoryPrivate']);
 //        Route::put('chat/{msgid}', ['as' => 'dashboard.chat.update', 'uses' => 'ChatController@update']);
-        Route::put('chat/{msgid}', ['as' => 'dashboard.chat.authUpdateChat', 'uses' => 'ChatController@authUpdateChat']);
+        Route::post('chat/update', ['as' => 'dashboard.chat.authUpdateChat', 'uses' => 'ChatController@authUpdateChat']);
         Route::post('chat/insertlog', ['as'=>'dashboard.chat.insertlog','uses' => 'ChatController@insertLog']);
         Route::resource('chat', 'ChatController',[
             'names' => [
