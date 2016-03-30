@@ -20,7 +20,7 @@ class TransactionsController extends Controller {
     public function index()
     {
         $transactions   = Transaction::orderBy('created_at', 'DESC')
-            ->paginate(3);
+            ->paginate(10);
         return view("Transaction::index", compact('transactions'));
     }
 
@@ -100,6 +100,7 @@ class TransactionsController extends Controller {
             'category_id' => 'required|exists:categories,id',
             'quantity' => 'required',
             'amount' => 'required',
+            'transactions' => 'required',
         ], [
             'user_id.required' => 'Pastikan Account Payable exists di dalam sistem. Gunakan Auto Complete dari form untuk membantu. ex: 85640427774',
             'user_id.exists' => 'Pastikan Account Payable exists di dalam sistem. Gunakan Auto Complete dari form untuk membantu. ex: 85640427774'
@@ -143,7 +144,15 @@ class TransactionsController extends Controller {
      */
     public function show($id)
     {
-        //
+        $data       = Transaction::findOrFail($id);
+        // dd($data->AccountPayable);
+        // $transaction    = DB::table('transactions')
+        //     ->join('categories as Category', function ($join) {
+        //         $join->on('transactions.category_id', '=', 'Category.id');
+        //     })
+        //     ->where('transactions.id', '=', $id)->get();
+        // dd($transaction);
+        return view('Transaction::show', compact('data'));
     }
 
     /**

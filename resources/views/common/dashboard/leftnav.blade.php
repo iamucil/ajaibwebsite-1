@@ -111,7 +111,7 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ route('transaction.category.index') }}" title="Inbox">Transactions
+                                        <a href="{{ route('transactions.index') }}" title="Inbox">Transactions
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Categories</div>
                                         </a>
                                     </li>
@@ -136,7 +136,7 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ route('transaction.category.index') }}" title="Inbox">Transactions
+                                        <a href="{{ route('transactions.index') }}" title="Inbox">Transactions
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Categories</div>
                                         </a>
                                     </li>

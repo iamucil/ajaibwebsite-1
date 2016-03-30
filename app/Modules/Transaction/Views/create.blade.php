@@ -43,19 +43,19 @@
             </div>
             <div class="form-group">
                 <label for="tanggal" class="col-sm-2 control-label">Tanggal</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <input type="text" class="form-control datepicker" id="txt-date" placeholder="MM/DD/YYYY" name="tanggal" value="{{ old('tanggal') }}" autocomplete="off" />
                 </div>
             </div>
             <div class="form-group">
                 <label for="select-category" class="col-sm-2 control-label">Kategory</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     {!! Form::select('category_id', $categories, old('category_id'), ['placeholder' => 'Pick a category...', 'class' => 'form-control', 'id' => 'select-category']) !!}
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="sub-total">Amount</label>
-                <div class="col-sm-10">
+                <div class="col-sm-5">
                     <input type="text" name="total" id="sub-total" readonly />
                 </div>
             </div>
@@ -101,7 +101,7 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <button type="submit" class="btn btn-primary" style="border-radius: 4px;"><i class="glyphicon glyphicon-floppy-disk"></i> Simpan</button>
-                    <a class="btn btn-danger" style="border-radius: 4px;">
+                    <a class="btn btn-danger" style="border-radius: 4px;" href="{{ route('transactions.index') }}">
                         <i class="glyphicon glyphicon-floppy-remove"></i> Batal
                     </a>
                 </div>
@@ -309,10 +309,10 @@
                 var colSatuan       = document.createElement('td');
                 var cmbSatuan       = document.createElement('select');
                 cmbSatuan.name      = 'transactions['+index+'][satuan]';
-                var empOpt          = document.createElement('option');
-                empOpt.value        = '';
-                empOpt.text         = '(choose)';
-                cmbSatuan.appendChild(empOpt);
+                // var empOpt          = document.createElement('option');
+                // empOpt.value        = '';
+                // empOpt.text         = '(choose)';
+                // cmbSatuan.appendChild(empOpt);
                 for (var i = $satuan.length - 1; i >= 0; i--) {
                     // console.log($satuan[i]);
                     o   = document.createElement('option');
