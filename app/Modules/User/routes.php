@@ -11,6 +11,8 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::post('/user', ['as' => 'api.user.store', 'uses' => 'UserController@store']);
         // api for update data user
         Route::post('/user/update', ['middleware' => 'oauth', 'as' => 'api.user.update', 'uses' => 'UserController@update']);
+        // api for get photo user
+        Route::get('/user/photo', ['middleware' => 'oauth', 'as' => 'api.user.photo', 'uses' => 'UserController@getPhotoApiService']);
     });
 
     Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:admin|root']], function() {
