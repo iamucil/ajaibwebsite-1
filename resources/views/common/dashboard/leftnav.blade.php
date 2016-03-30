@@ -40,6 +40,10 @@
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Users</div>
                                         </a>
                                     </li>
+                                    <li>
+                                        <a href="{{ route('menus.index') }}" title="Menu Management">Menu
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
 

@@ -20,6 +20,7 @@
         <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
         <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
         <link rel="stylesheet" href="{{asset('js/slicknav/slicknav.css')}}" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
         <!-- Slidebars CSS -->
         <link rel="stylesheet" href="{{asset('js/offcanvas/sidetogglemenu.css')}}" />
         <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/alertify.js/themes/alertify.core.css') }}">
@@ -128,6 +129,7 @@
     <script type='text/javascript' src="{{ secure_asset('/js/vendor/alertify.js/lib/alertify.min.js') }}"></script>
     <!-- FLOT CHARTS -->
     <script src="{{asset('/js/offcanvas/sidetogglemenu.js')}}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/js/bootstrap-datepicker.js"></script>
     <!-- <script src="{{asset('js/offcanvas/jPushMenu.js')}}"></script> -->
 @show
 
