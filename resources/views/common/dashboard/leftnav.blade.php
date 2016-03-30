@@ -132,8 +132,8 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="#" title="Inbox">Categories
-                                            <div class="noft-blue bg-red" style="display: inline-block; float: none;">Transaction</div>
+                                        <a href="{{ route('transaction.category.index') }}" title="Inbox">Transactions
+                                            <div class="noft-blue bg-red" style="display: inline-block; float: none;">Categories</div>
                                         </a>
                                     </li>
                                     <li>
