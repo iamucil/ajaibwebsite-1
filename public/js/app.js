@@ -57,6 +57,7 @@ $(function() {
         distance: '-1px',
         size: "4px"
     });
+ 
 });
 
 /*
