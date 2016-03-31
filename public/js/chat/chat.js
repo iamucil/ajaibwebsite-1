@@ -678,6 +678,7 @@ function publish(senderId) {
                     "sender_channel": channel,
                     "receiver_id"   : obj.sender_id,
                     "time"          : datetime,
+                    "role"          : roles,
                     "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
                 },
                 callback: function (m) {
