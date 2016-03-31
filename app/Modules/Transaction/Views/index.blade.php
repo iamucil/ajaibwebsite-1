@@ -39,12 +39,17 @@ Transaction
                         <th>
                             Kategori
                         </th>
+                        <th>
+                            Actions
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
+                    {{--*/ $nomor   = $transactions->currentPage() /*--}}
                     @forelse ($transactions as $transaction)
                         <tr>
-                            <td>
+                            <td align="center">
+                                {!! $nomor !!}
                             </td>
                             <td>
                                 {{ date('d F, Y', strtotime($transaction->tanggal)) }}
@@ -55,7 +60,13 @@ Transaction
                             <td>
                                 {{ $transaction->category->name }}
                             </td>
+                            <td>
+                                <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-default">
+                                    <i class="glyphicon glyphicon-list-alt"></i>
+                                </a>
+                            </td>
                         </tr>
+                        <?php $nomor++; ?>
                     @empty
                         <tr>
                             <th colspan="4">

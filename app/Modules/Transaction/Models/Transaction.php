@@ -16,4 +16,14 @@ class Transaction extends Model {
         return $this->hasMany('App\Modules\Transaction\Models\TransactionDetail');
     }
 
+    public function Assigne()
+    {
+        return $this->belongsTo('App\User', 'operator_id', 'id');
+    }
+
+    public function AccountPayable()
+    {
+        return $this->belongsTo('App\User', 'customer_id', 'id');
+    }
+
 }

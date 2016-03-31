@@ -20,7 +20,7 @@ class TransactionsController extends Controller {
     public function index()
     {
         $transactions   = Transaction::orderBy('created_at', 'DESC')
-            ->paginate(3);
+            ->paginate(10);
         return view("Transaction::index", compact('transactions'));
     }
 
@@ -68,7 +68,10 @@ class TransactionsController extends Controller {
         $amount         = 0;
         $index          = 0;
         $details        = [];
-
+        // dd($request->tanggal);
+        // $check          = date_parse_from_format('m/d/YYYY', $request->tanggal);
+        // $tanggal        = $request->tanggal;
+        // dd(compact('tanggal', 'check'));
         if($request->transactions AND is_array($request->transactions)) {
             foreach ($request->transactions as $trans) {
                 $quantity+=$trans['quantity'];
@@ -92,10 +95,15 @@ class TransactionsController extends Controller {
 
         $transaction    = new Transaction;
         $validate       = Validator::make($request->all(), [
-            'tanggal' => 'required',
-            'category_id' => 'required',
+            'user_id' => 'required|exists:users,id',
+            'tanggal' => 'required|date',
+            'category_id' => 'required|exists:categories,id',
             'quantity' => 'required',
             'amount' => 'required',
+            'transactions' => 'required',
+        ], [
+            'user_id.required' => 'Pastikan Account Payable exists di dalam sistem. Gunakan Auto Complete dari form untuk membantu. ex: 85640427774',
+            'user_id.exists' => 'Pastikan Account Payable exists di dalam sistem. Gunakan Auto Complete dari form untuk membantu. ex: 85640427774'
         ]);
 
         if($validate->fails()){
@@ -136,7 +144,15 @@ class TransactionsController extends Controller {
      */
     public function show($id)
     {
-        //
+        $data       = Transaction::findOrFail($id);
+        // dd($data->AccountPayable);
+        // $transaction    = DB::table('transactions')
+        //     ->join('categories as Category', function ($join) {
+        //         $join->on('transactions.category_id', '=', 'Category.id');
+        //     })
+        //     ->where('transactions.id', '=', $id)->get();
+        // dd($transaction);
+        return view('Transaction::show', compact('data'));
     }
 
     /**

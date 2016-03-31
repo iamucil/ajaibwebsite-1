@@ -40,6 +40,10 @@
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Users</div>
                                         </a>
                                     </li>
+                                    <li>
+                                        <a href="{{ route('menus.index') }}" title="Menu Management">Menu
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
 
@@ -107,7 +111,7 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ route('transaction.category.index') }}" title="Inbox">Transactions
+                                        <a href="{{ route('transactions.index') }}" title="Inbox">Transactions
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Categories</div>
                                         </a>
                                     </li>
@@ -132,7 +136,7 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ route('transaction.category.index') }}" title="Inbox">Transactions
+                                        <a href="{{ route('transactions.index') }}" title="Inbox">Transactions
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Categories</div>
                                         </a>
                                     </li>
