@@ -32,4 +32,5 @@
             ],
         ]);
 
+        Route::get('/transactions/invoice/{invoice}', 'TransactionsController@exportInvoice')->name('transactions.invoice');
     });

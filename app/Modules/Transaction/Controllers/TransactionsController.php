@@ -3,6 +3,7 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+// use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use App\Modules\Transaction\Models\Transaction;
 use App\Modules\Transaction\Models\Category;
@@ -188,4 +189,11 @@ class TransactionsController extends Controller {
         //
     }
 
+    public function exportInvoice($id)
+    {
+        $pdf = app()->make('dompdf.wrapper');
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->loadHTML('<h1>Test</h1>');
+        return $pdf->stream();
+    }
 }
