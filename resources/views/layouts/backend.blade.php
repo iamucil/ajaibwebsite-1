@@ -484,7 +484,19 @@
             <div class="row">
                 <div class="col-md-4">
                        <!-- Bootstrap Content -->
+                       <div>
+                            <form class="navbar-form-chat" style="position:relative" role="search">
+                                <!-- Search | has-form wrapper -->
+                                <div class="dark"></div>
+                                <input class="input-chat-search" type="text" placeholder="Cari">
+                            </form>
+
+                       </div>
+
                        <ul class="history-chat">
+                       
+                        
+
                          <li class="devider"></li>
                         <li>
                             <img alt="" src="http://api.randomuser.me/portraits/thumb/men/29.jpg">
@@ -586,13 +598,13 @@
                                 </div>
 
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>
+                             
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                    <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
                             <!-- /input-group -->
@@ -613,13 +625,13 @@
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
                             </div>
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>
+                             
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                  <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
 
@@ -640,13 +652,14 @@
                             <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
                             </div>
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>
+                            
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                    <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
+                                
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
 
