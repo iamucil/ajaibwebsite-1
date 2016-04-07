@@ -990,20 +990,18 @@ function GenerateChatBox(obj,public) {
         } else {
             var chatText = '';
         }
-        var elm = '<div id=\"cb_' + obj.user_name + '\"class="chat-list chat-active">' + '<div class="close-box">X</div>' +
+        var elm = '<div id=\"cb_' + obj.user_name + '\"class="chat-list chat-active">' +
+            '<div class="close-box">X</div>' +
             '<a class="chat-pop-over" data-cn="' + obj.sender_channel + '" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
-            '<div class="chat-conversation" id="cc_' + obj.user_name + '">' +
+            '<div class="chat-conversation slim-scroll-chat" id="cc_' + obj.user_name + '">' +
                 //chatText +
             '</div>' +
             '<div class="textarea-nest">' +
             '<div class="form-group">' +
-            '<span class="fontello-attach"></span>' +
-            '<span class="fontello-camera"></span>' +
-            '</div>' +
-            '<div class="form-group">' +
             '<textarea class="form-control chat-text" id="ct_' + obj.user_name + '" rows="3"></textarea>' +
             '</div>' +
+            '<span class="btn btn-default btn-file-ajaib"><i class="fontello-attach"></i><input type="file" class="input-file"></span>' +
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
             '</div>' +
             '</div>' +
@@ -1160,6 +1158,10 @@ function AppendChat(elm) {
  * It used to reload webuipopover.js, because after render on the fly, the popup doesn't show
  */
 function load_js() {
+    $('.input-file').change(function(){
+        alert($(this).val().split('\\'));
+    });
+
     // file js to be reload on the page
     var jsToBeLoaded = 'https://' + domain + '/js/jquery.webui-popover.js';
 
@@ -1193,6 +1195,18 @@ function load_js() {
             $(lmnt).find('.chat-conversation').scrollTop(9999);
         }
     });
+}
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#image_upload_preview').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 //=========================== custom function =======================//
 

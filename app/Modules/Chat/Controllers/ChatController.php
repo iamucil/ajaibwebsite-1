@@ -3,6 +3,7 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Modules\Chat\Models\Chat;
+use App\Repositories\AssetRepository;
 use GuzzleHttp\Psr7\Response;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
@@ -14,32 +15,36 @@ class ChatController extends Controller
 {
 
     protected $pubnub;
-
-    public function __construct(/*ChatRepository $pubnub*/)
+    protected $asset;
+    protected $user;
+    public function __construct(/*ChatRepository $pubnub*/ AssetRepository $asset)
     {
+
 //        $this->pubnub = $pubnub;
+        $this->user = $this->getOwnerId();
+        $this->asset = $asset;
         // end user access
-        $this->middleware(
-            "oauth",
-            [
-                'only' =>
-                    ['index', 'store']
-            ]
-        );
-        $this->middleware(
-            "oauth-user",
-            [
-                'only' =>
-                    ['index', 'store']
-            ]
-        );
-        // backend acces
-        $this->middleware('auth',
-            [
-                'except' =>
-                    ['index', 'store', 'insertLog', 'oauthUpdateChat']
-            ]
-        );
+//        $this->middleware(
+//            "oauth",
+//            [
+//                'only' =>
+//                    ['index', 'store']
+//            ]
+//        );
+//        $this->middleware(
+//            "oauth-user",
+//            [
+//                'only' =>
+//                    ['index', 'store']
+//            ]
+//        );
+//        // backend acces
+//        $this->middleware('auth',
+//            [
+//                'except' =>
+//                    ['index', 'store', 'insertLog', 'oauthUpdateChat']
+//            ]
+//        );
     }
 
     /**
@@ -79,7 +84,7 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         $param = array();
-        $param['sender_id'] = Authorizer::getResourceOwnerId();
+        $param['sender_id'] = $this->user;
         foreach ($request->data as $key => $item) {
             $param[$key] = $item;
         }
@@ -195,7 +200,7 @@ class ChatController extends Controller
 
     public function chatLog($id, Response $response)
     {
-        $chat = Chat::whereRaw('((sender_id = ' . auth()->user()->id . ' or receiver_id = ' . auth()->user()->id . ') and (sender_id = ' . $id . ' or receiver_id = ' . $id . '))')
+        $chat = Chat::whereRaw('((sender_id = ' . $this->user . ' or receiver_id = ' . $this->user . ') and (sender_id = ' . $id . ' or receiver_id = ' . $id . '))')
             ->orderBy("id","asc")
             ->get();
 
@@ -491,6 +496,15 @@ class ChatController extends Controller
     }
     //============== END HISTORY FUNCTION ===============
 
+    //================= SEND ATTACHMENT =================
+    protected function sendAttachment(Request $request) {
+        if ($this->getOwnerId()) {
+
+        }
+
+    }
+    //=============== END SEND ATTACHMENT ===============
+
 
     //================ CUSTOM FUNCTION =================
     /**
@@ -530,6 +544,16 @@ class ChatController extends Controller
                 break;
             default:
                 return false;
+        }
+    }
+
+    protected function getOwnerId() {
+        if ($this->valueValidation(auth()->user())) {
+            return auth()->user()->id;
+        } else if ($this->valueValidation(Authorizer::getResourceOwnerId())) {
+            return Authorizer::getResourceOwnerId();
+        } else {
+            return false;
         }
     }
 
