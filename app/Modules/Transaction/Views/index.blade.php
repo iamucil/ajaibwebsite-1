@@ -64,7 +64,7 @@ Transaction
                                 <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-default">
                                     <i class="glyphicon glyphicon-list-alt"></i>
                                 </a>
-                                <a href="{{ route('transactions.invoice', $transaction->id) }}" class="btn btn-default">
+                                <a href="{{ route('transactions.invoice', \Crypt::encrypt($transaction->id)) }}" class="btn btn-default">
                                     <i class="glyphicon glyphicon-duplicate"></i>
                                 </a>
                             </td>
