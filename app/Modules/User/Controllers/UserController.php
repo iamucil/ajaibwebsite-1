@@ -394,9 +394,15 @@ class UserController extends Controller {
     {
         $id =  Authorizer::getResourceOwnerId();
         $user       = User::find($id);
-        $pathPhoto  = storage_path() . '/' . $user->photo;
 
-        return $this->Asset->downloadFile($pathPhoto);
+        if(!is_null($user->photo)){
+            $pathPhoto  = storage_path() . '/' . $user->photo;
+            $return = $this->Asset->downloadFile($pathPhoto);
+        }else{
+            $return = response()->json('Not Found', 404);
+        }
+
+        return $return;
     }
 
     public function updateProfile($id, Request $request, User $User)
