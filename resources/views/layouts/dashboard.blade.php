@@ -62,6 +62,9 @@
                     <li class="active">
                         <i class="fontello-home"></i>
                     </li>
+                    <li>
+                        Dashboard
+                    </li>
                 @endif
             </ul>
             <!-- breadcrumbs -->
