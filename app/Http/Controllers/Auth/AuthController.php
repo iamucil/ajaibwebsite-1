@@ -27,10 +27,6 @@ class AuthController extends Controller
 
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     protected $user;
-    protected $redirectPath         = '/dashboard/';
-    protected $redirectAfterLogout  = '/auth/login';
-    protected $redirectTo           = '/dashboard/';
-    protected $loginPath            = '/auth/login';
     /**
      * Create a new authentication controller instance.
      *
@@ -40,6 +36,11 @@ class AuthController extends Controller
     {
         $this->middleware('guest', ['except' => 'getLogout']);
         $this->user         = $user;
+        // set in constructor or set as protected variable
+        $this->redirectAfterLogout  = route("login");
+        $this->loginPath            = route("login");
+        $this->redirectPath         = route("admin::dashboard");
+        $this->redirectTo           = route("admin::dashboard");
         $this->beforeFilter(function() {
             $country_code       = request()->country_code;
             if((isset(request()->country_code) OR !empty(request()->country_code))) {
@@ -124,7 +125,7 @@ class AuthController extends Controller
                     'errors' => $validator->errors()
                 ]);
             }else{
-                return redirect('/auth/register')
+                return redirect()->route('register')
                     ->withErrors($validator, 'register')
                     ->withInput()
                     ->with('errors', $validator->errors());
