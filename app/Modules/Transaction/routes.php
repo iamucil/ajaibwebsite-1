@@ -32,5 +32,11 @@
             ],
         ]);
 
-        Route::get('/transactions/invoice/{invoice}', 'TransactionsController@exportInvoice')->name('transactions.invoice');
+        Route::group(['prefix' => 'invoice/{transaction}'], function() {
+            Route::get('/pdf', 'TransactionsController@exportInvoice')->name('transactions.invoice.export');
+            Route::get('/print', 'TransactionsController@printInvoice')->name('transactions.invoice.print');
+        });
+
+        // Route::get('/transactions/invoice/{invoice}/pdf', 'TransactionsController@exportInvoice')->name('transactions.invoice');
+        // Route::get('/transactions/invoice/{invoice}', 'TransactionsController@printInvoice')->name('transactions.invoice');
     });

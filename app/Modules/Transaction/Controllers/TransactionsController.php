@@ -196,4 +196,11 @@ class TransactionsController extends Controller {
         $pdf->loadHTML('<h1>Test</h1>');
         return $pdf->stream();
     }
+
+    public function printInvoice($id)
+    {
+        $transaction        = Transaction::findOrFail($id);
+        // dd($transaction);
+        return view('Transaction::invoice', compact('transaction'));
+    }
 }
