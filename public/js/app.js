@@ -32,11 +32,11 @@ $(function() {
         alwaysVisible: true,
         size: "4px"
     });
-     $(".slim-scroll-chat").slimscroll({
+/*     $(".slim-scroll-chat").slimscroll({
         height: "400px",
         alwaysVisible: false,
         size: "3px"
-    });
+    });*/
 
      $("#paper-bg").slimscroll({
         height: "600px",
@@ -57,6 +57,8 @@ $(function() {
         distance: '-1px',
         size: "4px"
     });
+      //lightbox
+    $('.lightbox').lightGallery();
  
 });
 
