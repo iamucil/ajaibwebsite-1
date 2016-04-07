@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/lightgallery.css')}}" />
 
     <!-- pace loader -->
 
@@ -623,6 +624,9 @@
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                                <p class="ajaib-operator ajaib-operator-media lightbox"><a href="./img/al-ghazali.jpg"><img alt="image-load" src="./img/al-ghazali.jpg"></a></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ini contoh gambarnya mba.. </p>
+                                <p class="ajaib-client ajaib-operator-media lightbox"><a href="./img/03.jpg"><img alt="image-load" src="./img/03.jpg"></a></p>
                             </div>
                             <div class="textarea-nest">
                              
@@ -632,6 +636,11 @@
                                   <span class="btn btn-default btn-file-ajaib">
                                         <i class="fontello-attach"></i><input type="file">
                                     </span>
+                                     <span class="btn lightbox">
+                                        <a href="./img/raisa.jpg">Open</a>
+                                    </span>
+                                    
+                                    
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
 
@@ -762,6 +771,7 @@
 <script type='text/javascript' src="{{asset('/js/slicknav/jquery.slicknav.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/sliding-menu-fixed.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/scriptbreaker-multiple-accordion-1.js')}}"></script>
+<script type='text/javascript' src="{{asset('/js/lightgallery.min.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/app.js')}}"></script>
 
 <!-- FLOT CHARTS -->
