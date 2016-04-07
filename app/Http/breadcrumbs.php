@@ -25,9 +25,14 @@ foreach ($route_collections as $collection) {
     if(!is_null($collection->getName())){
         $route_name     = $collection->getName();
         if($route_name != 'admin::dashboard') {
-            Breadcrumbs::register($route_name, function ($breadcrumbs) use ($route_name){
+            Breadcrumbs::register($route_name, function ($breadcrumbs, $page = null) use ($route_name){
                 $breadcrumbs->parent('admin::dashboard');
-                $breadcrumbs->push(str_replace('.', ' ', $route_name), route($route_name));
+                if(!is_null($page)){
+                    $title  = $page->title;
+                }else{
+                    $title  = str_replace('.', ' ', $route_name);
+                }
+                $breadcrumbs->push($title, route($route_name));
             });
         }
     }
