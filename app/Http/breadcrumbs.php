@@ -27,8 +27,9 @@ foreach ($route_collections as $collection) {
         if($route_name != 'admin::dashboard') {
             Breadcrumbs::register($route_name, function ($breadcrumbs, $page = null) use ($route_name){
                 $breadcrumbs->parent('admin::dashboard');
+                $title  = str_replace('.', ' ', $route_name);
                 if(!is_null($page)){
-                    $title  = $page->title;
+                    $title  = (isset($page->title)) ?: $title;
                 }else{
                     $title  = str_replace('.', ' ', $route_name);
                 }

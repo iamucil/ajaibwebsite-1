@@ -10,6 +10,7 @@ use App\Modules\Transaction\Models\Category;
 use App\Modules\Transaction\Models\TransactionDetail;
 use Validator;
 use DB;
+use Crypt;
 
 class TransactionsController extends Controller {
 
@@ -191,16 +192,21 @@ class TransactionsController extends Controller {
 
     public function exportInvoice($id)
     {
+        $id             = Crypt::decrypt($id);
+        $transaction    = Transaction::findOrFail($id);
+
         $pdf = app()->make('dompdf.wrapper');
-        $pdf->setPaper('A4', 'landscape');
-        $pdf->loadHTML('<h1>Test</h1>');
-        return $pdf->stream();
+        $pdf->setPaper('A4', 'potrait');
+
+        $pdf->loadView('Transaction::invoice', compact('transaction'));
+        return $pdf->stream('invoice_'.$transaction->invoice_number.'.pdf');
+        // return $pdf->stream();
     }
 
     public function printInvoice($id)
     {
         $transaction        = Transaction::findOrFail($id);
         // dd($transaction);
-        return view('Transaction::invoice', compact('transaction'));
+        return view('Transaction::print', compact('transaction'));
     }
 }
