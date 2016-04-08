@@ -166,7 +166,8 @@ return [
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
         Aloha\Twilio\Support\Laravel\ServiceProvider::class,
-        Barryvdh\DomPDF\ServiceProvider::class,
+        // Barryvdh\DomPDF\ServiceProvider::class,
+        Barryvdh\Snappy\ServiceProvider::class,
     ],
 
     /*
@@ -224,7 +225,9 @@ return [
         'Javascript' => Laracasts\Utilities\JavaScript\JavaScriptFacade::class,
         'Breadcrumbs'   => DaveJamesMiller\Breadcrumbs\Facade::class,
         'Twilio'    => Aloha\Twilio\Support\Laravel\Facade::class,
-        'PDF'       => Barryvdh\DomPDF\Facade::class,
+        // 'PDF'       => Barryvdh\DomPDF\Facade::class,
+        'PDF'       => Barryvdh\Snappy\Facades\SnappyPdf::class,
+        'Image'     => Barryvdh\Snappy\Facades\SnappyImage::class,
     ),
 
 ];

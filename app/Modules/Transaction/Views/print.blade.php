@@ -1,5 +1,5 @@
 @extends('layouts.invoice')
-@section('title', $transaction->invoice_number);
+@section('title', $transaction->invoice_number)
 @section('content')
     <div class="row">
         <div class="col-xs-12">

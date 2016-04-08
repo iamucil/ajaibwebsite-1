@@ -190,23 +190,31 @@ class TransactionsController extends Controller {
         //
     }
 
-    public function exportInvoice($id)
+    public function printInvoice($id, $print = 'html')
     {
-        $id             = Crypt::decrypt($id);
-        $transaction    = Transaction::findOrFail($id);
-
-        $pdf = app()->make('dompdf.wrapper');
-        $pdf->setPaper('A4', 'potrait');
-
-        $pdf->loadView('Transaction::invoice', compact('transaction'));
-        return $pdf->stream('invoice_'.$transaction->invoice_number.'.pdf');
-        // return $pdf->stream();
-    }
-
-    public function printInvoice($id)
-    {
+        $id                 = Crypt::decrypt($id);
         $transaction        = Transaction::findOrFail($id);
-        // dd($transaction);
-        return view('Transaction::print', compact('transaction'));
+
+        switch (strtoupper($print)) {
+            case 'PDF':
+                $pdf    = app()->make('snappy.pdf.wrapper');
+                $pdf->loadView('Transaction::print', compact('transaction'));
+                $pdf->setPaper('A4');
+                // $pdf->setOrientation('landscape');
+                return $pdf->inline('invoice_'. $transaction->invoice_number .'.pdf');
+                break;
+            case 'IMAGE':
+                $img    = app()->make('snappy.image.wrapper');
+                $img->loadView('Transaction::print', compact('transaction'));
+                return $img->download('invoice_'. $transaction->invoice_number .'.jpg');
+                break;
+            case 'HTML':
+                return view('Transaction::print', compact('transaction'));
+                break;
+            default:
+                return view('Transaction::print', compact('transaction'));
+                # code...
+                break;
+        }
     }
 }
