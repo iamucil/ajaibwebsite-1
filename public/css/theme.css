@@ -565,6 +565,10 @@ Foundation Coustom
     font-variant: normal;
 }
 
+.breadcrumbs > *:last-child:after {
+    content: " " !important;
+}
+
 .slim_scroll {
     margin-top: 5px;
 }

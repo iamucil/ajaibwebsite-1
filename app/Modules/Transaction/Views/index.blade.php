@@ -60,12 +60,20 @@ Transaction
                             <td>
                                 {{ $transaction->category->name }}
                             </td>
-                            <td>
+                            <td style="width: 195px;">
                                 <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-default">
                                     <i class="glyphicon glyphicon-list-alt"></i>
                                 </a>
-                                <a href="{{ route('transactions.invoice', $transaction->id) }}" class="btn btn-default">
+                                <a href="{{ route('transactions.invoice.print', [\Crypt::encrypt($transaction->id), 'pdf']) }}" class="btn btn-default" title="invoice PDF" target="_blank">
+                                    <i class="glyphicon glyphicon-credit-card" alt="invoice"></i>
+                                </a>
+                                <a href="{{ route('transactions.invoice.print', \Crypt::encrypt($transaction->id)) }}" class="btn btn-default" target="_blank" title="invoice html">
                                     <i class="glyphicon glyphicon-duplicate"></i>
+                                </a>
+                                <a href="{{ route('transactions.invoice.print', [
+                                \Crypt::encrypt($transaction->id),
+                                'image']) }}" class="btn btn-default" target="_blank" title="invoice image">
+                                    <i class="glyphicon glyphicon-save-file"></i>
                                 </a>
                             </td>
                         </tr>
