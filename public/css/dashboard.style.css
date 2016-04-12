@@ -1566,3 +1566,80 @@ ALERT
     cursor: inherit;
     display: block;
 }
+
+.ajaib-media-uploader {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.9);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: block;
+    z-index: 9999;
+}
+
+.ajaib-media-uploader img {
+    margin: 0 auto;
+    position: absolute;
+    text-align: center;
+    top: 20%;
+    right: 0;
+    left: 0;
+}
+
+.ajaib-media-uploader span {
+    position: absolute;
+    bottom: 10%;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    display: table;
+    margin: 0 auto;
+    border-radius: 10px;
+    color: #ffffff;
+    text-align: center;
+    z-index: 11000;
+}
+
+.ajaib-media-uploader button {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: table;
+}
+
+.ajaib-media-uploader .close-box {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    display: table;
+    background: red;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    font-size: 13px;
+}
+
+.ajaib-media-uploader h2 {
+    font-weight: 100;
+    color: #fff;
+    text-align: center;
+    font-family: "Open Sans";
+    text-transform: uppercase;
+}
+
+.ajaib-chat-loader {
+    background: url("../img/ellipsis.gif");
+    width: 120px;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 55px;
+    top: 108px;
+    margin: 0;
+    background-size: 45px;
+    background-repeat: no-repeat;
+}

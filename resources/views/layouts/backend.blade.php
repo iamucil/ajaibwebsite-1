@@ -636,10 +636,10 @@
                                   <span class="btn btn-default btn-file-ajaib">
                                         <i class="fontello-attach"></i><input type="file">
                                     </span>
-                                     <span class="btn lightbox">
-                                        <a href="./img/raisa.jpg">Open</a>
+                                     <span class="ajaib-chat-loader">
+                                       
                                     </span>
-                                    
+
                                     
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
@@ -677,6 +677,8 @@
 
             </div>
             <!-- Chat bottom -->
+
+
             @show
 
             <!-- end of Container Begin -->
@@ -695,7 +697,18 @@
     </div>
     <!-- end paper bg -->
 
+
+
 </div>
+    <div class="ajaib-media-uploader">
+                <div class="close-box">X</div>
+                <img src="./img/raisa.jpg">
+                <span>Lorem Ipsum dollor si amet amet jabang bayi</span>
+                <button type="submit" class="btn btn-default">Submit</button>
+
+    </div>
+
+
     <div id="right-chat-menu-off" class="sidetogglemenu">
             <!-- Your right Slidebar content. -->
             <!-- Right Menu -->
