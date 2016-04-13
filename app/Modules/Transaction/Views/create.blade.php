@@ -44,7 +44,7 @@
             <div class="form-group">
                 <label for="tanggal" class="col-sm-2 control-label">Tanggal</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control datepicker" id="txt-date" placeholder="MM/DD/YYYY" name="tanggal" value="{{ old('tanggal') }}" autocomplete="off" />
+                    <input type="text" class="form-control datepicker" id="txt-date" placeholder="MM/DD/YYYY" name="tanggal" value="{{ old('tanggal', date('m/d/Y', time())) }}" autocomplete="off" />
                 </div>
             </div>
             <div class="form-group">
@@ -247,7 +247,8 @@
             $('.datepicker').each(function () {
                 $(this).datepicker({
                     'autoclose' : true,
-                    'startView' : 2
+                    'startView' : 0,
+                    'todayBtn' : 'linked'
                 });
             });
             var $transactions   = JSON.parse('{!! $transactions->content() !!}');
