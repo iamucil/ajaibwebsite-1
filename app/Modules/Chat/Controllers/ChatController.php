@@ -57,7 +57,7 @@ class ChatController extends Controller
         $ownerId = Authorizer::getResourceOwnerId();
         $chat = Chat::where('sender_id', $ownerId)
             ->orWhere('receiver_id', $ownerId)
-            ->get(['id', 'sender_id', 'message', 'read', 'created_at'])
+            ->get(['id AS chat_id', 'sender_id', 'message', 'read', 'created_at'])
 			->toArray();
 
         return response()->json(array(
