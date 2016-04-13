@@ -702,8 +702,8 @@
 
 </div>
     <div class="ajaib-media-uploader">
-                <div class="close-box">X</div>
-                <img src="./img/raisa.jpg">
+                <div class="close-box"></div>
+                <img src="./img/03.jpg">
                 <span>Lorem Ipsum dollor si amet amet jabang bayi</span>
                 <button type="submit" class="btn btn-default">Submit</button>
 
