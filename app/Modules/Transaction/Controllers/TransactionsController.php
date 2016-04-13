@@ -3,12 +3,14 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+// use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use App\Modules\Transaction\Models\Transaction;
 use App\Modules\Transaction\Models\Category;
 use App\Modules\Transaction\Models\TransactionDetail;
 use Validator;
 use DB;
+use Crypt;
 
 class TransactionsController extends Controller {
 
@@ -188,4 +190,31 @@ class TransactionsController extends Controller {
         //
     }
 
+    public function printInvoice($id, $print = 'html')
+    {
+        $id                 = Crypt::decrypt($id);
+        $transaction        = Transaction::findOrFail($id);
+
+        switch (strtoupper($print)) {
+            case 'PDF':
+                $pdf    = app()->make('snappy.pdf.wrapper');
+                $pdf->loadView('Transaction::print', compact('transaction'));
+                $pdf->setPaper('A4');
+                // $pdf->setOrientation('landscape');
+                return $pdf->inline('invoice_'. $transaction->invoice_number .'.pdf');
+                break;
+            case 'IMAGE':
+                $img    = app()->make('snappy.image.wrapper');
+                $img->loadView('Transaction::print', compact('transaction'));
+                return $img->download('invoice_'. $transaction->invoice_number .'.jpg');
+                break;
+            case 'HTML':
+                return view('Transaction::print', compact('transaction'));
+                break;
+            default:
+                return view('Transaction::print', compact('transaction'));
+                # code...
+                break;
+        }
+    }
 }
