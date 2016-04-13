@@ -19,6 +19,7 @@
         <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/typicons.css')}}" />
         <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/font-awesome.css')}}" />
         <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/theme.css')}}" />
+        <link id="lightgallery-style" rel="stylesheet" type="text/css" href="{{secure_asset('/css/lightgallery.css')}}" />
         <link rel="stylesheet" href="{{secure_asset('js/slicknav/slicknav.css')}}" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
         <!-- Slidebars CSS -->
@@ -124,6 +125,7 @@
     <script type='text/javascript' src="{{secure_asset('/js/slicknav/jquery.slicknav.js')}}"></script>
     <script type='text/javascript' src="{{secure_asset('/js/sliding-menu-fixed.js')}}"></script>
     <script type='text/javascript' src="{{secure_asset('/js/scriptbreaker-multiple-accordion-1.js')}}"></script>
+    <script id="lightgallery-script" type='text/javascript' src="{{secure_asset('/js/lightgallery.min.js')}}"></script>
     <script type='text/javascript' src="{{secure_asset('/js/app.js')}}"></script>
     <script type='text/javascript' src="{{ secure_asset('/js/vendor/js-cookie/js.cookie.js') }}"></script>
     <script type='text/javascript' src="{{ secure_asset('/js/vendor/alertify.js/lib/alertify.min.js') }}"></script>
