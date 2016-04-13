@@ -33,7 +33,7 @@ class ComposerServiceProvider extends ServiceProvider
                         $user->photo = secure_asset("/img/avatar_male.png");
                     }
                 }else{
-                    $user->photo = '/profile/photo/'.$id;
+                    $user->photo = '/profile/photo/'.$user->id;
                 }
             }
 
