@@ -4,19 +4,18 @@
 @stop
 
 @section('content')
-{!! $data->getContent() !!}
-{{--     @forelse ($menus as $menu)
-        {{ $menu->name }}
-    @empty
-        Belum Ada data menu
-    @endforelse --}}
+    <div class="row">
+        <div class="col-md-2">
+            <div class="bg-complete-profile">
+                <a href="{{ route('menus.create') }}">
+                    <span class="icon-plus"></span>
+                    <h6 class="bg-black text-white"><strong>Add new Menu</strong></h6>
+                </a>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('script-bottom')
     @parent
-    <script type="text/javascript">
-    var url     = '{!! url("/geo-ip") !!}';
-    var menus   = {!! $data->getContent() !!};
-    var geoloc  = [];
-    </script>
 @stop

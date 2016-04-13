@@ -60,7 +60,9 @@
                             </thead>
                             <tbody>
                                 <!-- foreach ($order->lineItems as $line) or some such thing here -->
+                                {{--*/ $total = 0 /*--}}
                                 @forelse ($transaction->TransactionDetails as $detail)
+                                    {{--*/ $total += ($detail->quantity*$detail->amount) /*--}}
                                     <tr>
                                         <td>
                                             {{ $detail->keterangan }}
@@ -84,19 +86,19 @@
                                     <td class="thick-line"></td>
                                     <td class="thick-line"></td>
                                     <td class="thick-line text-center"><strong>Subtotal</strong></td>
-                                    <td class="thick-line text-right">{!! number_format($transaction->amount, 2, ',','.') !!}</td>
+                                    <td class="thick-line text-right">{!! number_format($total, 2, ',','.') !!}</td>
                                 </tr>
                                 <tr>
                                     <td class="no-line"></td>
                                     <td class="no-line"></td>
                                     <td class="no-line text-center"><strong>Shipping</strong></td>
-                                    <td class="no-line text-right">0</td>
+                                    <td class="no-line text-right">{!! number_format(0, 2, ',','.') !!}</td>
                                 </tr>
                                 <tr>
                                     <td class="no-line"></td>
                                     <td class="no-line"></td>
                                     <td class="no-line text-center"><strong>Total</strong></td>
-                                    <td class="no-line text-right">{!! number_format($transaction->amount, 2, ',','.') !!}</td>
+                                    <td class="no-line text-right">{!! number_format($total, 2, ',','.') !!}</td>
                                 </tr>
                             </tbody>
                         </table>
