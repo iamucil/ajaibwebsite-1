@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/lightgallery.css')}}" />
+  
 
     <!-- pace loader -->
 
@@ -618,11 +619,11 @@
                         <div class="webui-popover-content">
                             <div class="chat-conversation slim-scroll-chat">
                                 <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
-                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ha</p>
-                                <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat .</p>
-                                <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya </p>
-                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
-                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ha<i class="material-icons">done</i></p>
+                                <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat<i class="material-icons">done_all</i></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya<i class="material-icons">done_all</i></p>
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Belum dibaca <i class="material-icons">done</i></p>
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Sudah dibaca<i class="material-icons">done_all</i></p>
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
                                 <p class="ajaib-operator ajaib-operator-media lightbox"><a href="./img/al-ghazali.jpg"><img alt="image-load" src="./img/al-ghazali.jpg"></a></p>
                                 <p class="ajaib-client"><small>Sat 7:19 PM</small>ini contoh gambarnya mba.. </p>
