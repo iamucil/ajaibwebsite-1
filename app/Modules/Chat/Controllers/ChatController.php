@@ -165,6 +165,7 @@ class ChatController extends Controller
          * ip address
          * useragent
          * read,
+         * type,
          * created at
          * updated at
          */
@@ -182,6 +183,7 @@ class ChatController extends Controller
                 'message' => $request->message,
                 'ip_address' => $request->ip_address,
                 'useragent' => $request->useragent,
+                'type'=> $request->type,
 //                'read' => $request->read
             ]);
 
@@ -499,9 +501,28 @@ class ChatController extends Controller
     //============== END HISTORY FUNCTION ===============
 
     //================= SEND ATTACHMENT =================
-    protected function sendAttachment(Request $request) {
-        if ($this->getOwnerId()) {
+    protected function sendAttachment(Request $request)
+    {
+        if ($this->user) {
 
+            $data['user_id'] = $this->user;
+            $request->merge($data);
+
+            $processUpload = $this->asset->uploadAttachment($request);
+            if(!$processUpload)
+            {
+                return response()->json(array(
+                    'status'=>500,
+                    'message'=>'Error Upload Photo'
+                ),500);
+            } else
+            {
+                return response()->json(array(
+                    'status'=>200,
+                    'message'=>'Success Upload',
+                    'data'=>$processUpload
+                ),200);
+            }
         }
 
     }

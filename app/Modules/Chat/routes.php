@@ -40,7 +40,7 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
             ]
         ]);
 
-        Route::post('chat/attachment/send', ['as' => 'dashboard.chat.sendAttachment', 'uses' => 'ChatController@sendAttachment']);
+        Route::post('chat/attachment/send', ['middleware' => 'auth', 'as' => 'dashboard.chat.sendAttachment', 'uses' => 'ChatController@sendAttachment']);
     });
 });
 
