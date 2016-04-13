@@ -332,6 +332,9 @@ function subscribeCallback(m) {
     //logging(m);
 
     if (m.sender_id === authUser.id) {
+        if ($("#"+ m.message_id).length === 0) {
+            renderMessage(m.message_id, 'operator', m.message, m.time, m.user_name, m.type);
+        }
         // operator it self
         //renderMessage('operator', m.message, m.time, m.user_name);
     } else {
@@ -381,7 +384,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage('client', m.message, m.time, m.user_name, m.type);
+                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type);
                     }
 
                     showNotification(m, false);
@@ -407,7 +410,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage('client', m.message, m.time, m.user_name, m.type);
+                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type);
                     }
 
                     showNotification(m, true);
@@ -696,10 +699,11 @@ function publish(senderId) {
                 pubnub.publish({
                     channel: authUser.channel,
                     message: {
-                        "user_name": obj.user_name,
-                        "sender_id": authUser.id,
-                        "message": text,
-                        "time": datetime
+                        "user_name"     : obj.user_name,
+                        "sender_id"     : authUser.id,
+                        "message"       : text,
+                        "time"          : datetime,
+                        "message_id"    : data.data.id,
                     },
                     callback: function (m) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -708,7 +712,7 @@ function publish(senderId) {
                     }
                 });
 
-                renderMessage('operator', text, datetime, obj.user_name, obj.type);
+                renderMessage(data.data.id, 'operator', text, datetime, obj.user_name, obj.type);
 
                 // append the text to conversation area
                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -725,6 +729,8 @@ function publish(senderId) {
 
     if ($('#input_'+obj.user_name)[0].files[0]!==undefined) {
         TriggerUploadFile(obj);
+        // remove form data & file
+        $("#input_"+obj.user_name).val("");
     }
 }
 
@@ -1081,7 +1087,7 @@ function TriggerUploadFile(obj) {
             $("#image_"+obj.user_name).attr("href",$("#input_"+obj.user_name).val());
             document.getElementById("file_loader_"+obj.user_name).style.display = "block";
             $.ajax({
-                url: "https://" + domain + "/dashboard/chat/attachment/send",
+                url: "https://" + domain + "/dashboard/chat/attachment/send", // return url of image uploaded
                 type : 'POST',
                 data : formData,
                 processData: false,  // tell jQuery not to process the data
@@ -1161,6 +1167,7 @@ function TriggerUploadFile(obj) {
                                 pubnub.publish({
                                     channel: authUser.channel,
                                     message: {
+                                        "message_id"    : data.data.id,
                                         "user_name"     : obj.user_name,
                                         "sender_id"     : authUser.id,
                                         "message"       : imagePath,
@@ -1174,7 +1181,7 @@ function TriggerUploadFile(obj) {
                                     }
                                 });
 
-                                renderMessage('operator', imagePath, datetime, obj.user_name, type);
+                                renderMessage(data.data.id,'operator', imagePath, datetime, obj.user_name, type);
 
                                 // append the text to conversation area
                                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -1189,11 +1196,7 @@ function TriggerUploadFile(obj) {
                             document.getElementById("file_loader_"+obj.user_name).style.display = "none";
                         });
 
-                        renderMessage('operator', data.data, datetime, obj.user_name, "image");
-                        $("#image_"+username).attr("href",data.data);
-
-                        // remove form data & file
-                        $("#input_"+username).val("");
+                        //renderMessage(data.data.id,'operator', data.data, datetime, obj.user_name, "image");
                     } else {
                         alertify.success("Upload file failed");
                     }
@@ -1226,10 +1229,10 @@ function RenderHistory(obj, username) {
 
                     if (historyData[i].sender_id === authUser.id) {
                         // operator
-                        renderMessage('operator', historyData[i].message, localTime, username,historyData[i].type);
+                        renderMessage(historyData[i].id,'operator', historyData[i].message, localTime, username,historyData[i].type);
                     } else {
                         // user
-                        renderMessage('client', historyData[i].message, localTime, username,historyData[i].type);
+                        renderMessage(historyData[i].id,'client', historyData[i].message, localTime, username,historyData[i].type);
                     }
                 }
             } else {
@@ -1503,7 +1506,7 @@ function parseTime(datetime) {
     /*26/01/2016 07:00 am*/
 }
 
-function renderMessage(actor, text, time, user, type) {
+function renderMessage(id, actor, text, time, user, type) {
     //var timeSeparator = '';
 
     // time to parse
@@ -1538,13 +1541,13 @@ function renderMessage(actor, text, time, user, type) {
 
         switch(str) {
             case "image":
-                elm = '<p class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a href="'+storage_path+text+'"><img alt="image-load" src="'+storage_path+text+'"></a></p>';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a href="'+storage_path+text+'"><img alt="image-load" src="'+storage_path+text+'"></a></p>';
                 break;
             case "text":
-                elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
                 break;
             default:
-                elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
         }
         //
         appendElm += elm;
