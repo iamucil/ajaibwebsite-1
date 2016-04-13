@@ -12,6 +12,7 @@ Author: matirasa
     Page: locked screen
 */
 
+ @import url(https://fonts.googleapis.com/icon?family=Material+Icons);     
 body {
     position: relative!important;
 }
@@ -1192,7 +1193,20 @@ ALERT
     top: -16px;
     font-size: 10px;
 }
-
+.chat-conversation .ajaib-client i {
+    position: absolute;
+    top: 5px;
+    font-size: 18px;
+    right: 5px;
+}
+.chat-conversation .ajaib-operator i {
+    position: relative;
+    top: 0;
+    font-size: 18px;
+    left: 0px;
+    float: left;
+    width: 21px;
+}
 .chat-conversation .ajaib-operator {
     background: #057dee;
     display: list-item;
