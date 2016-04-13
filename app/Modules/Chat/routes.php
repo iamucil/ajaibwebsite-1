@@ -15,6 +15,7 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
         //Route::post('/chat/addChannelToGroup', ['as'=>'api.chat.addChannelToGroup','uses' => 'ChatController@addChannelToGroup']);
         //Route::post('/chat/removeChannelFromGroup', ['as'=>'api.chat.removeChannelFromGroup','uses' => 'ChatController@removeChannelFromGroup']);
         //Route::post('/chat/grantChannelGroup', ['as'=>'api.chat.grantChannelGroup','uses' => 'ChatController@grantChannelGroup']);
+        Route::post('/chat/attachment/send', ['middleware' => 'oauth','as' => 'dashboard.chat.sendAttachment', 'uses' => 'ChatController@sendAttachment']);
     });
 
     Route::group(['prefix' => 'dashboard'], function () {
@@ -25,13 +26,21 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
         Route::get('chat/private/{read}', ['as'=>'dashboard.chat.private','uses' => 'ChatController@authHistoryPrivate']);
 //        Route::put('chat/{msgid}', ['as' => 'dashboard.chat.update', 'uses' => 'ChatController@update']);
         Route::post('chat/update', ['as' => 'dashboard.chat.authUpdateChat', 'uses' => 'ChatController@authUpdateChat']);
-        Route::post('chat/insertlog', ['as'=>'dashboard.chat.insertlog','uses' => 'ChatController@insertLog']);
+        Route::post('chat/insertlog',
+            [
+                'middleware' => 'auth',
+                'as'=>'dashboard.chat.insertlog',
+                'uses' => 'ChatController@insertLog'
+            ]
+        );
         Route::resource('chat', 'ChatController',[
             'names' => [
                 'insertlog'    => 'dashboard.chat.insertlog',
                 'authUpdateChat' => 'dashboard.chat.authUpdateChat'
             ]
         ]);
+
+        Route::post('chat/attachment/send', ['middleware' => 'auth', 'as' => 'dashboard.chat.sendAttachment', 'uses' => 'ChatController@sendAttachment']);
     });
 });
 

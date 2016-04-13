@@ -55,5 +55,29 @@ class AssetRepository
 
         return $resultUpdate;
     }
+
+    public function uploadAttachment($request) {
+        if ($request->hasFile('file'))
+        {
+            $userId = $request->user_id;
+            $destinationPath = 'files/'.$this->directoryNaming($userId);
+
+            $file       = $request->file('file');
+            $fileName 	= $file->getClientOriginalName();
+            $fileExt 	= strtolower($file->getClientOriginalExtension());
+            $fileRename = $this->fileNaming($fileName) . '.' . $fileExt;
+            switch ($fileExt) {
+                case 'jpg'||'png'||'bmp'||'gif'||'jpeg';
+                    $destinationPath.='/'.$fileRename;
+                    break;
+            }
+            $resultUpload = Storage::disk($this->storage_disk)->put($destinationPath, File::get($file));
+            if ($resultUpload) {
+                return $destinationPath;
+            } else {
+                return false;
+            }
+        }
+    }
 }
 ?>

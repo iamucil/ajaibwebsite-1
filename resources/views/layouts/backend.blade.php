@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/lightgallery.css')}}" />
 
     <!-- pace loader -->
 
@@ -484,7 +485,19 @@
             <div class="row">
                 <div class="col-md-4">
                        <!-- Bootstrap Content -->
+                       <div>
+                            <form class="navbar-form-chat" style="position:relative" role="search">
+                                <!-- Search | has-form wrapper -->
+                                <div class="dark"></div>
+                                <input class="input-chat-search" type="text" placeholder="Cari">
+                            </form>
+
+                       </div>
+
                        <ul class="history-chat">
+                       
+                        
+
                          <li class="devider"></li>
                         <li>
                             <img alt="" src="http://api.randomuser.me/portraits/thumb/men/29.jpg">
@@ -586,13 +599,13 @@
                                 </div>
 
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>
+                             
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                    <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
                             <!-- /input-group -->
@@ -611,15 +624,23 @@
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                                <p class="ajaib-operator ajaib-operator-media lightbox"><a href="./img/al-ghazali.jpg"><img alt="image-load" src="./img/al-ghazali.jpg"></a></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ini contoh gambarnya mba.. </p>
+                                <p class="ajaib-client ajaib-operator-media lightbox"><a href="./img/03.jpg"><img alt="image-load" src="./img/03.jpg"></a></p>
                             </div>
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>
+                             
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                  <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
+                                     <span class="ajaib-chat-loader">
+                                       
+                                    </span>
+
+                                    
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
 
@@ -640,13 +661,14 @@
                             <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
                             </div>
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>
+                            
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                    <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
+                                
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
 
@@ -655,6 +677,8 @@
 
             </div>
             <!-- Chat bottom -->
+
+
             @show
 
             <!-- end of Container Begin -->
@@ -673,7 +697,18 @@
     </div>
     <!-- end paper bg -->
 
+
+
 </div>
+    <div class="ajaib-media-uploader">
+                <div class="close-box">X</div>
+                <img src="./img/raisa.jpg">
+                <span>Lorem Ipsum dollor si amet amet jabang bayi</span>
+                <button type="submit" class="btn btn-default">Submit</button>
+
+    </div>
+
+
     <div id="right-chat-menu-off" class="sidetogglemenu">
             <!-- Your right Slidebar content. -->
             <!-- Right Menu -->
@@ -749,6 +784,7 @@
 <script type='text/javascript' src="{{asset('/js/slicknav/jquery.slicknav.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/sliding-menu-fixed.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/scriptbreaker-multiple-accordion-1.js')}}"></script>
+<script type='text/javascript' src="{{asset('/js/lightgallery.min.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/app.js')}}"></script>
 
 <!-- FLOT CHARTS -->

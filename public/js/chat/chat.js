@@ -381,7 +381,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage('client', m.message, m.time, m.user_name);
+                        renderMessage('client', m.message, m.time, m.user_name, m.type);
                     }
 
                     showNotification(m, false);
@@ -407,7 +407,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage('client', m.message, m.time, m.user_name);
+                        renderMessage('client', m.message, m.time, m.user_name, m.type);
                     }
 
                     showNotification(m, true);
@@ -536,7 +536,7 @@ function ShowOnlineElement(m, time) {
     }
 
     // register list-online class to click event
-    TriggerChatOnline(m);
+    TriggerChatOnline('online');
 
     // if chat box already shown then give it active class
     toggleChatBox(m.user_name,"active");
@@ -570,7 +570,7 @@ function ShowOfflineElement(m, time) {
         var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="https://randomuser.me/api/portraits/thumb/men/30.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.offline-list').append(elm);
     }
-
+    TriggerChatOnline('offline');
     // if chat box already shown then give it idle class
     toggleChatBox(m.user_name,"idle");
 }
@@ -616,16 +616,10 @@ function publish(senderId) {
     // get user chat object
     var obj = GetParam(senderId);
 
-    //TODO: sender object -> don't forget to disable this debug when it goes online
-    //logging('sender object '+obj);
-    //logging(obj);
-
-    // adding device
-    addDeviceToChannel(obj);
-    console.log(obj);
-
     // get message to publish
     var text = $('.chat-text#ct_' + obj.user_name).val();
+
+    // get ip address
     if (typeof Cookies.get('geoip') !== "undefined") {
         var geoip = JSON.parse(Cookies.get('geoip'));
         var ip = geoip.ip_address;
@@ -633,91 +627,105 @@ function publish(senderId) {
         var ip = "null";
     }
 
-    var param = {
-        sender_id: authUser.id,
-        receiver_id: obj.sender_id,
-        message: text,
-        ip: ip,
-        useragent: navigator.userAgent,
-        sender_auth: obj.sender_auth
-    };
+    if (text !== "") {
+        //TODO: sender object -> don't forget to disable this debug when it goes online
+        //logging('sender object '+obj);
+        //logging(obj);
 
-    //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
-    //logging('parameter to insert chat log '+param);
-    //logging(param);
+        // adding device
+        addDeviceToChannel(obj);
 
-    var logResponse = InsertLogChat(param);
+        var param = {
+            sender_id: authUser.id,
+            receiver_id: obj.sender_id,
+            message: text,
+            ip: ip,
+            useragent: navigator.userAgent,
+            sender_auth: obj.sender_auth,
+            type: "text"
+        };
 
-    // valid user permit to chat
-    logResponse.success(function (data) {
+        //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
+        //logging('parameter to insert chat log '+param);
+        //logging(param);
 
-        if (data.status == '201') {
-            // success then publish message
-            var datetime = getDate();
+        var logResponse = InsertLogChat(param);
 
-            logging({
-                channel: obj.sender_channel,
-                "user_name": firstname,
-                "message": text,
-                "ip": geoip.ip_address,
-                "sender_id": authUser.id,
-                "sender_channel": channel,
-                "receiver_id": obj.sender_id,
-                "time": datetime,
-                "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
-            });
+        // valid user permit to chat
+        logResponse.success(function (data) {
 
-            pubnub.publish({
-                channel: obj.sender_channel,
-                message: {
-                    "message_id"    : data.data.id,
-                    "user_name"     : firstname,
-                    "message"       : text,
-                    "ip"            : geoip.ip_address,
-                    "sender_id"     : authUser.id,
-                    "sender_channel": channel,
-                    "receiver_id"   : obj.sender_id,
-                    "time"          : datetime,
-                    "role"          : roles,
-                    "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
-                },
-                callback: function (m) {
-                    //TODO: publish event -> don't forget to disable this debug when it goes online
-                    //logging('publish event '+m);
-                    //logging(m);
-                }
-            });
+            if (data.status == '201') {
+                // success then publish message
+                var datetime = getDate();
 
-            // publish message to my channel
-            // used to: if operator use difference device/browser
-            pubnub.publish({
-                channel: authUser.channel,
-                message: {
-                    "user_name": obj.user_name,
-                    "sender_id": authUser.id,
+                logging({
+                    channel: obj.sender_channel,
+                    "user_name": firstname,
                     "message": text,
-                    "time": datetime
-                },
-                callback: function (m) {
-                    //TODO: publish event -> don't forget to disable this debug when it goes online
-                    //logging('publish event '+m);
-                    //logging(m);
-                }
-            });
+                    "ip": geoip.ip_address,
+                    "sender_id": authUser.id,
+                    "sender_channel": channel,
+                    "receiver_id": obj.sender_id,
+                    "time": datetime,
+                    "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
+                });
 
-            renderMessage('operator', text, datetime, obj.user_name);
+                pubnub.publish({
+                    channel: obj.sender_channel,
+                    message: {
+                        "message_id"    : data.data.id,
+                        "user_name"     : firstname,
+                        "message"       : text,
+                        "ip"            : geoip.ip_address,
+                        "sender_id"     : authUser.id,
+                        "sender_channel": channel,
+                        "receiver_id"   : obj.sender_id,
+                        "time"          : datetime,
+                        "role"          : roles,
+                        "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
+                    },
+                    callback: function (m) {
+                        //TODO: publish event -> don't forget to disable this debug when it goes online
+                        //logging('publish event '+m);
+                        //logging(m);
+                    }
+                });
 
-            // append the text to conversation area
-            //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
-            //$('.chat-conversation#cc_'+obj.user_name).append(appendElm);
+                // publish message to my channel
+                // used to: if operator use difference device/browser
+                pubnub.publish({
+                    channel: authUser.channel,
+                    message: {
+                        "user_name": obj.user_name,
+                        "sender_id": authUser.id,
+                        "message": text,
+                        "time": datetime
+                    },
+                    callback: function (m) {
+                        //TODO: publish event -> don't forget to disable this debug when it goes online
+                        //logging('publish event '+m);
+                        //logging(m);
+                    }
+                });
 
-            // set chat text to null
-            $('.chat-text#ct_' + obj.user_name).val('');
-        } else {
-            // fail
-            alertify.error("Gagal insert log chat. Periksa koneksi database!");
-        }
-    });
+                renderMessage('operator', text, datetime, obj.user_name, obj.type);
+
+                // append the text to conversation area
+                //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
+                //$('.chat-conversation#cc_'+obj.user_name).append(appendElm);
+
+                // set chat text to null
+                $('.chat-text#ct_' + obj.user_name).val('');
+            } else {
+                // fail
+                alertify.error("Gagal insert log chat. Periksa koneksi database!");
+            }
+        });
+    }
+
+    if ($('#input_'+obj.user_name)[0].files[0]!==undefined) {
+        TriggerUploadFile(obj);
+    }
 }
 
 
@@ -865,6 +873,7 @@ function InsertLogChat(param) {
             message: param.message,
             ip_address: param.ip,
             useragent: param.useragent,
+            type:param.type
             //read: datetime
         }),
         beforeSend: function (xhr) {
@@ -913,9 +922,9 @@ function CloseChatBox(elm) {
  * fungsi untuk handle ketika list online user diklik
  * @constructor
  */
-function TriggerChatOnline() {
+function TriggerChatOnline(status) {
     // jika list online user diklik maka akan menampilkan chatbox dan history untuk user tersebut
-    $('.list-online').click(function () {
+    $('.list-'+status).click(function () {
         // user_name : 085227052004
         // user : firstname is exist or phone number if firstname not exist
         // sender_id : user id
@@ -942,7 +951,7 @@ function TriggerChatOnline() {
                         sender_channel: channel
                     };
                     SetParam(obj.sender_id+".private", obj);
-                    GenerateChatBox(obj,0);
+                    GenerateChatBox(obj,0,status);
                 } else if (m.channels.length === 1 && m.channels[0] === authUser.channel) {
                     // operator itu sendiri
                     var obj = {
@@ -952,7 +961,7 @@ function TriggerChatOnline() {
                         sender_channel: channel
                     };
                     SetParam(obj.sender_id+".private", obj);
-                    GenerateChatBox(obj,0);
+                    GenerateChatBox(obj,0,status);
                 } else {
                     // operator yang melayani lebih dari satu
                     // cek channel groupnya
@@ -971,7 +980,7 @@ function ValidateValue(value) {
     }
 }
 
-function GenerateChatBox(obj,public) {
+function GenerateChatBox(obj,public,status) {
     // user_name : 085227052004
     // user : firstname is exist or phone number if firstname not exist
     // time : to parsing time
@@ -982,6 +991,13 @@ function GenerateChatBox(obj,public) {
     } else {
         var publish_object = obj.sender_id+".private";
     }
+
+    if (status === 'online') {
+        var style = "chat-list chat-active";
+    } else {
+        var style = "chat-list chat-idle";
+    }
+
     // if chat box exist then leave it, if not exist then generate
     //cb_85227052004
     if (!ElementIsExist('cb_' + obj.user_name)) {
@@ -990,20 +1006,18 @@ function GenerateChatBox(obj,public) {
         } else {
             var chatText = '';
         }
-        var elm = '<div id=\"cb_' + obj.user_name + '\"class="chat-list chat-active">' + '<div class="close-box">X</div>' +
+        var elm = '<div id=\"cb_' + obj.user_name + '\"class=\"'+style+'\">' +
+            '<div class="close-box">X</div>' +
             '<a class="chat-pop-over" data-cn="' + obj.sender_channel + '" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
-            '<div class="chat-conversation" id="cc_' + obj.user_name + '">' +
+            '<div class="chat-conversation slim-scroll-chat" id="cc_' + obj.user_name + '">' +
                 //chatText +
             '</div>' +
             '<div class="textarea-nest">' +
             '<div class="form-group">' +
-            '<span class="fontello-attach"></span>' +
-            '<span class="fontello-camera"></span>' +
-            '</div>' +
-            '<div class="form-group">' +
             '<textarea class="form-control chat-text" id="ct_' + obj.user_name + '" rows="3"></textarea>' +
             '</div>' +
+            '<span class="btn btn-default btn-file-ajaib"><i class="fontello-attach"></i><input id="input_'+obj.user_name+'" type="file" class="input-file" name="file"></span><span class="btn lightbox"><a id="image_'+obj.user_name+'" href="#">Open</a></span>' +
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
             '</div>' +
             '</div>' +
@@ -1013,19 +1027,178 @@ function GenerateChatBox(obj,public) {
         RenderHistory(obj, obj.user_name);
         // reload js
         load_js();
-
         //PUBNUB.bind( 'keyup', $("#ct_"+obj.user_name), function(e) {
         //
         //    (e.keyCode || e.charCode) === 13 && publish('\'' + obj.sender_id + '\'');
         //});
 
         TriggerCloseChat();
-        $("#cb_" + obj.user_name).find("a").click();
+        //if ($(".webui-popover").find("#cc_85227155554").is(":visible")) {
+
+        //} else {
+            $("#cb_" + obj.user_name).find("a").click();
+        //}
+
         //logging($("#cc_"+obj.user_name));
         $("#cc_" + obj.user_name).animate({scrollTop: $("#cc_" + obj.user_name).prop("scrollHeight")}, 500);
     }
 }
 
+function TriggerUploadFile(obj) {
+    // get ip address
+    if (typeof Cookies.get('geoip') !== "undefined") {
+        var geoip = JSON.parse(Cookies.get('geoip'));
+        var ip = geoip.ip_address;
+    } else {
+        var ip = "null";
+    }
+
+        var formData = new FormData();
+
+
+    if ($('#input_'+obj.user_name)[0].files.length>0) {
+        var file = $( '#input_'+obj.user_name)[0].files[0];
+        formData.append('file', file);
+
+        var name = file.name;
+        var size = file.size;
+        var type = file.type;
+        if(name.length < 1) {
+            alert("null");
+            return false;
+        }
+        else if(size > 100000) {
+            alert("File is to big");
+            return false;
+        }
+        else if(type != 'image/png' && type != 'image/jpg' && type != 'image/gif' && type != 'image/jpeg' ) {
+            alert("File doesnt match png, jpg or gif");
+            return false;
+        }
+        else {
+            $("#image_"+obj.user_name).attr("href",$("#input_"+obj.user_name).val());
+
+            $.ajax({
+                url: "https://" + domain + "/dashboard/chat/attachment/send",
+                type : 'POST',
+                data : formData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success : function(data) {
+                    if (data.status === 200) {
+                        var imagePath = data.data;
+                        alertify.error(imagePath);
+
+                        //TODO: sender object -> don't forget to disable this debug when it goes online
+                        //logging('sender object '+obj);
+                        //logging(obj);
+
+                        // adding device
+                        addDeviceToChannel(obj);
+
+                        var param = {
+                            sender_id: authUser.id,
+                            receiver_id: obj.sender_id,
+                            message: imagePath,
+                            ip: ip,
+                            useragent: navigator.userAgent,
+                            sender_auth: obj.sender_auth,
+                            type: type
+                        };
+
+                        //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
+                        //logging('parameter to insert chat log '+param);
+                        //logging(param);
+
+                        var logResponse = InsertLogChat(param);
+
+                        // valid user permit to chat
+                        logResponse.success(function (data) {
+
+                            if (data.status == '201') {
+                                // success then publish message
+                                var datetime = getDate();
+
+                                logging({
+                                    channel         : obj.sender_channel,
+                                    "user_name"     : firstname,
+                                    "message"       : imagePath,
+                                    "ip"            : ip,
+                                    "sender_id"     : authUser.id,
+                                    "sender_channel": channel,
+                                    "receiver_id"   : obj.sender_id,
+                                    "time"          : datetime,
+                                    "type"          : type,
+                                    "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
+                                });
+
+                                pubnub.publish({
+                                    channel: obj.sender_channel,
+                                    message: {
+                                        "message_id"    : data.data.id,
+                                        "user_name"     : firstname,
+                                        "message"       : imagePath,
+                                        "ip"            : ip,
+                                        "sender_id"     : authUser.id,
+                                        "sender_channel": channel,
+                                        "receiver_id"   : obj.sender_id,
+                                        "time"          : datetime,
+                                        "role"          : roles,
+                                        "type"          : type,
+                                        "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
+                                    },
+                                    callback: function (m) {
+                                        //TODO: publish event -> don't forget to disable this debug when it goes online
+                                        //logging('publish event '+m);
+                                        //logging(m);
+                                    }
+                                });
+
+                                // publish message to my channel
+                                // used to: if operator use difference device/browser
+                                pubnub.publish({
+                                    channel: authUser.channel,
+                                    message: {
+                                        "user_name"     : obj.user_name,
+                                        "sender_id"     : authUser.id,
+                                        "message"       : imagePath,
+                                        "time"          : datetime,
+                                        "type"          : type
+                                    },
+                                    callback: function (m) {
+                                        //TODO: publish event -> don't forget to disable this debug when it goes online
+                                        //logging('publish event '+m);
+                                        //logging(m);
+                                    }
+                                });
+
+                                renderMessage('operator', imagePath, datetime, obj.user_name, type);
+
+                                // append the text to conversation area
+                                //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
+                                //$('.chat-conversation#cc_'+obj.user_name).append(appendElm);
+
+                                // set chat text to null
+                                $('.chat-text#ct_' + obj.user_name).val('');
+                            } else {
+                                // fail
+                                alertify.error("Gagal insert log chat. Periksa koneksi database!");
+                            }
+                        });
+
+                        renderMessage('operator', data.data, datetime, obj.user_name, "image");
+                        $("#image_"+username).attr("href",data.data);
+
+                        // remove form data & file
+                        $("#input_"+username).val("");
+                    } else {
+                        alertify.error(data.message);
+                    }
+                }
+            });
+        }
+    }
+}
 
 function RenderHistory(obj, username) {
     $.ajax({
@@ -1046,10 +1219,10 @@ function RenderHistory(obj, username) {
 
                     if (historyData[i].sender_id === authUser.id) {
                         // operator
-                        renderMessage('operator', historyData[i].message, localTime, username);
+                        renderMessage('operator', historyData[i].message, localTime, username,historyData[i].type);
                     } else {
                         // user
-                        renderMessage('client', historyData[i].message, localTime, username);
+                        renderMessage('client', historyData[i].message, localTime, username,historyData[i].type);
                     }
                 }
             } else {
@@ -1065,6 +1238,7 @@ function RenderHistory(obj, username) {
  * @constructor
  */
 function AppendChat(elm) {
+    var status = "online";
     var attr = elm.attr("data").split("-");
     var senderId = attr[1];
     var is_public = attr[0];
@@ -1130,7 +1304,7 @@ function AppendChat(elm) {
                 }
 
                 if ($('#cb_' + obj.user_name).length === 0 || !$('#cb_' + obj.user_name)) {
-                    GenerateChatBox(obj, parseInt(is_public));
+                    GenerateChatBox(obj, parseInt(is_public),status);
                 } else {
                     // if chat bottom with this id exist, then just append text
                     //$('#cb_'+obj.sender_id);
@@ -1162,6 +1336,8 @@ function AppendChat(elm) {
 function load_js() {
     // file js to be reload on the page
     var jsToBeLoaded = 'https://' + domain + '/js/jquery.webui-popover.js';
+    var lightboxjs = 'https://' + domain + '/js/lightgallery.min.js';
+    var lightboxcss = 'https://' + domain + '/css/lightgallery.css';
 
     // remove webui-popover js if exist
     var head = document.getElementsByTagName('head')[0];
@@ -1175,6 +1351,31 @@ function load_js() {
     script.type = 'text/javascript';
     script.src = jsToBeLoaded;
     head.appendChild(script);
+
+    if ($("#lightgallery-script").length > 0) {
+        $("#lightgallery-script").remove();
+    }
+
+    // add it back to the head
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = lightboxjs;
+    head.appendChild(script);
+    //
+    //var lboxcss = $("#lightgallery-style").length;
+    //if (lboxcss.length > 0) {
+    //    lboxcss.remove();
+    //}
+    //
+    //// add it back to the head
+    //var script = document.createElement('link');
+    //script.type = 'text/css';
+    //script.id = 'lightgallery-style';
+    //script.rel = 'stylesheet';
+    //script.href = lightboxcss;
+    //head.appendChild(script);
+
+    console.log(head);
 
     $('.chat-pop-over').webuiPopover({
         placement: 'auto-top',
@@ -1193,6 +1394,18 @@ function load_js() {
             $(lmnt).find('.chat-conversation').scrollTop(9999);
         }
     });
+}
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#image_upload_preview').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 //=========================== custom function =======================//
 
@@ -1283,7 +1496,7 @@ function parseTime(datetime) {
     /*26/01/2016 07:00 am*/
 }
 
-function renderMessage(actor, text, time, user) {
+function renderMessage(actor, text, time, user, type) {
     //var timeSeparator = '';
 
     // time to parse
@@ -1307,7 +1520,27 @@ function renderMessage(actor, text, time, user) {
             // add separator
             appendElm += '<p class="ajaib-devider-chat"><span>' + splitMoment[0] + '</span></p>';
         }
-        appendElm += '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+
+        var elm;
+
+        if (type === null || type === undefined) {
+            var str = "text";
+        } else {
+            var str = String(type.match(/image/g));
+        }
+
+        switch(str) {
+            case "image":
+                elm = '<p class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><a href="'+storage_path+text+'"><img alt="image-load" src="'+storage_path+text+'"></a></p>';
+                break;
+            case "text":
+                elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+                break;
+            default:
+                elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+        }
+        //
+        appendElm += elm;
         timeSeparator = splitMoment[0];
     }
 
