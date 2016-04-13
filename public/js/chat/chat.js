@@ -1017,7 +1017,9 @@ function GenerateChatBox(obj,public,status) {
             '<div class="form-group">' +
             '<textarea class="form-control chat-text" id="ct_' + obj.user_name + '" rows="3"></textarea>' +
             '</div>' +
-            '<span class="btn btn-default btn-file-ajaib"><i class="fontello-attach"></i><input id="input_'+obj.user_name+'" type="file" class="input-file" name="file"></span><span class="btn lightbox"><a id="image_'+obj.user_name+'" href="#">Open</a></span>' +
+            '<span class="btn btn-default btn-file-ajaib"><i class="fontello-attach"></i><input id="input_'+obj.user_name+'" type="file" class="input-file" name="file"></span>' +
+            //'<span class="btn lightbox"><a id="image_'+obj.user_name+'" href="#">Open</a></span>' +
+            '<span style="display:none;" id="file_loader_'+obj.user_name+'" class="ajaib-chat-loader">uploading...</span>'+
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
             '</div>' +
             '</div>' +
@@ -1077,7 +1079,7 @@ function TriggerUploadFile(obj) {
         }
         else {
             $("#image_"+obj.user_name).attr("href",$("#input_"+obj.user_name).val());
-
+            document.getElementById("file_loader_"+obj.user_name).style.display = "block";
             $.ajax({
                 url: "https://" + domain + "/dashboard/chat/attachment/send",
                 type : 'POST',
@@ -1087,7 +1089,7 @@ function TriggerUploadFile(obj) {
                 success : function(data) {
                     if (data.status === 200) {
                         var imagePath = data.data;
-                        alertify.error(imagePath);
+                        alertify.success("File "+name+ " has been uploaded");
 
                         //TODO: sender object -> don't forget to disable this debug when it goes online
                         //logging('sender object '+obj);
@@ -1182,8 +1184,9 @@ function TriggerUploadFile(obj) {
                                 $('.chat-text#ct_' + obj.user_name).val('');
                             } else {
                                 // fail
-                                alertify.error("Gagal insert log chat. Periksa koneksi database!");
+                                alertify.error("Insert chat log failed. Check your database connection!");
                             }
+                            document.getElementById("file_loader_"+obj.user_name).style.display = "none";
                         });
 
                         renderMessage('operator', data.data, datetime, obj.user_name, "image");
@@ -1192,11 +1195,15 @@ function TriggerUploadFile(obj) {
                         // remove form data & file
                         $("#input_"+username).val("");
                     } else {
-                        alertify.error(data.message);
+                        alertify.success("Upload file failed");
                     }
+                },
+                done: function() {
+                    document.getElementById("file_loader_"+obj.user_name).style.display = "none";
                 }
             });
         }
+        $("#cc_" + obj.user_name).animate({scrollTop: $("#cc_" + obj.user_name).prop("scrollHeight")}, 500);
     }
 }
 
@@ -1226,7 +1233,7 @@ function RenderHistory(obj, username) {
                     }
                 }
             } else {
-                alert('can\'t retrieve chat history');
+                alertify.error('Can\'t retrieve chat history');
             }
         }
     });
@@ -1531,7 +1538,7 @@ function renderMessage(actor, text, time, user, type) {
 
         switch(str) {
             case "image":
-                elm = '<p class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><a href="'+storage_path+text+'"><img alt="image-load" src="'+storage_path+text+'"></a></p>';
+                elm = '<p class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a href="'+storage_path+text+'"><img alt="image-load" src="'+storage_path+text+'"></a></p>';
                 break;
             case "text":
                 elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
