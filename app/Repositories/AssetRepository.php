@@ -48,7 +48,7 @@ class AssetRepository
 
             if ($resultUpload) {
                 $user = User::find($userId);
-                $user->photo = "/".$destinationPath."/".$fileRename;
+                $user->photo = $destinationPath."/".$fileRename;
                 $resultUpdate=$user->save();
             }
         }

@@ -12,6 +12,7 @@ Author: matirasa
     Page: locked screen
 */
 
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 body {
     position: relative!important;
 }
@@ -1193,6 +1194,22 @@ ALERT
     font-size: 10px;
 }
 
+.chat-conversation .ajaib-client i {
+    position: absolute;
+    top: 5px;
+    font-size: 18px;
+    right: 5px;
+}
+
+.chat-conversation .ajaib-operator i {
+    position: relative;
+    top: 0;
+    font-size: 18px;
+    left: 0px;
+    float: left;
+    width: 21px;
+}
+
 .chat-conversation .ajaib-operator {
     background: #057dee;
     display: list-item;
@@ -1569,7 +1586,7 @@ ALERT
 
 .ajaib-media-uploader {
     position: fixed;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.7);
     top: 0;
     left: 0;
     width: 100%;
@@ -1582,21 +1599,24 @@ ALERT
     margin: 0 auto;
     position: absolute;
     text-align: center;
-    top: 20%;
+    top: 10%;
     right: 0;
     left: 0;
+    bottom: 0;
+    border-radius: 4px;
+    max-height: 500px;
 }
 
 .ajaib-media-uploader span {
     position: absolute;
-    bottom: 10%;
+    bottom: 17px;
     left: 0;
     right: 0;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 25px;
+    background: rgba(0, 0, 0, 1);
     display: table;
     margin: 0 auto;
-    border-radius: 10px;
+    border-radius: 30px;
     color: #ffffff;
     text-align: center;
     z-index: 11000;
@@ -1607,20 +1627,43 @@ ALERT
     right: 20px;
     bottom: 20px;
     display: table;
+    background: #057dee !important;
+    border: 1px solid #057dee !important;
+    color: white !important;
+    padding: 8px 20px;
+    text-transform: uppercase;
 }
 
 .ajaib-media-uploader .close-box {
     position: absolute;
-    right: 20px;
-    top: 20px;
+    right: 0;
+    top: 0;
     display: table;
-    background: red;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
+    background: #000;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
     color: #fff;
     text-align: center;
     font-size: 13px;
+    border-radius: 0;
+}
+
+.ajaib-media-uploader .close-box:after {
+    content: "\e070";
+    font-family: 'lg';
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -moz-osx-font-smoothing: grayscale;
+    color: #999;
+    cursor: pointer;
+    font-size: 24px;
+    text-align: center;
+    position: relative;
+    top: 5px;
 }
 
 .ajaib-media-uploader h2 {
