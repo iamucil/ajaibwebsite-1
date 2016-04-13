@@ -11,7 +11,7 @@
 @section('content')
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="menuLabelModal">Select Parent Menu</h4>
+        <h4 class="modal-title" id="menuLabelModal">Icon Pack</h4>
     </div>
     <div class="modal-body">
         <section data-valign="center">
