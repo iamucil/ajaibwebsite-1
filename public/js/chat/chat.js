@@ -694,6 +694,7 @@ function publish(senderId) {
                         "time"          : datetime,
                         "role"          : roles,
                         "path"          : null,
+                        "type"          : "text",
                         "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
                     },
                     callback: function (m) {
@@ -713,6 +714,7 @@ function publish(senderId) {
                         "message"       : text,
                         "time"          : datetime,
                         "message_id"    : data.data.id,
+                        "type"          : "text",
                         "path"          : null
                     },
                     callback: function (m) {
@@ -1105,7 +1107,7 @@ function TriggerUploadFile(obj) {
                 contentType: false,  // tell jQuery not to set contentType
                 success : function(data) {
                     if (data.status === 200) {
-                        var imagePath = data.data;
+                        var imagePath = data.data.path;
                         alertify.success("File "+name+ " has been uploaded");
 
                         //TODO: sender object -> don't forget to disable this debug when it goes online
@@ -1560,7 +1562,7 @@ function renderMessage(id, actor, text, time, user, type, path) {
 
         switch(str) {
             case "image":
-                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><i class="material-icons">done</i></p>';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a target="_blank" href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><i class="material-icons">done</i></p>';
                 break;
             case "text":
                 elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
