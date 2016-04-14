@@ -694,6 +694,7 @@ function publish(senderId) {
                         "time"          : datetime,
                         "role"          : roles,
                         "path"          : null,
+                        "type"          : "text",
                         "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
                     },
                     callback: function (m) {
@@ -713,6 +714,7 @@ function publish(senderId) {
                         "message"       : text,
                         "time"          : datetime,
                         "message_id"    : data.data.id,
+                        "type"          : "text",
                         "path"          : null
                     },
                     callback: function (m) {
