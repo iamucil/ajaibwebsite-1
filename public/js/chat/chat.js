@@ -332,6 +332,13 @@ function subscribeCallback(m) {
     //logging(m);
 
     if (m.sender_id === authUser.id) {
+        //if (m[0]===1)
+        $("#"+m.message_id).innerHTML = "done_all";
+        //else
+        //$("#"+data.data.id).innerHTML = "done";
+        if ($("#"+ m.message_id).length === 0) {
+            renderMessage(m.message_id, 'operator', m.message, m.time, m.user_name, m.type, m.path);
+        }
         // operator it self
         //renderMessage('operator', m.message, m.time, m.user_name);
     } else {
@@ -381,7 +388,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage('client', m.message, m.time, m.user_name, m.type);
+                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type, m.path);
                     }
 
                     showNotification(m, false);
@@ -407,7 +414,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage('client', m.message, m.time, m.user_name, m.type);
+                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type, m.path);
                     }
 
                     showNotification(m, true);
@@ -642,7 +649,8 @@ function publish(senderId) {
             ip: ip,
             useragent: navigator.userAgent,
             sender_auth: obj.sender_auth,
-            type: "text"
+            type: "text",
+            path: null
         };
 
         //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
@@ -658,6 +666,8 @@ function publish(senderId) {
                 // success then publish message
                 var datetime = getDate();
 
+                /**
+                // debugging purpose only
                 logging({
                     channel: obj.sender_channel,
                     "user_name": firstname,
@@ -669,6 +679,7 @@ function publish(senderId) {
                     "time": datetime,
                     "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
                 });
+                 */
 
                 pubnub.publish({
                     channel: obj.sender_channel,
@@ -682,6 +693,7 @@ function publish(senderId) {
                         "receiver_id"   : obj.sender_id,
                         "time"          : datetime,
                         "role"          : roles,
+                        "path"          : null,
                         "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
                     },
                     callback: function (m) {
@@ -696,10 +708,12 @@ function publish(senderId) {
                 pubnub.publish({
                     channel: authUser.channel,
                     message: {
-                        "user_name": obj.user_name,
-                        "sender_id": authUser.id,
-                        "message": text,
-                        "time": datetime
+                        "user_name"     : obj.user_name,
+                        "sender_id"     : authUser.id,
+                        "message"       : text,
+                        "time"          : datetime,
+                        "message_id"    : data.data.id,
+                        "path"          : null
                     },
                     callback: function (m) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -708,7 +722,7 @@ function publish(senderId) {
                     }
                 });
 
-                renderMessage('operator', text, datetime, obj.user_name, obj.type);
+                renderMessage(data.data.id, 'operator', text, datetime, obj.user_name, obj.type, obj.path);
 
                 // append the text to conversation area
                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -725,6 +739,8 @@ function publish(senderId) {
 
     if ($('#input_'+obj.user_name)[0].files[0]!==undefined) {
         TriggerUploadFile(obj);
+        // remove form data & file
+        $("#input_"+obj.user_name).val("");
     }
 }
 
@@ -868,12 +884,13 @@ function InsertLogChat(param) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         data: JSON.stringify({
-            sender_id: param.sender_id,
-            receiver_id: param.receiver_id,
-            message: param.message,
-            ip_address: param.ip,
-            useragent: param.useragent,
-            type:param.type
+            sender_id       : param.sender_id,
+            receiver_id     : param.receiver_id,
+            message         : param.message,
+            ip_address      : param.ip,
+            useragent       : param.useragent,
+            type            :param.type,
+            path            :param.path
             //read: datetime
         }),
         beforeSend: function (xhr) {
@@ -1069,19 +1086,19 @@ function TriggerUploadFile(obj) {
             alert("null");
             return false;
         }
-        else if(size > 100000) {
-            alert("File is to big");
+        else if(size > 2000000) {
+            alertify.error("File must be less than 2 Mb");
             return false;
         }
         else if(type != 'image/png' && type != 'image/jpg' && type != 'image/gif' && type != 'image/jpeg' ) {
-            alert("File doesnt match png, jpg or gif");
+            alertify.error("File doesnt match png, jpg or gif");
             return false;
         }
         else {
             $("#image_"+obj.user_name).attr("href",$("#input_"+obj.user_name).val());
             document.getElementById("file_loader_"+obj.user_name).style.display = "block";
             $.ajax({
-                url: "https://" + domain + "/dashboard/chat/attachment/send",
+                url: "https://" + domain + "/dashboard/chat/attachment/send", // return url of image uploaded
                 type : 'POST',
                 data : formData,
                 processData: false,  // tell jQuery not to process the data
@@ -1101,11 +1118,12 @@ function TriggerUploadFile(obj) {
                         var param = {
                             sender_id: authUser.id,
                             receiver_id: obj.sender_id,
-                            message: imagePath,
+                            message: null,
                             ip: ip,
                             useragent: navigator.userAgent,
                             sender_auth: obj.sender_auth,
-                            type: type
+                            type: type,
+                            path: imagePath
                         };
 
                         //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
@@ -1121,6 +1139,9 @@ function TriggerUploadFile(obj) {
                                 // success then publish message
                                 var datetime = getDate();
 
+                                /**
+                                 * debugging purpose only
+
                                 logging({
                                     channel         : obj.sender_channel,
                                     "user_name"     : firstname,
@@ -1134,12 +1155,14 @@ function TriggerUploadFile(obj) {
                                     "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
                                 });
 
+                                 */
+
                                 pubnub.publish({
                                     channel: obj.sender_channel,
                                     message: {
                                         "message_id"    : data.data.id,
                                         "user_name"     : firstname,
-                                        "message"       : imagePath,
+                                        "message"       : null,
                                         "ip"            : ip,
                                         "sender_id"     : authUser.id,
                                         "sender_channel": channel,
@@ -1147,6 +1170,7 @@ function TriggerUploadFile(obj) {
                                         "time"          : datetime,
                                         "role"          : roles,
                                         "type"          : type,
+                                        "path"          : imagePath,
                                         "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
                                     },
                                     callback: function (m) {
@@ -1161,11 +1185,13 @@ function TriggerUploadFile(obj) {
                                 pubnub.publish({
                                     channel: authUser.channel,
                                     message: {
+                                        "message_id"    : data.data.id,
                                         "user_name"     : obj.user_name,
                                         "sender_id"     : authUser.id,
-                                        "message"       : imagePath,
+                                        "message"       : null,
                                         "time"          : datetime,
-                                        "type"          : type
+                                        "type"          : type,
+                                        "path"          : imagePath
                                     },
                                     callback: function (m) {
                                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -1174,7 +1200,7 @@ function TriggerUploadFile(obj) {
                                     }
                                 });
 
-                                renderMessage('operator', imagePath, datetime, obj.user_name, type);
+                                renderMessage(data.data.id,'operator', null, datetime, obj.user_name, type, imagePath);
 
                                 // append the text to conversation area
                                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -1189,11 +1215,7 @@ function TriggerUploadFile(obj) {
                             document.getElementById("file_loader_"+obj.user_name).style.display = "none";
                         });
 
-                        renderMessage('operator', data.data, datetime, obj.user_name, "image");
-                        $("#image_"+username).attr("href",data.data);
-
-                        // remove form data & file
-                        $("#input_"+username).val("");
+                        //renderMessage(data.data.id,'operator', data.data, datetime, obj.user_name, "image");
                     } else {
                         alertify.success("Upload file failed");
                     }
@@ -1226,10 +1248,10 @@ function RenderHistory(obj, username) {
 
                     if (historyData[i].sender_id === authUser.id) {
                         // operator
-                        renderMessage('operator', historyData[i].message, localTime, username,historyData[i].type);
+                        renderMessage(historyData[i].id,'operator', historyData[i].message, localTime, username,historyData[i].type, historyData[i].path);
                     } else {
                         // user
-                        renderMessage('client', historyData[i].message, localTime, username,historyData[i].type);
+                        renderMessage(historyData[i].id,'client', historyData[i].message, localTime, username,historyData[i].type, historyData[i].path);
                     }
                 }
             } else {
@@ -1338,7 +1360,7 @@ function AppendChat(elm) {
 }
 
 /**
- * It used to reload webuipopover.js, because after render on the fly, the popup doesn't show
+ * It used to reload webuipopover.js, because after render oen the fly, the popup doesn't show
  */
 function load_js() {
     // file js to be reload on the page
@@ -1503,7 +1525,7 @@ function parseTime(datetime) {
     /*26/01/2016 07:00 am*/
 }
 
-function renderMessage(actor, text, time, user, type) {
+function renderMessage(id, actor, text, time, user, type, path) {
     //var timeSeparator = '';
 
     // time to parse
@@ -1530,7 +1552,7 @@ function renderMessage(actor, text, time, user, type) {
 
         var elm;
 
-        if (type === null || type === undefined) {
+        if (type === null || type === undefined || type === "text") {
             var str = "text";
         } else {
             var str = String(type.match(/image/g));
@@ -1538,13 +1560,13 @@ function renderMessage(actor, text, time, user, type) {
 
         switch(str) {
             case "image":
-                elm = '<p class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a href="'+storage_path+text+'"><img alt="image-load" src="'+storage_path+text+'"></a></p>';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><i class="material-icons">done</i></p>';
                 break;
             case "text":
-                elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
                 break;
             default:
-                elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
         }
         //
         appendElm += elm;

@@ -21,7 +21,6 @@ class ChatController extends Controller
     {
 
 //        $this->pubnub = $pubnub;
-        $this->user = $this->getOwnerId();
         $this->asset = $asset;
         // end user access
 //        $this->middleware(
@@ -45,6 +44,7 @@ class ChatController extends Controller
 //                    ['index', 'store', 'insertLog', 'oauthUpdateChat']
 //            ]
 //        );
+
     }
 
     /**
@@ -86,7 +86,7 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         $param = array();
-        $param['sender_id'] = $this->user;
+        $param['sender_id'] = $this->getOwnerId();
         foreach ($request->data as $key => $item) {
             $param[$key] = $item;
         }
@@ -184,6 +184,7 @@ class ChatController extends Controller
                 'ip_address' => $request->ip_address,
                 'useragent' => $request->useragent,
                 'type'=> $request->type,
+                'path'=> $request->path
 //                'read' => $request->read
             ]);
 
@@ -204,7 +205,8 @@ class ChatController extends Controller
 
     public function chatLog($id, Response $response)
     {
-        $chat = Chat::whereRaw('((sender_id = ' . $this->user . ' or receiver_id = ' . $this->user . ') and (sender_id = ' . $id . ' or receiver_id = ' . $id . '))')
+        $user = $this->getOwnerId();
+        $chat = Chat::whereRaw('((sender_id = ' . $user . ' or receiver_id = ' . $user . ') and (sender_id = ' . $id . ' or receiver_id = ' . $id . '))')
             ->orderBy("id","asc")
             ->get();
 
@@ -500,12 +502,30 @@ class ChatController extends Controller
     }
     //============== END HISTORY FUNCTION ===============
 
-    //================= SEND ATTACHMENT =================
+    //================= ATTACHMENT =================
+    public function getAttachment($chatid)
+    {
+        $userId = $this->getOwnerId();
+        if ($userId) {
+            $chat       = Chat::find($chatid);
+            $type       = $chat->type;
+            if($type != 'image/png' && $type != 'image/jpg' && $type != 'image/gif' && $type != 'image/jpeg' ) {
+                if(!is_null($chat->message)){
+                    $return = $this->asset->downloadFile($chat->message);
+                }else{
+                    $return = response()->json('Not Found', 404);
+                }
+            }
+            return $return;
+        }
+    }
+
     protected function sendAttachment(Request $request)
     {
-        if ($this->user) {
+        $user = $this->getOwnerId();
+        if ($user) {
 
-            $data['user_id'] = $this->user;
+            $data['user_id'] = $user;
             $request->merge($data);
 
             $processUpload = $this->asset->uploadAttachment($request);
@@ -526,7 +546,7 @@ class ChatController extends Controller
         }
 
     }
-    //=============== END SEND ATTACHMENT ===============
+    //=============== END ATTACHMENT ===============
 
 
     //================ CUSTOM FUNCTION =================
