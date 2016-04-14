@@ -32,6 +32,7 @@ $(function () {
         alertify.set({delay: 10000});
         alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     } else {
+        CreateModal();
 
         // get domain from accessed application url
         domain = window.location.hostname;
@@ -1040,6 +1041,7 @@ function GenerateChatBox(obj,public,status) {
             //'<span class="btn lightbox"><a id="image_'+obj.user_name+'" href="#">Open</a></span>' +
             '<span style="display:none;" id="file_loader_'+obj.user_name+'" class="ajaib-chat-loader">uploading...</span>'+
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
+            //'<span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#upload-modal"><i class="fontello-attach"></i></span>'+
             '</div>' +
             '</div>' +
             '</div>';
@@ -1063,6 +1065,41 @@ function GenerateChatBox(obj,public,status) {
         //logging($("#cc_"+obj.user_name));
         $("#cc_" + obj.user_name).animate({scrollTop: $("#cc_" + obj.user_name).prop("scrollHeight")}, 500);
     }
+}
+
+function CreateModal() {
+    var elm = '<!-- Modal -->'+
+        '<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">'+
+        '<div class="modal-dialog" role="document">'+
+        '<div class="modal-content">'+
+        '<div class="modal-header">'+
+        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+    '<h4 class="modal-title" id="myModalLabel">Modal title</h4>'+
+    '</div>'+
+    '<div class="modal-body">'+
+        '<div class="ajaib-media-uploader">'+
+
+        '<div id="wrapper">'+
+        '<input class="input-file" id="fileUpload" type="file" name="file" /><br />'+
+        '<div id="image-holder" class="ajaib-media-uploader"> </div>'+
+        '</div>'+
+        //'<span>Lorem Ipsum dollor si amet amet jabang bayi</span>'+
+    '<textarea class="form-control" rows="3"></textarea>'+
+
+
+        '</div>'+
+        '</div>'+
+        '<div class="modal-footer">'+
+        '<button type="button" class="btn btn-default" data-dismiss="modal">Camcel</button>'+
+        '<button type="button" class="btn btn-primary">Save changes</button>'+
+    '</div>'+
+    '</div>'+
+    '</div>';
+    $("body").append(elm);
+}
+
+function DestroyModal() {
+    $("#myModal").remove();
 }
 
 function TriggerUploadFile(obj) {
@@ -1365,6 +1402,38 @@ function AppendChat(elm) {
  * It used to reload webuipopover.js, because after render oen the fly, the popup doesn't show
  */
 function load_js() {
+    $(".input-file").change(function(){
+        if ($(this)[0].files && $(this)[0].files[0]) {
+            //Get count of selected files
+            var countFiles = $(this)[0].files.length;
+            var imgPath = $(this)[0].value;
+            var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+            var image_holder = $("#image-holder");
+            image_holder.empty();
+            if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
+                if (typeof(FileReader) != "undefined") {
+                    //loop for each file selected for uploaded.
+                    for (var i = 0; i < countFiles; i++)
+                    {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $("<img />", {
+                                "src": e.target.result,
+                                "class": "img-responsive"
+                            }).appendTo(image_holder);
+                        }
+                        image_holder.show();
+                        reader.readAsDataURL($(this)[0].files[i]);
+                    }
+                } else {
+                    alert("This browser does not support FileReader.");
+                }
+            } else {
+                alert("Pls select only images");
+            }
+        }
+    });
+
     // file js to be reload on the page
     var jsToBeLoaded = 'https://' + domain + '/js/jquery.webui-popover.js';
     var lightboxjs = 'https://' + domain + '/js/lightgallery.min.js';
@@ -1432,7 +1501,7 @@ function readURL(input) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
-            $('#image_upload_preview').attr('src', e.target.result);
+            $('#image-holder').attr('src', e.target.result);
         }
 
         reader.readAsDataURL(input.files[0]);
@@ -1560,9 +1629,13 @@ function renderMessage(id, actor, text, time, user, type, path) {
             var str = String(type.match(/image/g));
         }
 
+        if (text === null || text === undefined) {
+            text = "";
+        }
+
         switch(str) {
             case "image":
-                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a target="_blank" href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><i class="material-icons">done</i></p>';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a target="_blank" href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><span>'+text+'</span><i class="material-icons">done</i></p>';
                 break;
             case "text":
                 elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
