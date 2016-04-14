@@ -540,7 +540,9 @@ class ChatController extends Controller
                 return response()->json(array(
                     'status'=>200,
                     'message'=>'Success Upload',
-                    'data'=>$processUpload
+                    'data'=> array(
+                        "path" => $processUpload
+                    )
                 ),200);
             }
         }

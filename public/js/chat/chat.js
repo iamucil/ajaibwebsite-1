@@ -1105,7 +1105,7 @@ function TriggerUploadFile(obj) {
                 contentType: false,  // tell jQuery not to set contentType
                 success : function(data) {
                     if (data.status === 200) {
-                        var imagePath = data.data;
+                        var imagePath = data.data.path;
                         alertify.success("File "+name+ " has been uploaded");
 
                         //TODO: sender object -> don't forget to disable this debug when it goes online
