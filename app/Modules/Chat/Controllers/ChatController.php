@@ -57,7 +57,7 @@ class ChatController extends Controller
         $ownerId = Authorizer::getResourceOwnerId();
         $chat = Chat::where('sender_id', $ownerId)
             ->orWhere('receiver_id', $ownerId)
-            ->get(['id AS chat_id', 'sender_id', 'message', 'read', 'created_at'])
+            ->get(['id AS chat_id', 'sender_id', 'message', 'read', 'created_at', 'type', 'path'])
 			->toArray();
 
         return response()->json(array(
@@ -509,9 +509,9 @@ class ChatController extends Controller
         if ($userId) {
             $chat       = Chat::find($chatid);
             $type       = $chat->type;
-            if($type != 'image/png' && $type != 'image/jpg' && $type != 'image/gif' && $type != 'image/jpeg' ) {
-                if(!is_null($chat->message)){
-                    $return = $this->asset->downloadFile($chat->message);
+            if($type == 'image/png' || $type == 'image/jpg' || $type == 'image/gif' || $type == 'image/jpeg' ) {
+                if(!is_null($chat->path)){
+                    $return = $this->asset->downloadFile($chat->path);
                 }else{
                     $return = response()->json('Not Found', 404);
                 }
