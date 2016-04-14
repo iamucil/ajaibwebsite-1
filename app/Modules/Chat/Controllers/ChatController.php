@@ -184,6 +184,7 @@ class ChatController extends Controller
                 'ip_address' => $request->ip_address,
                 'useragent' => $request->useragent,
                 'type'=> $request->type,
+                'path'=> $request->path
 //                'read' => $request->read
             ]);
 
