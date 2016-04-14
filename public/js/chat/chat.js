@@ -1037,11 +1037,11 @@ function GenerateChatBox(obj,public,status) {
             '<div class="form-group">' +
             '<textarea class="form-control chat-text" id="ct_' + obj.user_name + '" rows="3"></textarea>' +
             '</div>' +
-            //'<span class="btn btn-default btn-file-ajaib"><i class="fontello-attach"></i><input id="input_'+obj.user_name+'" type="file" class="input-file" name="file"></span>' +
+            '<span class="btn btn-default btn-file-ajaib"><i class="fontello-attach"></i><input id="input_'+obj.user_name+'" type="file" class="input-file" name="file"></span>' +
             //'<span class="btn lightbox"><a id="image_'+obj.user_name+'" href="#">Open</a></span>' +
             '<span style="display:none;" id="file_loader_'+obj.user_name+'" class="ajaib-chat-loader">uploading...</span>'+
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
-            '<span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#upload-modal"><i class="fontello-attach"></i></span>'+
+            //'<span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#upload-modal"><i class="fontello-attach"></i></span>'+
             '</div>' +
             '</div>' +
             '</div>';
@@ -1627,6 +1627,10 @@ function renderMessage(id, actor, text, time, user, type, path) {
             var str = "text";
         } else {
             var str = String(type.match(/image/g));
+        }
+
+        if (text === null || text === undefined) {
+            text = "";
         }
 
         switch(str) {
