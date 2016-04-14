@@ -23,18 +23,17 @@ class AssetRepository
     }
 
     public function downloadFile($photoPath)
-    {
-        if (env("ASSET_STORAGE") == "s3") {
-            $file = Storage::disk('s3')->get($photoPath);
-            $type = "image/jpeg";
-        } else {
-            $file = Storage::disk('local')->get($photoPath);
-            $type = "image/jpeg";
-        }
+    {		
+		$exists = Storage::disk($this->storage_disk)->has($photoPath);
+		if($exists){
+			$file = Storage::disk($this->storage_disk)->get($photoPath);
+			$type = "image/jpeg";
 
-        $response = \Response::make($file, 200);
-        $response->header("Content-Type", $type);
-
+			$response = \Response::make($file, 200);
+			$response->header("Content-Type", $type);
+		}else{
+			$response = response()->json('File Not Found', 404);
+		}
         return $response;
     }
 
