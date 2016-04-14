@@ -646,9 +646,9 @@
 
                                     
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
-                                  <button type="button" class="btn pull-right btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-                                          Modal
-                                        </button>
+                                  <span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#myModal">
+                                        <i class="fontello-attach"></i>
+                                    </span>
                             </div>
 
                         </div>
