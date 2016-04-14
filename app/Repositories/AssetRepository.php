@@ -22,10 +22,15 @@ class AssetRepository
         return hash('sha256', sha1(microtime()) . '.' . gethostname() . '.' . $name);
     }
 
-    public function downloadFile($pathFile)
+    public function downloadFile($photoPath)
     {
-        $file = File::get($pathFile);
-        $type = File::mimeType($pathFile);
+        if (env("ASSET_STORAGE") == "s3") {
+            $file = Storage::disk('s3')->get($photoPath);
+            $type = "image/jpeg";
+        } else {
+            $file = Storage::disk('local')->get($photoPath);
+            $type = "image/jpeg";
+        }
 
         $response = \Response::make($file, 200);
         $response->header("Content-Type", $type);
