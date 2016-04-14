@@ -509,9 +509,9 @@ class ChatController extends Controller
         if ($userId) {
             $chat       = Chat::find($chatid);
             $type       = $chat->type;
-            if($type != 'image/png' && $type != 'image/jpg' && $type != 'image/gif' && $type != 'image/jpeg' ) {
-                if(!is_null($chat->message)){
-                    $return = $this->asset->downloadFile($chat->message);
+            if($type == 'image/png' || $type == 'image/jpg' || $type == 'image/gif' || $type == 'image/jpeg' ) {
+                if(!is_null($chat->path)){
+                    $return = $this->asset->downloadFile($chat->path);
                 }else{
                     $return = response()->json('Not Found', 404);
                 }
