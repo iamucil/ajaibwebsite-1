@@ -624,9 +624,6 @@ function publish(senderId) {
     // get user chat object
     var obj = GetParam(senderId);
 
-    // get message to publish
-    var text = $('.chat-text#ct_' + obj.user_name).val();
-
     // get ip address
     if (typeof Cookies.get('geoip') !== "undefined") {
         var geoip = JSON.parse(Cookies.get('geoip'));
@@ -635,10 +632,17 @@ function publish(senderId) {
         var ip = "null";
     }
 
-    if (text !== "") {
+    if ($('#input_'+obj.user_name)[0].files[0]!==undefined) {
+        TriggerUploadFile(obj);
+        // remove form data & file
+        $("#input_"+obj.user_name).val("");
+    } else {
         //TODO: sender object -> don't forget to disable this debug when it goes online
         //logging('sender object '+obj);
         //logging(obj);
+
+        // get message to publish
+        var text = $('.chat-text#ct_' + obj.user_name).val();
 
         // adding device
         addDeviceToChannel(obj);
@@ -738,12 +742,6 @@ function publish(senderId) {
                 alertify.error("Gagal insert log chat. Periksa koneksi database!");
             }
         });
-    }
-
-    if ($('#input_'+obj.user_name)[0].files[0]!==undefined) {
-        TriggerUploadFile(obj);
-        // remove form data & file
-        $("#input_"+obj.user_name).val("");
     }
 }
 
@@ -1113,8 +1111,10 @@ function TriggerUploadFile(obj) {
 
         var formData = new FormData();
 
+    // get message to publish
+    var text = $('.chat-text#ct_' + obj.user_name).val();
 
-    if ($('#input_'+obj.user_name)[0].files.length>0) {
+    //if ($('#input_'+obj.user_name)[0].files.length>0) {
         var file = $( '#input_'+obj.user_name)[0].files[0];
         formData.append('file', file);
 
@@ -1157,7 +1157,7 @@ function TriggerUploadFile(obj) {
                         var param = {
                             sender_id: authUser.id,
                             receiver_id: obj.sender_id,
-                            message: null,
+                            message: text,
                             ip: ip,
                             useragent: navigator.userAgent,
                             sender_auth: obj.sender_auth,
@@ -1201,7 +1201,7 @@ function TriggerUploadFile(obj) {
                                     message: {
                                         "message_id"    : data.data.id,
                                         "user_name"     : firstname,
-                                        "message"       : null,
+                                        "message"       : text,
                                         "ip"            : ip,
                                         "sender_id"     : authUser.id,
                                         "sender_channel": channel,
@@ -1227,7 +1227,7 @@ function TriggerUploadFile(obj) {
                                         "message_id"    : data.data.id,
                                         "user_name"     : obj.user_name,
                                         "sender_id"     : authUser.id,
-                                        "message"       : null,
+                                        "message"       : text,
                                         "time"          : datetime,
                                         "type"          : type,
                                         "path"          : imagePath
@@ -1239,7 +1239,7 @@ function TriggerUploadFile(obj) {
                                     }
                                 });
 
-                                renderMessage(data.data.id,'operator', null, datetime, obj.user_name, type, imagePath);
+                                renderMessage(data.data.id,'operator', text, datetime, obj.user_name, type, imagePath);
 
                                 // append the text to conversation area
                                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -1265,7 +1265,7 @@ function TriggerUploadFile(obj) {
             });
         }
         $("#cc_" + obj.user_name).animate({scrollTop: $("#cc_" + obj.user_name).prop("scrollHeight")}, 500);
-    }
+    //}
 }
 
 function RenderHistory(obj, username) {
