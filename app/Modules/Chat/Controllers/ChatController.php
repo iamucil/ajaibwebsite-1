@@ -501,7 +501,24 @@ class ChatController extends Controller
     }
     //============== END HISTORY FUNCTION ===============
 
-    //================= SEND ATTACHMENT =================
+    //================= ATTACHMENT =================
+    public function getAttachment($chatid)
+    {
+        $userId = $this->getOwnerId();
+        if ($userId) {
+            $chat       = Chat::find($chatid);
+            $type       = $chat->type;
+            if($type != 'image/png' && $type != 'image/jpg' && $type != 'image/gif' && $type != 'image/jpeg' ) {
+                if(!is_null($chat->message)){
+                    $return = $this->asset->downloadFile($chat->message);
+                }else{
+                    $return = response()->json('Not Found', 404);
+                }
+            }
+            return $return;
+        }
+    }
+
     protected function sendAttachment(Request $request)
     {
         $user = $this->getOwnerId();
@@ -528,7 +545,7 @@ class ChatController extends Controller
         }
 
     }
-    //=============== END SEND ATTACHMENT ===============
+    //=============== END ATTACHMENT ===============
 
 
     //================ CUSTOM FUNCTION =================
