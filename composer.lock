@@ -113,6 +113,7 @@
         },
         {
             "name": "aws/aws-sdk-php",
+<<<<<<< HEAD
             "version": "3.17.5",
             "source": {
                 "type": "git",
@@ -123,6 +124,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1cef9b334729b3564c9aef15481a55561c54b53f",
                 "reference": "1cef9b334729b3564c9aef15481a55561c54b53f",
+=======
+            "version": "3.17.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aws/aws-sdk-php.git",
+                "reference": "d5a5145263da88c9ba870b579c3d4f648b82d2a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d5a5145263da88c9ba870b579c3d4f648b82d2a9",
+                "reference": "d5a5145263da88c9ba870b579c3d4f648b82d2a9",
+>>>>>>> ajaib/master
                 "shasum": ""
             },
             "require": {
@@ -189,7 +202,11 @@
                 "s3",
                 "sdk"
             ],
+<<<<<<< HEAD
             "time": "2016-04-07 22:44:13"
+=======
+            "time": "2016-04-11 17:36:01"
+>>>>>>> ajaib/master
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -1943,6 +1960,7 @@
         },
         {
             "name": "monolog/monolog",
+<<<<<<< HEAD
             "version": "1.18.2",
             "source": {
                 "type": "git",
@@ -1953,6 +1971,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/Seldaek/monolog/zipball/064b38c16790249488e7a8b987acf1c9d7383c09",
                 "reference": "064b38c16790249488e7a8b987acf1c9d7383c09",
+=======
+            "version": "1.19.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/monolog.git",
+                "reference": "5f56ed5212dc509c8dc8caeba2715732abb32dbf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/5f56ed5212dc509c8dc8caeba2715732abb32dbf",
+                "reference": "5f56ed5212dc509c8dc8caeba2715732abb32dbf",
+>>>>>>> ajaib/master
                 "shasum": ""
             },
             "require": {
@@ -2017,7 +2047,11 @@
                 "logging",
                 "psr-3"
             ],
+<<<<<<< HEAD
             "time": "2016-04-02 13:12:58"
+=======
+            "time": "2016-04-12 18:29:35"
+>>>>>>> ajaib/master
         },
         {
             "name": "mtdowling/cron-expression",

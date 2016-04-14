@@ -5,6 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 class Chat extends Model {
 
     protected $table = 'chats';
-    protected $fillable = ['sender_id','receiver_id','message','ip_address','useragent','read'];
+    protected $fillable = ['sender_id','receiver_id','message','ip_address','useragent','read','type'];
 
 }

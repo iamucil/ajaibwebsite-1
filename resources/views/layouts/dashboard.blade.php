@@ -10,24 +10,25 @@
 
     <!-- pace loader -->
     @section('style')
-        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/bootstrap.css') }}" />
-        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/jquery.webui-popover.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/bootstrap.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/jquery.webui-popover.css')}}" />
         <!-- Custom styles for this template -->
-        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/dashboard.css') }}" />
-        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/dashboard.style.css') }}" />
-        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/dripicon.css') }}" />
-        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/typicons.css') }}" />
-        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/font-awesome.css') }}" />
-        <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/theme.css') }}" />
-        <link rel="stylesheet" href="{{ secure_asset('js/slicknav/slicknav.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/dashboard.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/dashboard.style.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/dripicon.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/typicons.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/font-awesome.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/theme.css')}}" />
+        <link id="lightgallery-style" rel="stylesheet" type="text/css" href="{{secure_asset('/css/lightgallery.css')}}" />
+        <link rel="stylesheet" href="{{secure_asset('js/slicknav/slicknav.css')}}" />
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
         <!-- Slidebars CSS -->
-        <link rel="stylesheet" href="{{ secure_asset('js/offcanvas/sidetogglemenu.css') }}" />
+        <link rel="stylesheet" href="{{secure_asset('js/offcanvas/sidetogglemenu.css')}}" />
         <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/alertify.js/themes/alertify.core.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/alertify.js/themes/alertify.default.css') }}">
 
-        <link href="{{  secure_asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
-        <link href="{{  secure_asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
+        <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
+        <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
     @show
 
     @section('css')
@@ -61,9 +62,6 @@
                 @else
                     <li class="active">
                         <i class="fontello-home"></i>
-                    </li>
-                    <li>
-                        Dashboard
                     </li>
                 @endif
             </ul>
@@ -116,18 +114,19 @@
 
 @section('script-lib')
     {{-- script library --}}
-    <script type='text/javascript' src="{{ secure_asset('/js/jquery.js') }}"></script>
-    <script type='text/javascript' src="{{ secure_asset('/js/preloader-script.js') }}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/jquery.js')}}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/preloader-script.js')}}"></script>
     <!-- bootstrap javascript -->
-    <script type='text/javascript' src="{{ secure_asset('/js/bootstrap.js') }}"></script>
-    <script type='text/javascript' src="{{ secure_asset('/js/jquery.webui-popover.js') }}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/bootstrap.js')}}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/jquery.webui-popover.js')}}"></script>
 
     <!-- main edumix javascript -->
-    <script type='text/javascript' src="{{ secure_asset('/js/slimscroll/jquery.slimscroll.js') }}"></script>
-    <script type='text/javascript' src="{{ secure_asset('/js/slicknav/jquery.slicknav.js') }}"></script>
-    <script type='text/javascript' src="{{ secure_asset('/js/sliding-menu-fixed.js') }}"></script>
-    <script type='text/javascript' src="{{ secure_asset('/js/scriptbreaker-multiple-accordion-1.js') }}"></script>
-    <script type='text/javascript' src="{{ secure_asset('/js/app.js') }}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/slimscroll/jquery.slimscroll.js')}}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/slicknav/jquery.slicknav.js')}}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/sliding-menu-fixed.js')}}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/scriptbreaker-multiple-accordion-1.js')}}"></script>
+    <script id="lightgallery-script" type='text/javascript' src="{{secure_asset('/js/lightgallery.min.js')}}"></script>
+    <script type='text/javascript' src="{{secure_asset('/js/app.js')}}"></script>
     <script type='text/javascript' src="{{ secure_asset('/js/vendor/js-cookie/js.cookie.js') }}"></script>
     <script type='text/javascript' src="{{ secure_asset('/js/vendor/alertify.js/lib/alertify.min.js') }}"></script>
     <!-- FLOT CHARTS -->

@@ -385,7 +385,12 @@ class UserController extends Controller {
     public function getPhoto($id)
     {
         $user       = User::find($id);
-        $pathPhoto  = storage_path() . '/' . $user->photo;
+        if (env("ASSET_STORAGE") == "s3") {
+            $path = "https://".env('ASSET_STORAGE').'-'.env('S3_REGION').".amazonaws.com/".env('S3_BUCKET');
+        } else {
+            $path = storage_path();
+        }
+        $pathPhoto  = $path .'/'. $user->photo;
 
         return $this->Asset->downloadFile($pathPhoto);
     }
@@ -394,9 +399,15 @@ class UserController extends Controller {
     {
         $id =  Authorizer::getResourceOwnerId();
         $user       = User::find($id);
-        $pathPhoto  = storage_path() . '/' . $user->photo;
 
-        return $this->Asset->downloadFile($pathPhoto);
+        if(!is_null($user->photo)){
+            $pathPhoto  = storage_path() . '/' . $user->photo;
+            $return = $this->Asset->downloadFile($pathPhoto);
+        }else{
+            $return = response()->json('Not Found', 404);
+        }
+
+        return $return;
     }
 
     public function updateProfile($id, Request $request, User $User)
