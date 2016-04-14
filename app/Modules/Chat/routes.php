@@ -10,9 +10,9 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
         // api for insert data chat
         Route::post('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.store', 'uses' => 'ChatController@store']);
 		// api for get image chat
-		Route::get('/chat/attachment/image/{chatid}', ['middleware' => 'oauth','as' => 'api.chat.getimage', 'uses' => 'ChatController@getAttachment']);
+		Route::get('/chat/attachment/{chatid}', ['middleware' => 'oauth','as' => 'api.chat.getattachment', 'uses' => 'ChatController@getAttachment']);
 		// api for insert image chat
-		Route::post('/chat/attachment/image', ['middleware' => 'oauth','as' => 'api.chat.storeimage', 'uses' => 'ChatController@sendAttachment']);
+		Route::post('/chat/attachment', ['middleware' => 'oauth','as' => 'api.chat.storeattachment', 'uses' => 'ChatController@sendAttachment']);
 		
 		
         // api for update read chat
