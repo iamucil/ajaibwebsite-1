@@ -535,7 +535,12 @@ function ShowOnlineElement(m, time) {
 
     // pada saat join, jika element list online user untuk username ini tidak ada, maka akan dibuat
     if (!ElementIsExist('online-user-' + m.user_name)) {
-        var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel + '" data="' + m.sender_id + '-' + m.user_name + '-' + m.user + '" id="online-user-' + m.user_name + '"><img alt="" class="chat-pic" src="'+storage_path+ m.photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        if (m.photo === undefined || m.photo === "" || m.photo === null) {
+            var photo = "https://randomuser.me/api/portraits/thumb/men/25.jpg";
+        } else {
+            var photo = storage_path+ photo;
+        }
+        var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel + '" data="' + m.sender_id + '-' + m.user_name + '-' + m.user + '" id="online-user-' + m.user_name + '"><img alt="" class="chat-pic" src="'+photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.online-list').append(elm);
     }
 
@@ -571,7 +576,12 @@ function ShowOfflineElement(m, time) {
 
     // jika belum ada di list offline user maka akan dibuat
     if (!ElementIsExist('offline-user-' + m.user_name)) {
-        var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="'+storage_path+ m.photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        if (m.photo === undefined || m.photo === "" || m.photo === null) {
+            var photo = "https://randomuser.me/api/portraits/thumb/men/25.jpg";
+        } else {
+            var photo = storage_path+ photo;
+        }
+        var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="'+photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.offline-list').append(elm);
     }
     TriggerChatOnline('offline');
