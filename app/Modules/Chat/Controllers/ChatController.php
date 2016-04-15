@@ -340,6 +340,8 @@ class ChatController extends Controller
                 case "1":
                     $return = $this->updateProcess($chat, $data);
                     break;
+//                case "2":
+//                    $return = $this->updateProcess($chat, $data);
                 default:
                     if ($this->valueValidation($chat->receiver_id) && !($this->valueValidation($chat->read)) && $chat->receiver_id === auth()->user()->id) {
                         // sudah ada operator yang handle dan pesan belum dibaca
