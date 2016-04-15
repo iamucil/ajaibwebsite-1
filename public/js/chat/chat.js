@@ -333,10 +333,6 @@ function subscribeCallback(m) {
     //logging(m);
 
     if (m.sender_id === authUser.id) {
-        //if (m[0]===1)
-        $("#"+m.message_id).innerHTML = "done_all";
-        //else
-        //$("#"+data.data.id).innerHTML = "done";
         if ($("#"+ m.message_id).length === 0) {
             renderMessage(m.message_id, 'operator', m.message, m.time, m.user_name, m.type, m.path);
         }
@@ -539,7 +535,12 @@ function ShowOnlineElement(m, time) {
 
     // pada saat join, jika element list online user untuk username ini tidak ada, maka akan dibuat
     if (!ElementIsExist('online-user-' + m.user_name)) {
-        var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel + '" data="' + m.sender_id + '-' + m.user_name + '-' + m.user + '" id="online-user-' + m.user_name + '"><img alt="" class="chat-pic" src="https://randomuser.me/api/portraits/thumb/men/25.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        if (m.photo === undefined || m.photo === "" || m.photo === null) {
+            var photo = "https://randomuser.me/api/portraits/thumb/men/25.jpg";
+        } else {
+            var photo = storage_path+m.photo;
+        }
+        var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel + '" data="' + m.sender_id + '-' + m.user_name + '-' + m.user + '" id="online-user-' + m.user_name + '"><img alt="" class="chat-pic" src="'+photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.online-list').append(elm);
     }
 
@@ -575,7 +576,12 @@ function ShowOfflineElement(m, time) {
 
     // jika belum ada di list offline user maka akan dibuat
     if (!ElementIsExist('offline-user-' + m.user_name)) {
-        var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="https://randomuser.me/api/portraits/thumb/men/30.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        if (m.photo === undefined || m.photo === "" || m.photo === null) {
+            var photo = "https://randomuser.me/api/portraits/thumb/men/25.jpg";
+        } else {
+            var photo = storage_path+m.photo;
+        }
+        var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="'+photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.offline-list').append(elm);
     }
     TriggerChatOnline('offline');
@@ -624,9 +630,6 @@ function publish(senderId) {
     // get user chat object
     var obj = GetParam(senderId);
 
-    // get message to publish
-    var text = $('.chat-text#ct_' + obj.user_name).val();
-
     // get ip address
     if (typeof Cookies.get('geoip') !== "undefined") {
         var geoip = JSON.parse(Cookies.get('geoip'));
@@ -635,10 +638,17 @@ function publish(senderId) {
         var ip = "null";
     }
 
-    if (text !== "") {
+    if ($('#input_'+obj.user_name)[0].files[0]!==undefined) {
+        TriggerUploadFile(obj);
+        // remove form data & file
+        $("#input_"+obj.user_name).val("");
+    } else {
         //TODO: sender object -> don't forget to disable this debug when it goes online
         //logging('sender object '+obj);
         //logging(obj);
+
+        // get message to publish
+        var text = $('.chat-text#ct_' + obj.user_name).val();
 
         // adding device
         addDeviceToChannel(obj);
@@ -702,6 +712,33 @@ function publish(senderId) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
                         //logging('publish event '+m);
                         //logging(m);
+                        if (m[0]===1)
+                            $("#"+data.data.id).find("i")[0].innerHTML="done_all";
+                        else
+                            $("#"+data.data.id).find("i")[0].innerHTML="done";
+
+                        // update status di table chat
+                        //var data =
+                        //{
+                        //    "data":{
+                        //        "message_id":obj.message_id,
+                        //        "receiver_id":authUser.id,
+                        //        "sender_id":obj.sender_id,
+                        //        "read":getDate(),
+                        //        "action":"0"
+                        //    }
+                        //};
+                        //
+                        //// update status
+                        //$.ajax({
+                        //    url: "https://" + domain + "/dashboard/chat/update",
+                        //    contentType: "application/json; charset=utf-8",
+                        //    dataType: "json",
+                        //    method:"POST",
+                        //    data: JSON.stringify(data),
+                        //    success: function (data) {
+                        //    }
+                        //});
                     }
                 });
 
@@ -738,12 +775,6 @@ function publish(senderId) {
                 alertify.error("Gagal insert log chat. Periksa koneksi database!");
             }
         });
-    }
-
-    if ($('#input_'+obj.user_name)[0].files[0]!==undefined) {
-        TriggerUploadFile(obj);
-        // remove form data & file
-        $("#input_"+obj.user_name).val("");
     }
 }
 
@@ -1117,8 +1148,10 @@ function TriggerUploadFile(obj) {
 
         var formData = new FormData();
 
+    // get message to publish
+    var text = $('.chat-text#ct_' + obj.user_name).val();
 
-    if ($('#input_'+obj.user_name)[0].files.length>0) {
+    //if ($('#input_'+obj.user_name)[0].files.length>0) {
         var file = $( '#input_'+obj.user_name)[0].files[0];
         formData.append('file', file);
 
@@ -1161,7 +1194,7 @@ function TriggerUploadFile(obj) {
                         var param = {
                             sender_id: authUser.id,
                             receiver_id: obj.sender_id,
-                            message: null,
+                            message: text,
                             ip: ip,
                             useragent: navigator.userAgent,
                             sender_auth: obj.sender_auth,
@@ -1205,7 +1238,7 @@ function TriggerUploadFile(obj) {
                                     message: {
                                         "message_id"    : data.data.id,
                                         "user_name"     : firstname,
-                                        "message"       : null,
+                                        "message"       : text,
                                         "ip"            : ip,
                                         "sender_id"     : authUser.id,
                                         "sender_channel": channel,
@@ -1231,7 +1264,7 @@ function TriggerUploadFile(obj) {
                                         "message_id"    : data.data.id,
                                         "user_name"     : obj.user_name,
                                         "sender_id"     : authUser.id,
-                                        "message"       : null,
+                                        "message"       : text,
                                         "time"          : datetime,
                                         "type"          : type,
                                         "path"          : imagePath
@@ -1243,7 +1276,7 @@ function TriggerUploadFile(obj) {
                                     }
                                 });
 
-                                renderMessage(data.data.id,'operator', null, datetime, obj.user_name, type, imagePath);
+                                renderMessage(data.data.id,'operator', text, datetime, obj.user_name, type, imagePath);
 
                                 // append the text to conversation area
                                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -1269,7 +1302,7 @@ function TriggerUploadFile(obj) {
             });
         }
         $("#cc_" + obj.user_name).animate({scrollTop: $("#cc_" + obj.user_name).prop("scrollHeight")}, 500);
-    }
+    //}
 }
 
 function RenderHistory(obj, username) {
@@ -1651,7 +1684,7 @@ function renderMessage(id, actor, text, time, user, type, path) {
 
         switch(str) {
             case "image":
-                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a target="_blank" href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><span>'+text+'</span><i class="material-icons">done</i></p>';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-operator-media lightbox"><small>' + parsedTime + '</small><a target="_blank" href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><span>'+text+'</span><i class="material-icons">done</i></p>';
                 break;
             case "text":
                 elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
