@@ -333,10 +333,6 @@ function subscribeCallback(m) {
     //logging(m);
 
     if (m.sender_id === authUser.id) {
-        //if (m[0]===1)
-        $("#"+m.message_id).innerHTML = "done_all";
-        //else
-        //$("#"+data.data.id).innerHTML = "done";
         if ($("#"+ m.message_id).length === 0) {
             renderMessage(m.message_id, 'operator', m.message, m.time, m.user_name, m.type, m.path);
         }
@@ -539,7 +535,7 @@ function ShowOnlineElement(m, time) {
 
     // pada saat join, jika element list online user untuk username ini tidak ada, maka akan dibuat
     if (!ElementIsExist('online-user-' + m.user_name)) {
-        var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel + '" data="' + m.sender_id + '-' + m.user_name + '-' + m.user + '" id="online-user-' + m.user_name + '"><img alt="" class="chat-pic" src="https://randomuser.me/api/portraits/thumb/men/25.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        var elm = '<li class="li-class-online-user"><a href="#" class="list-online" cn-data="' + m.sender_channel + '" data="' + m.sender_id + '-' + m.user_name + '-' + m.user + '" id="online-user-' + m.user_name + '"><img alt="" class="chat-pic" src="'+storage_path+ m.photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.online-list').append(elm);
     }
 
@@ -575,7 +571,7 @@ function ShowOfflineElement(m, time) {
 
     // jika belum ada di list offline user maka akan dibuat
     if (!ElementIsExist('offline-user-' + m.user_name)) {
-        var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="https://randomuser.me/api/portraits/thumb/men/30.jpg"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="'+storage_path+ m.photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.offline-list').append(elm);
     }
     TriggerChatOnline('offline');
@@ -706,6 +702,33 @@ function publish(senderId) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
                         //logging('publish event '+m);
                         //logging(m);
+                        if (m[0]===1)
+                            $("#"+data.data.id).find("i")[0].innerHTML="done_all";
+                        else
+                            $("#"+data.data.id).find("i")[0].innerHTML="done";
+
+                        // update status di table chat
+                        //var data =
+                        //{
+                        //    "data":{
+                        //        "message_id":obj.message_id,
+                        //        "receiver_id":authUser.id,
+                        //        "sender_id":obj.sender_id,
+                        //        "read":getDate(),
+                        //        "action":"0"
+                        //    }
+                        //};
+                        //
+                        //// update status
+                        //$.ajax({
+                        //    url: "https://" + domain + "/dashboard/chat/update",
+                        //    contentType: "application/json; charset=utf-8",
+                        //    dataType: "json",
+                        //    method:"POST",
+                        //    data: JSON.stringify(data),
+                        //    success: function (data) {
+                        //    }
+                        //});
                     }
                 });
 
@@ -1402,37 +1425,37 @@ function AppendChat(elm) {
  * It used to reload webuipopover.js, because after render oen the fly, the popup doesn't show
  */
 function load_js() {
-    $(".input-file").change(function(){
-        if ($(this)[0].files && $(this)[0].files[0]) {
-            //Get count of selected files
-            var countFiles = $(this)[0].files.length;
-            var imgPath = $(this)[0].value;
-            var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
-            var image_holder = $("#image-holder");
-            image_holder.empty();
-            if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
-                if (typeof(FileReader) != "undefined") {
-                    //loop for each file selected for uploaded.
-                    for (var i = 0; i < countFiles; i++)
-                    {
-                        var reader = new FileReader();
-                        reader.onload = function(e) {
-                            $("<img />", {
-                                "src": e.target.result,
-                                "class": "img-responsive"
-                            }).appendTo(image_holder);
-                        }
-                        image_holder.show();
-                        reader.readAsDataURL($(this)[0].files[i]);
-                    }
-                } else {
-                    alert("This browser does not support FileReader.");
-                }
-            } else {
-                alert("Pls select only images");
-            }
-        }
-    });
+    //$(".input-file").change(function(){
+    //    if ($(this)[0].files && $(this)[0].files[0]) {
+    //        //Get count of selected files
+    //        var countFiles = $(this)[0].files.length;
+    //        var imgPath = $(this)[0].value;
+    //        var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+    //        var image_holder = $("#image-holder");
+    //        image_holder.empty();
+    //        if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
+    //            if (typeof(FileReader) != "undefined") {
+    //                //loop for each file selected for uploaded.
+    //                for (var i = 0; i < countFiles; i++)
+    //                {
+    //                    var reader = new FileReader();
+    //                    reader.onload = function(e) {
+    //                        $("<img />", {
+    //                            "src": e.target.result,
+    //                            "class": "img-responsive"
+    //                        }).appendTo(image_holder);
+    //                    }
+    //                    image_holder.show();
+    //                    reader.readAsDataURL($(this)[0].files[i]);
+    //                }
+    //            } else {
+    //                alert("This browser does not support FileReader.");
+    //            }
+    //        } else {
+    //            alert("Pls select only images");
+    //        }
+    //    }
+    //});
 
     // file js to be reload on the page
     var jsToBeLoaded = 'https://' + domain + '/js/jquery.webui-popover.js';
