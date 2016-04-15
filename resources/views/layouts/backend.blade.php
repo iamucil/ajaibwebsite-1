@@ -619,15 +619,17 @@
                         <div class="webui-popover-content">
                             <div class="chat-conversation slim-scroll-chat">
                                 <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
-                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ha<i class="material-icons">done</i></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ha</br><i class="material-icons">done</i></p>
                                 <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat<i class="material-icons">done_all</i></p>
-                                <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya<i class="material-icons">done_all</i></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya lorem ipsum dolor si amet amet jabang bayi. iki nyobo yo mbul<i class="material-icons">done_all</i></p>
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Belum dibaca <i class="material-icons">done</i></p>
-                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Sudah dibaca<i class="material-icons">done_all</i></p>
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Tidak terkirim<i class="material-icons failed">error</i></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>Tidak terkirim<i class="material-icons failed">error</i></p>
+              
                                 <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
-                                <p class="ajaib-operator ajaib-operator-media lightbox"><a href="./img/al-ghazali.jpg"><img alt="image-load" src="./img/al-ghazali.jpg"></a></p>
+                                <p class="ajaib-operator ajaib-operator-media lightbox"><a href="./img/al-ghazali.jpg"><img alt="image-load" src="./img/al-ghazali.jpg"></a><span>Saya lorem ipsum dolor si amet amet jabang bayi. iki nyobo yo mbu</span><i class="material-icons">done</i></p>
                                 <p class="ajaib-client"><small>Sat 7:19 PM</small>ini contoh gambarnya mba.. </p>
-                                <p class="ajaib-client ajaib-operator-media lightbox"><a href="./img/03.jpg"><img alt="image-load" src="./img/03.jpg"></a></p>
+                                <p class="ajaib-client ajaib-operator-media lightbox"><a href="./img/03.jpg"><img alt="image-load" src="./img/03.jpg"></a><span>Saya lorem ipsum dolor si amet amet jabang bayi. iki nyobo yo mbu</span><i class="material-icons failed">error</i></p>
                             </div>
                             <div class="textarea-nest">
                              
@@ -640,9 +642,13 @@
                                      <span class="ajaib-chat-loader">
                                        
                                     </span>
+                                    
 
                                     
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
+                                  <span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#myModal">
+                                        <i class="fontello-attach"></i>
+                                    </span>
                             </div>
 
                         </div>
@@ -701,13 +707,42 @@
 
 
 </div>
-    <div class="ajaib-media-uploader">
+<!--     <div class="ajaib-media-uploader">
                 <div class="close-box"></div>
                 <img src="./img/03.jpg">
                 <span>Lorem Ipsum dollor si amet amet jabang bayi</span>
+                <textarea class="form-control" rows="3"></textarea>
                 <button type="submit" class="btn btn-default">Submit</button>
 
+    </div> -->
+    <!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+         <div class="ajaib-media-uploader">
+                
+                <img class="img-responsive" src="./img/03.jpg">
+                <span>Lorem Ipsum dollor si amet amet jabang bayi</span>
+                <textarea class="form-control" rows="3"></textarea>
+               
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Camcel</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
     </div>
+  </div>
+</div>
 
 
     <div id="right-chat-menu-off" class="sidetogglemenu">

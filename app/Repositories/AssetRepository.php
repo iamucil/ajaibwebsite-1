@@ -22,14 +22,18 @@ class AssetRepository
         return hash('sha256', sha1(microtime()) . '.' . gethostname() . '.' . $name);
     }
 
-    public function downloadFile($pathFile)
-    {
-        $file = File::get($pathFile);
-        $type = File::mimeType($pathFile);
+    public function downloadFile($photoPath)
+    {		
+		$exists = Storage::disk($this->storage_disk)->has($photoPath);
+		if($exists){
+			$file = Storage::disk($this->storage_disk)->get($photoPath);
+			$type = "image/jpeg";
 
-        $response = \Response::make($file, 200);
-        $response->header("Content-Type", $type);
-
+			$response = \Response::make($file, 200);
+			$response->header("Content-Type", $type);
+		}else{
+			$response = response()->json('File Not Found', 404);
+		}
         return $response;
     }
 

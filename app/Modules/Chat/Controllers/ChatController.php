@@ -57,7 +57,7 @@ class ChatController extends Controller
         $ownerId = Authorizer::getResourceOwnerId();
         $chat = Chat::where('sender_id', $ownerId)
             ->orWhere('receiver_id', $ownerId)
-            ->get(['id AS chat_id', 'sender_id', 'message', 'read', 'created_at'])
+            ->get(['id AS chat_id', 'sender_id', 'message', 'read', 'created_at', 'type', 'path'])
 			->toArray();
 
         return response()->json(array(
@@ -184,6 +184,7 @@ class ChatController extends Controller
                 'ip_address' => $request->ip_address,
                 'useragent' => $request->useragent,
                 'type'=> $request->type,
+                'path'=> $request->path
 //                'read' => $request->read
             ]);
 
@@ -501,7 +502,24 @@ class ChatController extends Controller
     }
     //============== END HISTORY FUNCTION ===============
 
-    //================= SEND ATTACHMENT =================
+    //================= ATTACHMENT =================
+    public function getAttachment($chatid)
+    {
+        $userId = $this->getOwnerId();
+        if ($userId) {
+            $chat       = Chat::find($chatid);
+            $type       = $chat->type;
+            if($type == 'image/png' || $type == 'image/jpg' || $type == 'image/gif' || $type == 'image/jpeg' ) {
+                if(!is_null($chat->path)){
+                    $return = $this->asset->downloadFile($chat->path);
+                }else{
+                    $return = response()->json('Not Found', 404);
+                }
+            }
+            return $return;
+        }
+    }
+
     protected function sendAttachment(Request $request)
     {
         $user = $this->getOwnerId();
@@ -522,13 +540,15 @@ class ChatController extends Controller
                 return response()->json(array(
                     'status'=>200,
                     'message'=>'Success Upload',
-                    'data'=>$processUpload
+                    'data'=> array(
+                        "path" => $processUpload
+                    )
                 ),200);
             }
         }
 
     }
-    //=============== END SEND ATTACHMENT ===============
+    //=============== END ATTACHMENT ===============
 
 
     //================ CUSTOM FUNCTION =================

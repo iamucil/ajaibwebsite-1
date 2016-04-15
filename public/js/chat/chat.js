@@ -32,6 +32,7 @@ $(function () {
         alertify.set({delay: 10000});
         alertify.error("<strong>Roles </strong>for current user is undefined yet!! Please contact system admin");
     } else {
+        CreateModal();
 
         // get domain from accessed application url
         domain = window.location.hostname;
@@ -332,6 +333,13 @@ function subscribeCallback(m) {
     //logging(m);
 
     if (m.sender_id === authUser.id) {
+        //if (m[0]===1)
+        $("#"+m.message_id).innerHTML = "done_all";
+        //else
+        //$("#"+data.data.id).innerHTML = "done";
+        if ($("#"+ m.message_id).length === 0) {
+            renderMessage(m.message_id, 'operator', m.message, m.time, m.user_name, m.type, m.path);
+        }
         // operator it self
         //renderMessage('operator', m.message, m.time, m.user_name);
     } else {
@@ -381,7 +389,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage('client', m.message, m.time, m.user_name, m.type);
+                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type, m.path);
                     }
 
                     showNotification(m, false);
@@ -407,7 +415,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage('client', m.message, m.time, m.user_name, m.type);
+                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type, m.path);
                     }
 
                     showNotification(m, true);
@@ -642,7 +650,8 @@ function publish(senderId) {
             ip: ip,
             useragent: navigator.userAgent,
             sender_auth: obj.sender_auth,
-            type: "text"
+            type: "text",
+            path: null
         };
 
         //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
@@ -658,6 +667,8 @@ function publish(senderId) {
                 // success then publish message
                 var datetime = getDate();
 
+                /**
+                // debugging purpose only
                 logging({
                     channel: obj.sender_channel,
                     "user_name": firstname,
@@ -669,6 +680,7 @@ function publish(senderId) {
                     "time": datetime,
                     "pn_gcm": {"data": {"title": 'Ajaib', "message": text}}
                 });
+                 */
 
                 pubnub.publish({
                     channel: obj.sender_channel,
@@ -682,6 +694,8 @@ function publish(senderId) {
                         "receiver_id"   : obj.sender_id,
                         "time"          : datetime,
                         "role"          : roles,
+                        "path"          : null,
+                        "type"          : "text",
                         "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
                     },
                     callback: function (m) {
@@ -696,10 +710,13 @@ function publish(senderId) {
                 pubnub.publish({
                     channel: authUser.channel,
                     message: {
-                        "user_name": obj.user_name,
-                        "sender_id": authUser.id,
-                        "message": text,
-                        "time": datetime
+                        "user_name"     : obj.user_name,
+                        "sender_id"     : authUser.id,
+                        "message"       : text,
+                        "time"          : datetime,
+                        "message_id"    : data.data.id,
+                        "type"          : "text",
+                        "path"          : null
                     },
                     callback: function (m) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -708,7 +725,7 @@ function publish(senderId) {
                     }
                 });
 
-                renderMessage('operator', text, datetime, obj.user_name, obj.type);
+                renderMessage(data.data.id, 'operator', text, datetime, obj.user_name, obj.type, obj.path);
 
                 // append the text to conversation area
                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -725,6 +742,8 @@ function publish(senderId) {
 
     if ($('#input_'+obj.user_name)[0].files[0]!==undefined) {
         TriggerUploadFile(obj);
+        // remove form data & file
+        $("#input_"+obj.user_name).val("");
     }
 }
 
@@ -868,12 +887,13 @@ function InsertLogChat(param) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         data: JSON.stringify({
-            sender_id: param.sender_id,
-            receiver_id: param.receiver_id,
-            message: param.message,
-            ip_address: param.ip,
-            useragent: param.useragent,
-            type:param.type
+            sender_id       : param.sender_id,
+            receiver_id     : param.receiver_id,
+            message         : param.message,
+            ip_address      : param.ip,
+            useragent       : param.useragent,
+            type            :param.type,
+            path            :param.path
             //read: datetime
         }),
         beforeSend: function (xhr) {
@@ -1021,6 +1041,7 @@ function GenerateChatBox(obj,public,status) {
             //'<span class="btn lightbox"><a id="image_'+obj.user_name+'" href="#">Open</a></span>' +
             '<span style="display:none;" id="file_loader_'+obj.user_name+'" class="ajaib-chat-loader">uploading...</span>'+
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
+            //'<span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#upload-modal"><i class="fontello-attach"></i></span>'+
             '</div>' +
             '</div>' +
             '</div>';
@@ -1046,6 +1067,41 @@ function GenerateChatBox(obj,public,status) {
     }
 }
 
+function CreateModal() {
+    var elm = '<!-- Modal -->'+
+        '<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">'+
+        '<div class="modal-dialog" role="document">'+
+        '<div class="modal-content">'+
+        '<div class="modal-header">'+
+        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+    '<h4 class="modal-title" id="myModalLabel">Modal title</h4>'+
+    '</div>'+
+    '<div class="modal-body">'+
+        '<div class="ajaib-media-uploader">'+
+
+        '<div id="wrapper">'+
+        '<input class="input-file" id="fileUpload" type="file" name="file" /><br />'+
+        '<div id="image-holder" class="ajaib-media-uploader"> </div>'+
+        '</div>'+
+        //'<span>Lorem Ipsum dollor si amet amet jabang bayi</span>'+
+    '<textarea class="form-control" rows="3"></textarea>'+
+
+
+        '</div>'+
+        '</div>'+
+        '<div class="modal-footer">'+
+        '<button type="button" class="btn btn-default" data-dismiss="modal">Camcel</button>'+
+        '<button type="button" class="btn btn-primary">Save changes</button>'+
+    '</div>'+
+    '</div>'+
+    '</div>';
+    $("body").append(elm);
+}
+
+function DestroyModal() {
+    $("#myModal").remove();
+}
+
 function TriggerUploadFile(obj) {
     // get ip address
     if (typeof Cookies.get('geoip') !== "undefined") {
@@ -1069,26 +1125,26 @@ function TriggerUploadFile(obj) {
             alert("null");
             return false;
         }
-        else if(size > 100000) {
-            alert("File is to big");
+        else if(size > 2000000) {
+            alertify.error("File must be less than 2 Mb");
             return false;
         }
         else if(type != 'image/png' && type != 'image/jpg' && type != 'image/gif' && type != 'image/jpeg' ) {
-            alert("File doesnt match png, jpg or gif");
+            alertify.error("File doesnt match png, jpg or gif");
             return false;
         }
         else {
             $("#image_"+obj.user_name).attr("href",$("#input_"+obj.user_name).val());
             document.getElementById("file_loader_"+obj.user_name).style.display = "block";
             $.ajax({
-                url: "https://" + domain + "/dashboard/chat/attachment/send",
+                url: "https://" + domain + "/dashboard/chat/attachment/send", // return url of image uploaded
                 type : 'POST',
                 data : formData,
                 processData: false,  // tell jQuery not to process the data
                 contentType: false,  // tell jQuery not to set contentType
                 success : function(data) {
                     if (data.status === 200) {
-                        var imagePath = data.data;
+                        var imagePath = data.data.path;
                         alertify.success("File "+name+ " has been uploaded");
 
                         //TODO: sender object -> don't forget to disable this debug when it goes online
@@ -1101,11 +1157,12 @@ function TriggerUploadFile(obj) {
                         var param = {
                             sender_id: authUser.id,
                             receiver_id: obj.sender_id,
-                            message: imagePath,
+                            message: null,
                             ip: ip,
                             useragent: navigator.userAgent,
                             sender_auth: obj.sender_auth,
-                            type: type
+                            type: type,
+                            path: imagePath
                         };
 
                         //TODO: parameter to insert chat log -> don't forget to disable this debug when it goes online
@@ -1121,6 +1178,9 @@ function TriggerUploadFile(obj) {
                                 // success then publish message
                                 var datetime = getDate();
 
+                                /**
+                                 * debugging purpose only
+
                                 logging({
                                     channel         : obj.sender_channel,
                                     "user_name"     : firstname,
@@ -1134,12 +1194,14 @@ function TriggerUploadFile(obj) {
                                     "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
                                 });
 
+                                 */
+
                                 pubnub.publish({
                                     channel: obj.sender_channel,
                                     message: {
                                         "message_id"    : data.data.id,
                                         "user_name"     : firstname,
-                                        "message"       : imagePath,
+                                        "message"       : null,
                                         "ip"            : ip,
                                         "sender_id"     : authUser.id,
                                         "sender_channel": channel,
@@ -1147,6 +1209,7 @@ function TriggerUploadFile(obj) {
                                         "time"          : datetime,
                                         "role"          : roles,
                                         "type"          : type,
+                                        "path"          : imagePath,
                                         "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
                                     },
                                     callback: function (m) {
@@ -1161,11 +1224,13 @@ function TriggerUploadFile(obj) {
                                 pubnub.publish({
                                     channel: authUser.channel,
                                     message: {
+                                        "message_id"    : data.data.id,
                                         "user_name"     : obj.user_name,
                                         "sender_id"     : authUser.id,
-                                        "message"       : imagePath,
+                                        "message"       : null,
                                         "time"          : datetime,
-                                        "type"          : type
+                                        "type"          : type,
+                                        "path"          : imagePath
                                     },
                                     callback: function (m) {
                                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -1174,7 +1239,7 @@ function TriggerUploadFile(obj) {
                                     }
                                 });
 
-                                renderMessage('operator', imagePath, datetime, obj.user_name, type);
+                                renderMessage(data.data.id,'operator', null, datetime, obj.user_name, type, imagePath);
 
                                 // append the text to conversation area
                                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -1189,11 +1254,7 @@ function TriggerUploadFile(obj) {
                             document.getElementById("file_loader_"+obj.user_name).style.display = "none";
                         });
 
-                        renderMessage('operator', data.data, datetime, obj.user_name, "image");
-                        $("#image_"+username).attr("href",data.data);
-
-                        // remove form data & file
-                        $("#input_"+username).val("");
+                        //renderMessage(data.data.id,'operator', data.data, datetime, obj.user_name, "image");
                     } else {
                         alertify.success("Upload file failed");
                     }
@@ -1226,10 +1287,10 @@ function RenderHistory(obj, username) {
 
                     if (historyData[i].sender_id === authUser.id) {
                         // operator
-                        renderMessage('operator', historyData[i].message, localTime, username,historyData[i].type);
+                        renderMessage(historyData[i].id,'operator', historyData[i].message, localTime, username,historyData[i].type, historyData[i].path);
                     } else {
                         // user
-                        renderMessage('client', historyData[i].message, localTime, username,historyData[i].type);
+                        renderMessage(historyData[i].id,'client', historyData[i].message, localTime, username,historyData[i].type, historyData[i].path);
                     }
                 }
             } else {
@@ -1338,9 +1399,41 @@ function AppendChat(elm) {
 }
 
 /**
- * It used to reload webuipopover.js, because after render on the fly, the popup doesn't show
+ * It used to reload webuipopover.js, because after render oen the fly, the popup doesn't show
  */
 function load_js() {
+    $(".input-file").change(function(){
+        if ($(this)[0].files && $(this)[0].files[0]) {
+            //Get count of selected files
+            var countFiles = $(this)[0].files.length;
+            var imgPath = $(this)[0].value;
+            var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+            var image_holder = $("#image-holder");
+            image_holder.empty();
+            if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
+                if (typeof(FileReader) != "undefined") {
+                    //loop for each file selected for uploaded.
+                    for (var i = 0; i < countFiles; i++)
+                    {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $("<img />", {
+                                "src": e.target.result,
+                                "class": "img-responsive"
+                            }).appendTo(image_holder);
+                        }
+                        image_holder.show();
+                        reader.readAsDataURL($(this)[0].files[i]);
+                    }
+                } else {
+                    alert("This browser does not support FileReader.");
+                }
+            } else {
+                alert("Pls select only images");
+            }
+        }
+    });
+
     // file js to be reload on the page
     var jsToBeLoaded = 'https://' + domain + '/js/jquery.webui-popover.js';
     var lightboxjs = 'https://' + domain + '/js/lightgallery.min.js';
@@ -1408,7 +1501,7 @@ function readURL(input) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
-            $('#image_upload_preview').attr('src', e.target.result);
+            $('#image-holder').attr('src', e.target.result);
         }
 
         reader.readAsDataURL(input.files[0]);
@@ -1503,7 +1596,7 @@ function parseTime(datetime) {
     /*26/01/2016 07:00 am*/
 }
 
-function renderMessage(actor, text, time, user, type) {
+function renderMessage(id, actor, text, time, user, type, path) {
     //var timeSeparator = '';
 
     // time to parse
@@ -1530,21 +1623,25 @@ function renderMessage(actor, text, time, user, type) {
 
         var elm;
 
-        if (type === null || type === undefined) {
+        if (type === null || type === undefined || type === "text") {
             var str = "text";
         } else {
             var str = String(type.match(/image/g));
         }
 
+        if (text === null || text === undefined) {
+            text = "";
+        }
+
         switch(str) {
             case "image":
-                elm = '<p class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a href="'+storage_path+text+'"><img alt="image-load" src="'+storage_path+text+'"></a></p>';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-' + actor + '-media lightbox"><small>' + parsedTime + '</small><a target="_blank" href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><span>'+text+'</span><i class="material-icons">done</i></p>';
                 break;
             case "text":
-                elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
                 break;
             default:
-                elm = '<p class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '</p><br />';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
         }
         //
         appendElm += elm;
