@@ -55,7 +55,13 @@
                         Icon
                     </label>
                     <div class="col-sm-4">
-                        <input type="text" name="icon" id="menu-icon" value="{{ old('icon') }}" class="form-control" aria-describedby="helpBlock">
+                        {{-- glyphicon glyphicon-th --}}
+                        <div class="input-group">
+                            <input type="text" name="icon" id="menu-icon" value="{{ old('icon') }}" class="form-control" aria-describedby="helpBlock">
+                            <a class="input-group-addon" id="sizing-addon2" data-toggle="modal" data-target="#menusModal" data-whatever="@getbootstrap" href="{{ route('icons-pack') }}">
+                                <i class="glyphicon glyphicon-th"></i>
+                            </a>
+                        </div>
                         <span id="helpBlock" class="help-block">
                             Checkout icon on <a href="http://fontello.com/" target="_blank">fontello icon pack site here</a>
                         </span>
