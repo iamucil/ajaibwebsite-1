@@ -581,7 +581,7 @@ function ShowOfflineElement(m, time) {
         } else {
             var photo = storage_path+m.photo;
         }
-        var elm = '<li><a class="list-offline"  href="#" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="'+photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
+        var elm = '<li><a class="list-offline"  href="#" did-data="'+ m.device_id +'" cn-data="' + m.channel + '" data="' + m.id + '-' + m.user_name + '-' + m.user + '" id="offline-user-' + m.user_name + '"><img alt="" class="chat-pic chat-pic-gray" src="'+photo+'"><b>' + m.user + '</b><br>' + time + '</a></li>';
         $('.offline-list').append(elm);
     }
     TriggerChatOnline('offline');
@@ -981,6 +981,7 @@ function TriggerChatOnline(status) {
         // sender_id : user id
         var arrData = $(this).attr('data').split('-');
         var channel = $(this).attr('cn-data');
+        var deviceId= $(this).attr('did-data');
 
         // grant this operator
         fnChat().grantChannelGroup(channel);
@@ -996,20 +997,22 @@ function TriggerChatOnline(status) {
                     // belum dihandle oleh operator lain
                     fnChat().addChannelToGroup(channel);
                     var obj = {
-                        sender_id: arrData[0],
-                        user_name: arrData[1],
-                        user: arrData[2],
-                        sender_channel: channel
+                        sender_id       : arrData[0],
+                        user_name       : arrData[1],
+                        user            : arrData[2],
+                        sender_channel  : channel,
+                        device_id       : deviceId
                     };
                     SetParam(obj.sender_id+".private", obj);
                     GenerateChatBox(obj,0,status);
                 } else if (m.channels.length === 1 && m.channels[0] === authUser.channel) {
                     // operator itu sendiri
                     var obj = {
-                        sender_id: arrData[0],
-                        user_name: arrData[1],
-                        user: arrData[2],
-                        sender_channel: channel
+                        sender_id       : arrData[0],
+                        user_name       : arrData[1],
+                        user            : arrData[2],
+                        sender_channel  : channel,
+                        device_id       : deviceId
                     };
                     SetParam(obj.sender_id+".private", obj);
                     GenerateChatBox(obj,0,status);

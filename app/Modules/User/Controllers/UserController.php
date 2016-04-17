@@ -326,7 +326,7 @@ class UserController extends Controller {
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereIn('roles.name', ['users'])
             ->orderBy('users.name', 'DESC')
-            ->selectRaw('users.id,users.name as user_name,case when users.firstname = \'\' then users.name else users.firstname end as user,users.lastname,users.channel,users.photo')
+            ->selectRaw('users.id,users.device_id,users.name as user_name,case when users.firstname = \'\' then users.name else users.firstname end as user,users.lastname,users.channel,users.photo')
             ->get();
         return response()->json(array(
             'status'=>200,
