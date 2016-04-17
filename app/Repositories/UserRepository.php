@@ -68,7 +68,7 @@ class UserRepository
             } else {
                 $exists = false;
                 // $input  = request()->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
-                $input      = request()->only(['phone_number', 'channel', 'status', 'name', 'verification_code', 'password', 'email']);
+                $input      = request()->only(['phone_number', 'channel', 'status', 'name', 'verification_code', 'password', 'email', 'country_id']);
                 $user = User::firstOrCreate($input);
                 $mail_template  = 'emails.greeting';
                 $sender         = env('EMAIL_FROM','noreply@getajaib.com');
