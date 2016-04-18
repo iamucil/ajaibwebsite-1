@@ -334,7 +334,7 @@ function subscribeCallback(m) {
 
     if (m.sender_id === authUser.id) {
         if ($("#"+ m.message_id).length === 0) {
-            renderMessage(m.message_id, 'operator', m.message, m.time, m.user_name, m.type, m.path);
+            renderMessage(m.message_id, 'operator', m.message, m.time, m.user_name, m.type, m.path, "done");
         }
         // operator it self
         //renderMessage('operator', m.message, m.time, m.user_name);
@@ -385,7 +385,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type, m.path);
+                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type, m.path,"done_all");
                     }
 
                     showNotification(m, false);
@@ -411,7 +411,7 @@ function subscribeCallback(m) {
 
                     // append chat to chat-conversation div
                     if (ElementIsExist('cb_' + m.user_name)) {
-                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type, m.path);
+                        renderMessage(m.message_id, 'client', m.message, m.time, m.user_name, m.type, m.path,"done_all");
                     }
 
                     showNotification(m, true);
@@ -674,6 +674,8 @@ function publish(senderId) {
         logResponse.success(function (data) {
 
             if (data.status == '201') {
+                var message_id = data.data.id;
+                console.log(data);
                 // success then publish message
                 var datetime = getDate();
 
@@ -695,7 +697,7 @@ function publish(senderId) {
                 pubnub.publish({
                     channel: obj.sender_channel,
                     message: {
-                        "message_id"    : data.data.id,
+                        "message_id"    : message_id,
                         "user_name"     : firstname,
                         "message"       : text,
                         "ip"            : geoip.ip_address,
@@ -711,34 +713,9 @@ function publish(senderId) {
                     callback: function (m) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
                         //logging('publish event '+m);
-                        //logging(m);
-                        if (m[0]===1)
-                            $("#"+data.data.id).find("i")[0].innerHTML="done_all";
-                        else
-                            $("#"+data.data.id).find("i")[0].innerHTML="done";
 
-                        // update status di table chat
-                        //var data =
-                        //{
-                        //    "data":{
-                        //        "message_id":obj.message_id,
-                        //        "receiver_id":authUser.id,
-                        //        "sender_id":obj.sender_id,
-                        //        "read":getDate(),
-                        //        "action":"0"
-                        //    }
-                        //};
-                        //
-                        //// update status
-                        //$.ajax({
-                        //    url: "https://" + domain + "/dashboard/chat/update",
-                        //    contentType: "application/json; charset=utf-8",
-                        //    dataType: "json",
-                        //    method:"POST",
-                        //    data: JSON.stringify(data),
-                        //    success: function (data) {
-                        //    }
-                        //});
+                        // update chat status from message_id
+                        updateStatusChat(message_id,m,"2");
                     }
                 });
 
@@ -762,7 +739,7 @@ function publish(senderId) {
                     }
                 });
 
-                renderMessage(data.data.id, 'operator', text, datetime, obj.user_name, obj.type, obj.path);
+                renderMessage(data.data.id, 'operator', text, datetime, obj.user_name, obj.type, obj.path,"done");
 
                 // append the text to conversation area
                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -1252,6 +1229,9 @@ function TriggerUploadFile(obj) {
                                         //TODO: publish event -> don't forget to disable this debug when it goes online
                                         //logging('publish event '+m);
                                         //logging(m);
+
+                                        // update chat status from message_id
+                                        updateStatusChat(message_id,m,"2");
                                     }
                                 });
 
@@ -1275,7 +1255,7 @@ function TriggerUploadFile(obj) {
                                     }
                                 });
 
-                                renderMessage(data.data.id,'operator', text, datetime, obj.user_name, type, imagePath);
+                                renderMessage(data.data.id,'operator', text, datetime, obj.user_name, type, imagePath, "done");
 
                                 // append the text to conversation area
                                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
@@ -1321,12 +1301,22 @@ function RenderHistory(obj, username) {
                     var utcTime = moment.utc(historyData[i].created_at);
                     var localTime = moment(utcTime).toDate();
 
+                    if (historyData[i].status === null) {
+                        var status = "done";
+                    } else {
+                        if (historyData[i].status[0] === "1") {
+                            var status = "done_all";
+                        } else {
+                            var status = "done";
+                        }
+                    }
+
                     if (historyData[i].sender_id === authUser.id) {
                         // operator
-                        renderMessage(historyData[i].id,'operator', historyData[i].message, localTime, username,historyData[i].type, historyData[i].path);
+                        renderMessage(historyData[i].id,'operator', historyData[i].message, localTime, username,historyData[i].type, historyData[i].path, status);
                     } else {
                         // user
-                        renderMessage(historyData[i].id,'client', historyData[i].message, localTime, username,historyData[i].type, historyData[i].path);
+                        renderMessage(historyData[i].id,'client', historyData[i].message, localTime, username,historyData[i].type, historyData[i].path, status);
                     }
                 }
             } else {
@@ -1511,8 +1501,6 @@ function load_js() {
     //script.href = lightboxcss;
     //head.appendChild(script);
 
-    console.log(head);
-
     $('.chat-pop-over').webuiPopover({
         placement: 'auto-top',
         padding: false,
@@ -1632,7 +1620,7 @@ function parseTime(datetime) {
     /*26/01/2016 07:00 am*/
 }
 
-function renderMessage(id, actor, text, time, user, type, path) {
+function renderMessage(id, actor, text, time, user, type, path, status) {
     //var timeSeparator = '';
 
     // time to parse
@@ -1671,13 +1659,13 @@ function renderMessage(id, actor, text, time, user, type, path) {
 
         switch(str) {
             case "image":
-                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-operator-media lightbox"><small>' + parsedTime + '</small><a target="_blank" href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><span>'+text+'</span><i class="material-icons">done</i></p>';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + ' ajaib-operator-media lightbox"><small>' + parsedTime + '</small><a target="_blank" href="'+storage_path+path+'"><img alt="image-load" src="'+storage_path+path+'"></a><span>'+text+'</span><i class="material-icons">'+status+'</i></p>';
                 break;
             case "text":
-                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">'+status+'</i></p><br />';
                 break;
             default:
-                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">done</i></p><br />';
+                elm = '<p id="'+id+'" class="ajaib-' + actor + '"><small>' + parsedTime + '</small>' + text + '<i class="material-icons">'+status+'</i></p><br />';
         }
         //
         appendElm += elm;
@@ -1690,4 +1678,34 @@ function renderMessage(id, actor, text, time, user, type, path) {
 
 function displayCallback(m, e, c, d, f) {
     //logging(JSON.stringify(m, null, 4));
+}
+
+function updateStatusChat(message_id,m,action) {
+    // update sent status element
+    if (m[0]===1)
+        $("#"+message_id).find("i")[0].innerHTML="done_all";
+    else
+        $("#"+message_id).find("i")[0].innerHTML="done";
+
+    // update status di table chat
+    var data =
+    {
+        "data":{
+            "message_id"    : message_id,
+            "status"        : m.join(),
+            "action"        : action
+        }
+    };
+
+    // update status
+    $.ajax({
+        url: "https://" + domain + "/dashboard/chat/update",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        method:"POST",
+        data: JSON.stringify(data),
+        success: function (data) {
+            console.log(data);
+        }
+    });
 }
