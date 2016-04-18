@@ -1301,7 +1301,7 @@ function RenderHistory(obj, username) {
                     var utcTime = moment.utc(historyData[i].created_at);
                     var localTime = moment(utcTime).toDate();
 
-                    if (historyData[i].status === null) {
+                    if (historyData[i].status === null || historyData[i].status === undefined) {
                         var status = "done";
                     } else {
                         if (historyData[i].status[0] === "1") {
