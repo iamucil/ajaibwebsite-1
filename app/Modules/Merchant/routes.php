@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['module' => 'Merchant', 'namespace' => 'App\Modules\Merchant\Controllers', 'prefix' => 'dashboard', 'middleware' => ['auth', 'csrf', 'role:admin|root']], function() {
+Route::group(['module' => 'Merchant', 'namespace' => 'App\Modules\Merchant\Controllers', 'prefix' => 'ajaib', 'middleware' => ['auth', 'csrf', 'role:admin|root']], function() {
 
     Route::resource('vendors', 'VendorController', [
         'names' => [

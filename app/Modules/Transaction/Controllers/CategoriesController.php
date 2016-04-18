@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Modules\Transaction\Models\Category;
 use Validator;
+
 /**
 * FILENAME     : CategoriesController.php
 * @package     : CategoriesController
@@ -21,9 +22,12 @@ class CategoriesController extends Controller
     {
         $categories         = Category::where('type', '=', 'transaction')
             ->orderBy('created_at', 'DESC')
-            ->paginate(15);
-        // $categories         = [];
-        return view("Transaction::Categories.index", compact('categories'));
+            ->get();
+        foreach ($categories as $key => $value) {
+            # code...
+            $categories[$key]['transaction_count'] = $value->Transactions->count();
+        }
+        return response()->json($categories,200);
     }
 
     /**
@@ -33,7 +37,7 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        return view('Transaction::Categories.create');
+        
     }
 
     /**
@@ -48,9 +52,10 @@ class CategoriesController extends Controller
         ]);
 
         if($validate->fails()){
-            flash()->error($validate->errors()->first());
-
-            return redirect()->route('transaction.category.create')->withInput($request->except(['_token']))->withErrors($validate);
+            return response()->json(array(
+                'status' => 500,
+                'message' => $validate->errors()->first()
+            ),500);
         }else{
             $category   = new Category;
             $category->name     = $request->name;
@@ -58,11 +63,15 @@ class CategoriesController extends Controller
             $category->description  = $request->description;
 
             if($category->save()){
-                flash()->success('Penyimpanan data berhasil');
-                return redirect()->route('transaction.category.index');
+                return response()->json(array(
+                    'status' => 200,
+                    'message' => 'Penyimpanan data berhasil'
+                ),200);                
             }else{
-                flash()->warning('Penyimpanan data gagal');
-                return redirect()->route('transaction.category.create');
+                return response()->json(array(
+                    'status' => 200,
+                    'message' => 'Penyimpanan data gagal'
+                ),200);
             }
         }
     }
@@ -89,7 +98,7 @@ class CategoriesController extends Controller
     {
         $category       = Category::findOrFail($id);
 
-        return view('Transaction::Categories.edit', compact('category'));
+        return response()->json($category,200);
     }
 
     /**
@@ -101,7 +110,10 @@ class CategoriesController extends Controller
     public function update($id, Request $request)
     {
         if(!$request->isMethod('put')){
-            app::abort('403', 'unauthorized');
+            return response()->json(array(
+                    'status' => 403,
+                    'message' => 'Unauthorized action.'
+                ),403);
         }
 
         $category       = Category::find($id);
@@ -109,18 +121,24 @@ class CategoriesController extends Controller
             'name' => 'required|unique:categories,name,'.$category->id.',id',
         ]);
 
-        if($validate->fails()){
-            flash()->error($validate->errors()->first());
-            return redirect()->route('transaction.category.edit', $id)->withInput($request->except(['_token']))->withErrors($validate);
+        if($validate->fails()){            
+            return response()->json(array(
+                    'status' => 500,
+                    'message' => $validate->errors()->first()
+                ),200);
         }else{
             $category->name         = $request->name;
             $category->description  = $request->description;
-            if($category->save()){
-                flash()->success('Penyimpanan data berhasil');
-                return redirect()->route('transaction.category.index');
+            if($category->save()){                
+                return response()->json(array(
+                    'status' => 200,
+                    'message' => 'Penyimpanan data berhasil.'
+                ),200);
             }else{
-                flash()->warning('Penyimpanan data gagal');
-                return redirect()->route('transaction.category.edit', $id);
+                return response()->json(array(
+                    'status' => 500,
+                    'message' => 'Penyimpanan data gagal.'
+                ),200);
             }
         }
     }
@@ -134,11 +152,26 @@ class CategoriesController extends Controller
     public function destroy($id)
     {
         $category       = Category::findOrFail($id);
-        $category->delete();
-
-        flash()->success('Data terhapus');
-
-        return redirect()->route('transaction.category.index');
+        $count_transaction = $category->Transactions->count();// handle verifycation on backend side
+        if($count_transaction > 0){
+            return response()->json(array(
+                    'status' => 500,
+                    'message' => 'Category Has Many Transactions.'
+                ),200);
+        }else{
+            $delete = $category->delete();
+            if($delete){
+                return response()->json(array(
+                    'status' => 200,
+                    'message' => 'Data berhasil terhapus.'
+                ),200);
+            }else{
+                return response()->json(array(
+                    'status' => 500,
+                    'message' => 'Data gagal dihapus.'
+                ),200);
+            }
+        }
     }
 }
 ?>

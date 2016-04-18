@@ -13,6 +13,7 @@ use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use App\Repositories\AssetRepository;
 use Storage;
 use File;
+use Auth;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
@@ -93,9 +94,8 @@ class UserController extends Controller {
      */
     public function create()
     {
-        $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');
-        $user['gender'] = 'male';
-        return view('User::create', compact('roles', 'user'));
+        $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');        
+        return response()->json(['roles' => $roles],200);
     }
 
     /**
@@ -137,7 +137,7 @@ class UserController extends Controller {
     public function storeLocal(Request $request)
     {
         if (!$request->isMethod('post')) {
-            App::abort(403, 'Unauthorized action.');
+            return response()->json(['status' =>403, 'message' => 'Unauthorized action.'] , 403);
         }else{
             $data           = $request->all();
             $validator      = Validator::make($data, [
@@ -146,7 +146,7 @@ class UserController extends Controller {
                 'name' => 'required|unique:users',
                 'email' => 'required|email|max:255|unique:users',
                 'password' => 'required|alpha_num',
-                'retype-password' => 'required|same:password',
+                'retype_password' => 'required|same:password',
                 'phone_number' => 'required|unique:users|regex:/^[0-9]{6,}$/',
                 'country_id' => 'required|exists:countries,id',
                 'ext_phone' => 'required|unique:users,phone_number|regex:/^[0-9]{6,}$/',
@@ -158,8 +158,8 @@ class UserController extends Controller {
             ]);
 
             if($validator->fails()){
-                flash()->error($validator->errors()->first());
-                return redirect()->route('user.add')->withInput($request->except(['password', 'retype-password']))->withErrors($validator);
+                // flash()->error($validator->errors()->first());
+                return response()->json(['status' =>500, 'message' => $validator->errors()->first() ] , 200);
             }else{
                 $data['channel']    = hash('crc32b', bcrypt(uniqid(rand()*time())));
                 $calling_code       = $data['calling_code'];
@@ -172,13 +172,15 @@ class UserController extends Controller {
                 $data['password']       = bcrypt($data['password']);
                 $data['verification_code']  = '******';
                 $request->merge($data);
-                $input          = $request->except(['_token', 'role_id', 'retype-password', 'country_name', 'ext_phone', 'calling_code']);
+                $input          = $request->except(['_token', 'role_id', 'retype_password', 'country_name', 'ext_phone', 'calling_code']);
                 array_set($input, 'phone_number', $request->ext_phone);
                 $user           = User::firstOrCreate($input);
                 $user->roles()->attach($request->role_id);
 
-                flash()->success('Penambahan data berhasil!');
-                return redirect()->route('user.list');
+                if($user)
+                    return response()->json(['status' =>200, 'message' => 'Penambahan data berhasil.'] , 200);
+                else
+                    return response()->json(['status' =>500, 'message' => 'Penambahan gagal.'] , 500);
             }
         }
     }
@@ -205,11 +207,10 @@ class UserController extends Controller {
         if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
             App::abort(403, 'Unauthorized action.');
         }
-
         $user       = User::findOrFail($id);
         $roles      = Role::whereNotIn('name', ['root', 'users'])->lists('name', 'id');
         $this->authorize('showProfile', $User);
-        return view('User::edit', compact('user', 'url', 'roles'));
+        return response()->json($user,200);
     }
 
     /**
@@ -288,13 +289,16 @@ class UserController extends Controller {
     public function destroy($id, Request $request, User $user)
     {
         $this->authorize('destroy', $user);
-        if(!$request->has('_method') OR $request->_method !== 'DELETE'){
-            App::abort(403, 'Unauthorized action.');
+        if(!$request->has('_method') OR $request->_method !== 'delete'){
+            return response()->json(['status' =>403, 'message' => 'Unauthorized action.'] , 403);
         }
         $result         = $user->where('id', '=', $id)->update(['status' => false]);
         flash()->success('Your data has been deleted');
-
-        return redirect()->route('user.list');
+        if($result){
+            return response()->json(['status' =>200, 'message' => 'Your data has been deleted.'] , 200);
+        }else{
+            return response()->json(['status' =>500, 'message' => 'Your data cannot be deleted.'] , 200);
+        }        
     }
 
     public function getListUsers(Request $request)
@@ -302,16 +306,32 @@ class UserController extends Controller {
         $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereNotIn('roles.name', ['root'])
+            ->where('status',true)
             ->orderBy('users.name', 'DESC')
             ->orderBy('users.created_at', 'DESC')
             ->orderBy('roles.name', 'ASC')
             ->selectRaw('users.name as username, roles.id as role_id, users.*')
             // ->distinct()
-            ->paginate(15);
+            // ->paginate(15)
+            ->get()
+            ;
+        foreach ($users as $key => $value) {
+            # code...
+            if($value->hasRole(['root','admin']))
+                $users[$key]['has_role'] = 'admin';
+            else
+                $users[$key]['has_role'] = '';
+        }
         // $sms    = Twilio::message('+6285640427774', 'Your Ajaib Verification code is 801753');
 
         // dd(Twilio::message('+6285227052004', 'shit'));
-        return view('User::index', compact('users'));
+        // return view('User::index', compact('users'));
+            if(Auth::user()->hasRole(['root', 'admin']))
+                $has_role = 1;
+            else
+                $has_role = 0;
+            $data = compact('users','has_role');
+        return response()->json($data,200);
     }
 
     /**
@@ -340,35 +360,41 @@ class UserController extends Controller {
         if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
             App::abort(403, 'Unauthorized action.');
         }
-
         $user       = User::findOrFail($id);
+        $pathPhoto  = File::exists(storage_path() . '/' . $user->photo);
         $this->authorize('showProfile', $User);
         if(is_null($user->photo))
-        {
+        {        
             if($user->gender == 'female') {
                 $user->photo = "/img/avatar_female.png";
             }else{
                 $user->photo = "/img/avatar_male.png";
             }
         }else{
-            $user->photo = '/profile/photo/'.$id;
-        }
-        $url        = secure_url('/');
-        return view('User::profile', compact('user', 'url'));
+            if($pathPhoto)
+                $user->photo = '/ajaib/profile/photo/'.$id;
+            else{
+                if($user->gender == 'female') {
+                    $user->photo = "/img/avatar_female.png";
+                }else{
+                    $user->photo = "/img/avatar_male.png";
+                }   
+            }
+        }        
+        return response()->json($user,200);
     }
 
     public function setActive($id, Request $request, User $user)
     {
         // dd($user->roles());
         $this->authorize('setStatus', $user);
-
-        if($this->User->setActive($id)){
-            flash()->success('Activated user success');
+        if($this->User->setActive($id)){            
+            return response()->json(['status' => 200,'message' => 'Activated user success'] , 200);
         }else{
-            flash()->error('Error occured');
+            return response()->json(['status' => 500,'message' => 'Error occured.'] , 200);
         }
 
-        return redirect()->route('user.list');
+        
     }
 
     public function uploadPhoto(Request $request)
@@ -376,24 +402,28 @@ class UserController extends Controller {
         $processUpload = $this->Asset->uploadPhoto($request);
 
         if ($processUpload) {
-            return response()->json(['success' => true, 'path' => 'photo/'.$request->user_id], 200);
+            return response()->json(['success' => true,'status' => 200,'message' => 'Your data cannot update. Error on save data' , 'path' => '/ajaib/profile/photo/'.$request->user_id] , 200);            
         } else {
-            return response()->json('error', 400);
+            return response()->json(['status' => 500,'message' => 'Your data cannot update. Error on save data'] , 200);
         }
     }
 
     public function getPhoto($id)
     {
         $user       = User::find($id);
-        return $this->Asset->downloadFile($user->photo);
+        $pathPhoto  = storage_path() . '/' . $user->photo;
+
+        return $this->Asset->downloadFile($pathPhoto);
     }
 
     public function getPhotoApiService()
     {
         $id =  Authorizer::getResourceOwnerId();
         $user       = User::find($id);
+
         if(!is_null($user->photo)){
-            $return = $this->Asset->downloadFile($user->photo);
+            $pathPhoto  = storage_path() . '/' . $user->photo;
+            $return = $this->Asset->downloadFile($pathPhoto);
         }else{
             $return = response()->json('Not Found', 404);
         }
@@ -403,12 +433,11 @@ class UserController extends Controller {
 
     public function updateProfile($id, Request $request, User $User)
     {
-        if(!$request->has('_method') OR $request->_method !== 'PUT'){
-            App::abort(403, 'Unauthorized action.');
+        if(!$request->has('_method') OR $request->_method !== 'put'){
+            return response()->json(['status' =>403, 'message' => 'Unauthorized action.'] , 403);
         }
-
         if(!auth()->user()->hasRole(['admin', 'root']) AND (!auth()->user()->hasRole(['admin', 'root']) AND (int)auth()->user()->id !== (int)$id)){
-            App::abort(403, 'Unauthorized action.');
+            return response()->json(['status' =>403, 'message' => 'Unauthorized action.'] , 403);
         }
 
         $this->authorize('showProfile', $User);
@@ -421,9 +450,12 @@ class UserController extends Controller {
 
         $user->save();
 
-        flash()->success('Your data has been updated');
+        if($user){            
+            return response()->json(['status' => 200, 'message' => 'Your data has been updated'] , 200);
+        }else{
+            return response()->json(['status' => 500,'message' => 'Your data cannot update. Error on save data'] , 200);            
+        }
 
-        return redirect()->route('user.profile', $id);
     }
 
 }

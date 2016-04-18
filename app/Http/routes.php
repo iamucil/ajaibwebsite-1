@@ -145,3 +145,55 @@ Route::get('/users/{name?}', ['as' => 'member.lists', 'middleware' => ['auth'], 
 
     return $members;
 }]);
+
+
+/**
+ * get data with restangular with prefix 'ajaib'
+ */
+Route::group(['prefix' => 'ajaib'], function() {
+    Route::get('/country/{name?}', ['as' => 'country.list', function(App\Country $country, $name = null) {
+        $countries      = $country->where(DB::raw('LOWER(name)'), 'LIKE', '%'.strtolower($name).'%')->get();
+        return $countries;
+    }]);
+
+    Route::get('/user/{name?}', ['as' => 'member.lists', 'middleware' => ['auth'], function (DB $database, $name = null) {
+        $members            = $database::table('users')
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', function($join) {
+                $join->on('role_user.role_id', '=', 'roles.id')
+                    ->whereIn('roles.name', ['users']);
+            })->select('users.id', 'users.name', 'users.phone_number', 'users.email')
+            ->where(DB::raw('LOWER(users.name)'), 'LIKE', '%'.strtolower($name).'%')
+            ->orWhere(DB::raw('LOWER(users.email)'), 'LIKE', '%'.strtolower($name).'%')
+            ->get();
+
+        return $members;
+    }]);
+});
+
+
+
+/**
+ * pre-angular method
+ */
+Route::get('/partials/index', function () {
+    return view('partials.index');
+});
+
+// if restful 
+Route::get('/partials/{category}/{action?}', function ($category, $action = 'index') {
+    return view(join('.', ['partials', $category, $action]));
+});
+Route::get('/partials/{category}/{id}/{action}', function ($category, $action = 'index', $id) {
+    return view(join('.', ['partials', $category, $id]));
+})->where('id', '[0-9]+');
+
+Route::get('/partials/{category}/{action}/{id}', function ($category, $action = 'index', $id) {
+    return view(join('.', ['partials', $category, $action]));
+})->where('action', '[A-Za-z]+');
+// end if restful
+
+// Catch all undefined routes. Always gotta stay at the bottom since order of routes matters.
+// Route::any('{undefinedRoute}', function ($undefinedRoute) {
+//     return view('layout');
+// })->where('undefinedRoute', '([A-z\d-\/_.]+)?');

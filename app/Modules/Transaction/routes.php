@@ -3,7 +3,7 @@
     Route::group ([
         'module'     => 'Transaction',
         'namespace'  => 'App\Modules\Transaction\Controllers',
-        'prefix'     => 'dashboard',
+        'prefix'     => 'ajaib',
         'middleware' => 'auth',], function () {
 
         Route::resource ('transactions', 'TransactionsController', [
@@ -30,7 +30,17 @@
                 'show'    => 'transaction.category.show',
                 'destroy' => 'transaction.category.destroy',
             ],
-        ]);
+        ]);        
+    });
+
+
+
+
+    Route::group ([
+        'module'     => 'Transaction',
+        'namespace'  => 'App\Modules\Transaction\Controllers',
+        'prefix'     => 'dashboard',
+        'middleware' => 'auth',], function () {
 
         Route::get('/transactions/invoice/{invoice}/{print?}', 'TransactionsController@printInvoice')->name('transactions.invoice.print');
         // Route::group(['prefix' => 'invoice/{transaction}'], function() {

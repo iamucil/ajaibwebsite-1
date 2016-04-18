@@ -15,7 +15,7 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::get('/user/photo', ['middleware' => 'oauth', 'as' => 'api.user.photo', 'uses' => 'UserController@getPhotoApiService']);
     });
 
-    Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:admin|root']], function() {
+    Route::group(['prefix' => 'ajaib', 'module' => 'User', 'middleware' => ['auth', 'role:admin|root']], function() {
         Route::get('/users', ['as' => 'user.list', 'uses' => 'UserController@getListUsers']);
         Route::put('/users/{user}/setactive', ['as' => 'user.setactive', 'uses' => 'UserController@setActive']);
         Route::delete('/users/{user}', ['as' => 'user.destroy', 'uses' => 'UserController@destroy']);
@@ -26,7 +26,7 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::PUT('/users/{user}', ['as' => 'user.update', 'uses' => 'UserController@updateProfile']);
     });
 
-    Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:operator|admin|root']], function() {
+    Route::group(['prefix' => 'ajaib', 'module' => 'User', 'middleware' => ['auth', 'role:operator|admin|root']], function() {
         Route::get('/users/list', ['as' => 'user.list.operator', 'uses' => 'UserController@getListUsersOperator']);
     });
 
