@@ -1,4 +1,4 @@
-<div id="right_chat_menu" class="sidetogglemenu">
+<div id="right_chat_menu" class="sidetogglemenu" ng-controller="RightchatbarController">
     <!-- Your right Slidebar content. -->
     <!-- Right Menu -->
     <aside class="right-off-canvas-menu"  id="right-chat">

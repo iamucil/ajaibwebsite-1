@@ -1,6 +1,6 @@
 <!-- Right sidemenu -->
 
-<div id="skin-select" class="fixed-nest ">
+<div id="skin-select" class="fixed-nest " ng-controller="LeftnavController">
     <!--      Toggle sidemenu icon button -->
     <a id="toggle">
         <span class="fa icon-menu"></span>
@@ -36,7 +36,7 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ route('user.list') }}" title="Inbox">Users
+                                        <a ng-href="/users" title="Inbox">Users
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Users</div>
                                         </a>
                                     </li>
@@ -73,7 +73,7 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ route('vendor.index') }}" title="Inbox">Vendors
+                                        <a href="/vendors" title="Inbox">Vendors
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Daftar Merchant</div>
                                         </a>
                                     </li>
@@ -111,7 +111,7 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ route('transactions.index') }}" title="Inbox">Transactions
+                                        <a href="/transactions" title="Inbox">Transactions
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Categories</div>
                                         </a>
                                     </li>
@@ -136,7 +136,7 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ route('transactions.index') }}" title="Inbox">Transactions
+                                        <a href="/transactions" title="Inbox">Transactions
                                             <div class="noft-blue bg-red" style="display: inline-block; float: none;">Categories</div>
                                         </a>
                                     </li>

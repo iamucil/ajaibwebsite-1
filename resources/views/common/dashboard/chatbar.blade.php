@@ -1,5 +1,5 @@
 <!-- Chat bottom -->
-<div class="chat-bottom">
+<div class="chat-bottom" ng-controller="ChatbarController">
 </div>
 <!-- Chat bottom -->
 

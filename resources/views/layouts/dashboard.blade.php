@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" ng-app="app">
 
 <head>
     <meta charset="utf-8" />
@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('meta')
     <title>Ajaib - @yield('title')</title>
-
+    <base href="/" />
     <!-- pace loader -->
     @section('style')
         <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/bootstrap.css')}}" />
@@ -29,6 +29,7 @@
 
         <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
         <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
+        <link rel="stylesheet" type="text/css" href="{{elixir('css/main.css')}}">
     @show
 
     @section('css')
@@ -38,6 +39,9 @@
     <!-- pace loader -->
     @section('script')
         {{-- Main Script --}}
+        <script>
+            document.cookie = 'XSRF-TOKEN={{csrf_token()}}';            
+        </script>
     @show
 <body>
 <!-- preloader -->
@@ -86,7 +90,9 @@
             <!-- Content Begin -->
             <div class="row">
                 <div class="col-md-12">
-                    @yield('content')
+                    <div ng-view>
+                        @yield('content')
+                    </div>
                 </div>
             </div>
             <!-- end of content -->
@@ -115,6 +121,9 @@
 @section('script-lib')
     {{-- script library --}}
     <script type='text/javascript' src="{{secure_asset('/js/jquery.js')}}"></script>
+    <script type='text/javascript' src="{{elixir('js/vendor.js')}}"></script>
+    <script type='text/javascript' src="{{elixir('js/main.js')}}"></script>
+
     <script type='text/javascript' src="{{secure_asset('/js/preloader-script.js')}}"></script>
     <!-- bootstrap javascript -->
     <script type='text/javascript' src="{{secure_asset('/js/bootstrap.js')}}"></script>
@@ -180,5 +189,7 @@
     </script>
 
 @show
+
+<toasty></toasty>
 </body>
 </html>
