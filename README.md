@@ -5,7 +5,10 @@ Repository for Ajaib website and admin panel
 ## Installation
 
 1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist laravel/laravel [app_name]`.
+2. Run `php composer.phar install` or `composer install` for linux.
+3. install node.js from `https://nodejs.org`.
+4. Run `npm install`.
+5. Run `gulp` or `gulp && gulp watch` for development.
 
 If Composer is installed globally, run
 ```bash
