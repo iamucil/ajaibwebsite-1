@@ -12,6 +12,7 @@ Author: matirasa
     Page: locked screen
 */
 
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 body {
     position: relative!important;
 }
@@ -1091,12 +1092,12 @@ ALERT
     cursor: pointer;
     width: 15px;
     height: 15px;
-    background: #FF4800;
+    background: rgba(0, 0, 0, 0.5);
     font-size: 8px;
     text-align: center;
     line-height: 15px;
     color: #fff;
-    border-radius: 3px;
+    border-radius: 50%;
 }
 
 .chat-list {
@@ -1126,8 +1127,8 @@ ALERT
 
 .chat-active {
     position: relative;
-    background-color: #ff6600;
-    border-top: 1px solid #ff6600;
+    background-color: #057dee;
+    border-top: 1px solid #057dee;
     color: #fff;
     border-right: 1px solid rgba(255, 255, 255, 0.3);
     /*   top: -1px;
@@ -1156,7 +1157,7 @@ ALERT
     padding: 4px 8px;
     position: relative;
     z-index: 2;
-    color: rgba(255, 102, 0, 0.48);
+    color: #9BC2E6;
 }
 
 .chat-conversation .ajaib-devider-chat:before {
@@ -1166,7 +1167,7 @@ ALERT
     z-index: 2;
     width: 100%;
     height: 1px;
-    background: rgba(255, 102, 0, 0.2);
+    background: #9BC2E6;
     top: 7px;
     left: 0;
 }
@@ -1193,8 +1194,54 @@ ALERT
     font-size: 10px;
 }
 
+.chat-conversation .ajaib-client i {
+    position: relative;
+    top: 0px;
+    font-size: 18px;
+    text-align: right;
+    display: block;
+    margin: 0;
+}
+
+.chat-conversation .ajaib-operator i {
+    position: relative;
+    top: 0;
+    font-size: 18px;
+    right: 0px;
+    /* float: left; */
+    display: block;
+    margin: 0;
+}
+
+.chat-conversation .ajaib-operator span {
+    background: rgba(0, 0, 0, 0.5);
+    display: block;
+    padding: 10px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 100;
+    border-radius: 0 0 4px 4px;
+}
+
+.chat-conversation .ajaib-client span {
+    background: rgba(0, 0, 0, 0.5);
+    display: block;
+    padding: 10px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 100;
+    border-radius: 0 0 4px 4px;
+}
+
+.material-icons.failed {
+    color: red;
+    background: white;
+    border-radius: 50%;
+    display: table!important;
+}
+
 .chat-conversation .ajaib-operator {
-    background: #FF6600;
+    background: #057dee;
     display: list-item;
     padding: 5px 10px;
     border-radius: 4px;
@@ -1223,7 +1270,7 @@ ALERT
     height: 0;
     border-style: solid;
     border-width: 20px 20px 0 0;
-    border-color: #FF6600 transparent transparent transparent;
+    border-color: #057dee transparent transparent transparent;
     position: absolute;
     right: -10px;
     top: 0;
@@ -1290,20 +1337,230 @@ ALERT
 }
 
 .chat-conversation {
-    max-height: 220px;
+    max-height: 260px;
     overflow: auto;
     padding: 15px;
 }
 
 .btn.btn-ajaib {
     background-color: #ffffff;
-    color: #FF6600;
-    border-color: #FBAF7C;
-    border-bottom-color: #FBAF7C;
+    color: #057dee;
+    border-color: #057dee;
+    border-bottom-color: #057dee;
 }
 
 .chat-active a {
     color: #fff;
+}
+
+.ajaib-operator.ajaib-operator-media {
+    /* background: #fff; */
+    padding: 10px;
+    border-radius: 4px;
+    position: relative;
+    z-index: 2;
+    max-width: 200px;
+}
+
+.ajaib-operator.ajaib-operator-media img {
+    max-width: 180px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px 4px 0 0;
+}
+
+.ajaib-operator.ajaib-operator-media:after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 20px 20px 0 0;
+    /*    border-color: #fff transparent transparent transparent;*/
+    position: absolute;
+    right: -10px;
+    top: 0;
+    z-index: -1;
+}
+
+.ajaib-client.ajaib-operator-media {
+    /* background: #fff; */
+    padding: 10px;
+    border-radius: 4px;
+    border: 0;
+    max-width: 200px;
+    color: #fff;
+}
+
+.ajaib-client.ajaib-operator-media img {
+    max-width: 180px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px 4px 0 0;
+}
+
+.ajaib-client.ajaib-operator-media:after {
+    display: none;
+    z-index: -1;
+}
+
+.ajaib-client.ajaib-operator-media:before {
+    z-index: -1;
+}
+
+.lightbox img {
+    transition: all .2s ease-in-out;
+}
+
+.lightbox img:hover {
+    position: relative;
+    z-index: 0;
+    width: 180px;
+    height: auto;
+    border-radius: 4px;
+    transform: scale(1.02);
+}
+
+.lightbox img:after:hover {}
+
+.history-chat {
+    list-style: none;
+    background: #fff;
+    margin: 0;
+    padding: 20px 0;
+    border-radius: 4px;
+}
+
+.history-chat p {
+    margin: 5px 0 0 -1px;
+    display: inline-block;
+    width: 75%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.history-chat li {
+    padding: 10px 20px;
+}
+
+.history-chat .devider {
+    height: 1px;
+    min-height: 1px;
+    width: 100%;
+    background: #ddd;
+    display: block;
+    padding: 0;
+}
+
+.history-chat img {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+    float: left;
+    margin: 0 10px 0 0;
+    border-radius: 50%;
+}
+
+.history-chat h4 {
+    font-weight: normal;
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif!important;
+    margin: 5px 0;
+    font-weight: bold;
+    color: #057dee;
+}
+
+.history-chat h4 small {
+    text-align: right;
+    float: right;
+    padding: 0;
+    border-radius: 5px;
+    font-style: italic;
+    color: #999;
+}
+
+.history-chat-detail {
+    list-style: none;
+    background: #fff;
+    margin: 0;
+    padding: 20px 15px;
+    border-radius: 4px;
+}
+
+.history-chat-detail p {
+    margin: 5px 0 0 -1px;
+    display: inline-block;
+    width: 90%;
+    overflow: hidden;
+}
+
+.history-chat-detail li {
+    padding: 10px 20px;
+}
+
+.history-chat-detail .devider {
+    height: 1px;
+    min-height: 1px;
+    background: #ddd;
+    display: block;
+    padding: 0;
+    text-align: center;
+    z-index: 0;
+    position: relative;
+    margin: 20px;
+}
+
+.history-chat-detail .devider span {
+    background: #fff;
+    font-size: 11px;
+    z-index: 1;
+    position: relative;
+    top: -9px;
+    padding: 10px;
+    color: #999;
+}
+
+.history-chat-detail img {
+    height: 30px;
+    width: 30px;
+    display: inline-block;
+    float: left;
+    margin: 8px 15px 0 0;
+    border-radius: 50%;
+}
+
+.history-chat-detail h4 {
+    font-weight: normal;
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif!important;
+    margin: 5px 0;
+    font-weight: bold;
+    color: #057dee;
+}
+
+.history-chat-detail h4 small {
+    text-align: right;
+    float: right;
+    padding: 0;
+    border-radius: 5px;
+    color: #bbb;
+}
+
+.history-chat-detail h4 span {
+    text-align: right;
+    float: right;
+    padding: 0;
+    border-radius: 5px;
+    font-size: 11px;
+    margin: 0;
+    color: #bbb;
+    font-weight: normal;
+}
+
+.history-chat-detail h4 span:after {
+    content: "/";
+    padding: 0 5px;
 }
 
 .dropdown-menu > .active > a,
@@ -1311,6 +1568,157 @@ ALERT
 .dropdown-menu > .active > a:focus {
     color: #fff;
     text-decoration: none;
-    background-color: #ff6600;
+    background-color: #057dee;
+    outline: 0;
+}
+
+.btn-file-ajaib {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    line-height: 0;
+    overflow: hidden;
+    background: #4895DE!important;
+    color: #fff!important;
+    font-size: 16px;
+    text-align: center;
+    border: 0px solid #057dee !important;
+}
+
+.btn-file-ajaib:hover {
+    background: #ccc!important;
+    color: #4895DE!important;
+    font-size: 16px;
+    text-align: center;
+    border: 0px solid #057dee !important;
+}
+
+.btn-file-ajaib i {
+    text-align: center;
+    position: absolute;
+    left: 3px;
+    top: 7px;
+    font-weight: normal;
+}
+
+.btn-file-ajaib input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.ajaib-media-uploader {}
+
+.ajaib-media-uploader img {
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.ajaib-media-uploader span {
+    padding: 10px;
+    display: block;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #eee;
+    margin: 16px 0 0;
+}
+
+.ajaib-media-uploader textarea {
+    margin: 16px 0 0;
+}
+
+.ajaib-media-uploader textarea:focus {}
+
+.modal-body {
+    position: relative;
+    padding: 8px;
+}
+
+.ajaib-media-uploader button {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: table;
+    background: #057dee !important;
+    border: 1px solid #057dee !important;
+    color: white !important;
+    padding: 8px 20px;
+    text-transform: uppercase;
+}
+
+.ajaib-media-uploader .close-box {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: table;
+    background: #000;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    color: #fff;
+    text-align: center;
+    font-size: 13px;
+    border-radius: 0;
+}
+
+.ajaib-media-uploader .close-box:after {
+    content: "\e070";
+    font-family: 'lg';
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -moz-osx-font-smoothing: grayscale;
+    color: #999;
+    cursor: pointer;
+    font-size: 24px;
+    text-align: center;
+    position: relative;
+    top: 5px;
+}
+
+.ajaib-media-uploader h2 {
+    font-weight: 100;
+    color: #fff;
+    text-align: center;
+    font-family: "Open Sans";
+    text-transform: uppercase;
+}
+
+.ajaib-chat-loader {
+    background: url("../img/ellipsis.gif");
+    width: 120px;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 55px;
+    top: 95px;
+    margin: 0;
+    background-size: 50px;
+    background-repeat: no-repeat;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10040;
+    display: none;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
     outline: 0;
 }

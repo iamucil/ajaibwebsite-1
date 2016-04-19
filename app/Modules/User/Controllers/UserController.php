@@ -25,7 +25,7 @@ class UserController extends Controller {
     {
         $this->User     = $user;
         $this->Asset    = $asset;
-        $this->middleWare('auth', ['except' => ['index', 'store', 'update']]);
+        $this->middleWare('auth', ['except' => ['index', 'store', 'update', 'getPhotoApiService']]);
         $this->beforeFilter(function() {
             $country        = Country::where('iso_3166_2', '=', 'ID')
                 ->get(['calling_code', 'id'])
@@ -326,7 +326,7 @@ class UserController extends Controller {
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereIn('roles.name', ['users'])
             ->orderBy('users.name', 'DESC')
-            ->selectRaw('users.id,users.name as user_name,case when users.firstname = \'\' then users.name else users.firstname end as user,users.lastname,users.channel,users.photo')
+            ->selectRaw('users.id,users.device_id,users.name as user_name,case when users.firstname = \'\' then users.name else users.firstname end as user,users.lastname,users.channel,users.photo')
             ->get();
         return response()->json(array(
             'status'=>200,
@@ -385,9 +385,20 @@ class UserController extends Controller {
     public function getPhoto($id)
     {
         $user       = User::find($id);
-        $pathPhoto  = storage_path() . '/' . $user->photo;
+        return $this->Asset->downloadFile($user->photo);
+    }
 
-        return $this->Asset->downloadFile($pathPhoto);
+    public function getPhotoApiService()
+    {
+        $id =  Authorizer::getResourceOwnerId();
+        $user       = User::find($id);
+        if(!is_null($user->photo)){
+            $return = $this->Asset->downloadFile($user->photo);
+        }else{
+            $return = response()->json('Not Found', 404);
+        }
+
+        return $return;
     }
 
     public function updateProfile($id, Request $request, User $User)

@@ -27,9 +27,6 @@ class AuthController extends Controller
 
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     protected $user;
-    protected $redirectPath     = '/dashboard/';
-    protected $redirectAfterLogout  = '/auth/login';
-    protected $redirectTo       = '/dashboard/';
     /**
      * Create a new authentication controller instance.
      *
@@ -39,8 +36,19 @@ class AuthController extends Controller
     {
         $this->middleware('guest', ['except' => 'getLogout']);
         $this->user         = $user;
+        // set in constructor or set as protected variable
+        $this->redirectAfterLogout  = route("login");
+        $this->loginPath            = route("login");
+        $this->redirectPath         = route("admin::dashboard");
+        $this->redirectTo           = route("admin::dashboard");
         $this->beforeFilter(function() {
-            $country        = Country::where('iso_3166_2', '=', 'ID')
+            $country_code       = request()->country_code;
+            if((isset(request()->country_code) OR !empty(request()->country_code))) {
+                $country_code   = 'ID';
+            }
+            // $country_code   = (isset(request()->country_code) OR !empty(request()->country_code)) ?: 'ID';
+            // dd($country_code);
+            $country        = Country::where('iso_3166_2', '=', strtoupper($country_code))
                 ->get(['calling_code', 'id'])
                 ->first();
             $calling_code   = $country->calling_code;
@@ -50,6 +58,7 @@ class AuthController extends Controller
             $phone_number   = preg_replace('/\s[\s]+/', '', $phone_number);
             $phone_number   = preg_replace('/[\s\W]+/', '', $phone_number);
             $phone_number   = preg_replace('/^[\+]+/', '', $phone_number);
+            request()->phone_number = $phone_number;
             $phone_number   = preg_replace($regexp, '', $phone_number);
             $phone_number   = preg_replace('/^[(0)]{0,1}/i', $calling_code.'\1', $phone_number);
             $data['ext_phone']  = $phone_number;
@@ -116,23 +125,24 @@ class AuthController extends Controller
                     'errors' => $validator->errors()
                 ]);
             }else{
-                return redirect('/auth/register')
+                return redirect()->route('register')
                     ->withErrors($validator, 'register')
                     ->withInput()
                     ->with('errors', $validator->errors());
             }
         }
 
+        $user           = $this->user->createOrUpdateUser($request->all());
         if(request()->ajax()){
             return response()->json(['status' => [
                 'code' => 200,
                 'message' => 'Success'
             ], 'data' => $request->all(), 'errors' => NULL]);
+        }else{
+            return redirect()->route('auth.success.get')
+                ->with('user', $user['user'])
+                ->with('status', (bool)$user['exists']);
         }
-        $user           = $this->user->createOrUpdateUser($request->all());
-        return redirect()->route('auth.success.get')
-            ->with('user', $user['user'])
-            ->with('status', (bool)$user['exists']);
     }
 
     public function doLogin(Request $request)

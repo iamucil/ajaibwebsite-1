@@ -11,24 +11,24 @@
     <meta name="description" content="Ajaib is personal assistant application">
     <meta name="keywords" content="assistant, personal assistant">
     <meta name="author" content="getajaib.com">
-    <!-- Favicons
-    ================================================== -->
-    <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}" type="image/x-icon">
     <!-- Bootstrap -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/bootstrap.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/fonts/font-awesome/css/font-awesome.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/flaticon.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/fonts/font-awesome/css/font-awesome.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/flaticon.css') }}">
     <!-- Slider
     ================================================== -->
-    <link href="{{ asset('/css/owl.carousel.css') }}" rel="stylesheet" media="screen">
-    <link href="{{ asset('/css/owl.theme.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ secure_asset('/css/owl.carousel.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ secure_asset('/css/owl.theme.css') }}" rel="stylesheet" media="screen">
     <!-- Stylesheet
     ================================================== -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/responsive.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/animate.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/responsive.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/animate.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/intlTelInput.css') }}">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700,900,500,400italic' rel='stylesheet' type='text/css'>
-    <script type="text/javascript" src="{{ asset('/js/modernizr.custom.js') }}"></script>
+    <script type="text/javascript" src="{{ secure_asset('/js/modernizr.custom.js') }}"></script>
+    <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
+    <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -62,15 +62,19 @@
 
     @section('script-bottom')
         {{-- place javascript here --}}
+        <script type="text/javascript">
+        var server      = window.location.host;
+        var protocol    = 'https:' == document.location.protocol ? 'https:' : 'http:';
+        </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="{{ asset('/js/jquery.1.11.1.js') }}"></script>
+        <script type="text/javascript" src="{{ secure_asset('/js/intlTelInput.js') }}"></script>
         {{-- Include all compiled plugins (below), or include individual files as needed --}}
-        <script src="{{ asset('/js/bootstrap.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/SmoothScroll.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('/js/jquery.isotope.js') }}"></script>
-        <script src="{{ asset('/js/owl.carousel.js') }}"></script>
+        <script src="{{ secure_asset('/js/bootstrap.js') }}"></script>
+        <script type="text/javascript" src="{{ secure_asset('/js/SmoothScroll.js') }}"></script>
+        <script type="text/javascript" src="{{ secure_asset('/js/jquery.isotope.js') }}"></script>
+        <script src="{{ secure_asset('/js/owl.carousel.js') }}"></script>
         {{-- Javascripts mail --}}
-        <script type="text/javascript" src="{{ asset('/js/main.js') }}"></script>
+        <script type="text/javascript" src="{{ secure_asset('/js/main.js') }}"></script>
     @show
 </body>
 

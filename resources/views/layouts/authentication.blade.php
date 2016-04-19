@@ -10,15 +10,14 @@
     <meta name="description" content="Ajaib is personal assistant application">
     <meta name="keywords" content="assistant, personal assistant">
     <meta name="author" content="getajaib.com">
-    <!-- Favicons
-    ================================================== -->
-    <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}" type="image/x-icon">
     <!-- Bootstrap -->
-    <link rel="stylesheet" type="text/css" href="{{asset('css/dripicon.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('css/typicons.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.css')}}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('/fonts/font-awesome/css/font-awesome.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/css/authentication.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/dripicon.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/typicons.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{secure_asset('/css/bootstrap.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/fonts/font-awesome/css/font-awesome.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/authentication.css') }}">
+    <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
+    <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
 </head>
 <body>
     @yield('content')
@@ -26,9 +25,8 @@
     @section('script-bottom')
         {{-- place javascript here --}}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="{{ asset('/js/jquery.1.11.1.js') }}"></script>
         {{-- Include all compiled plugins (below), or include individual files as needed --}}
-        <script src="{{ asset('/js/bootstrap.js') }}"></script>
+        <script src="{{ secure_asset('/js/bootstrap.js') }}"></script>
     @show
 </body>
 </html>

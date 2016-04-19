@@ -4,28 +4,18 @@
 @stop
 
 @section('content')
-{{--     @forelse ($menus as $menu)
-        {{ $menu->name }}
-    @empty
-        Belum Ada data menu
-    @endforelse --}}
+    <div class="row">
+        <div class="col-md-2">
+            <div class="bg-complete-profile">
+                <a href="{{ route('menus.create') }}">
+                    <span class="icon-plus"></span>
+                    <h6 class="bg-black text-white"><strong>Add new Menu</strong></h6>
+                </a>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('script-bottom')
     @parent
-    <script type="text/javascript">
-    var url     = '{!! url("/geo-ip") !!}';
-    var menus   = {!! $data->getContent() !!};
-    var geoloc  = [];
-    // $.getJSON( url, function( data ) {
-    //     console.log(data);
-    // });
-    // jQuery.post('//freegeoip.net/json/', function (response) {
-    //     console.log(response);
-    // }, 'jsonp');
-
-    // jQuery.getJSON('https://randomuser.me/api/?nat=us', function(response) {
-    //     console.log(response.results[0].user.picture.thumbnail);
-    // });
-    </script>
 @stop
