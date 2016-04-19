@@ -38,6 +38,11 @@
                     </address>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <blockquote>{{ $transaction->keterangan }} @unless ($transaction->keterangan != '') No Description @endunless</blockquote>
+                </div>
+            </div>
         </div>
     </div>
 
