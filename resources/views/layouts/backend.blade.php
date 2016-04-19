@@ -15,6 +15,8 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/css/typicons.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/font-awesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('/css/theme.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{asset('/css/lightgallery.css')}}" />
+  
 
     <!-- pace loader -->
 
@@ -173,7 +175,7 @@
                                             </li>
                                             <li>
                                                 <a href="typography.html" title="Typography">
-                                                
+
                                                 Typography
                                             </a>
                                             </li>
@@ -321,7 +323,7 @@
                                 </ul>
                             </li>
 
-                      
+
                         </ul>
                         <form class="navbar-form navbar-left" style="position:relative" role="search">
                             <!-- Search | has-form wrapper -->
@@ -332,7 +334,7 @@
                         <ul class="nav navbar-nav navbar-right">
                             <!--  message end -->
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-bell"></i>&nbsp;&nbsp;<span class="label edumix-msg-noft">999</span><span class="caret"></span></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat"></i>&nbsp;&nbsp;<span class="label edumix-msg-noft">999</span><span class="caret"></span></a>
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-green">MESSAGE</span>
                                     </li>
@@ -387,23 +389,23 @@
                             <!-- message end -->
                             <!--  notification nest -->
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-chat-alt"></i>&nbsp;&nbsp;<span class="label edumix-noft">45</span><span class="caret"></span></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fontello-comment"></i>&nbsp;&nbsp;<span class="label edumix-noft">45</span><span class="caret"></span></a>
                                 <ul class="dropdown-menu dropdown-nest" role="menu">
                                     <li class="top-dropdown-nest"><span class="label round bg-blue">ALERT</span>
                                     </li>
-                     
+
                                     <li>
                                         <div class="slim-scroll">
                                             <div class="unread-notf">
-                                               
+
                                                 <a href="#">
-                                                    <h3>0809272382 
+                                                    <h3>0809272382
                                                     </h3>
                                                     <p>Just Now !</p>
                                                 </a>
                                             </div>
                                             <div class="read-notf">
-                                                
+
                                                 <a href="#">
                                                     <h3>+62 082347823473
                                                     </h3>
@@ -411,7 +413,7 @@
                                                 </a>
                                             </div>
                                             <div class="read-notf">
-                                        
+
                                                 <a href="#">
                                                     <h3>+62 3453454353
                                                     </h3>
@@ -419,7 +421,7 @@
                                                 </a>
                                             </div>
                                             <div class="read-notf">
-                                               
+
                                                 <a href="#">
                                                     <h3>+62 34542524553454
                                                     </h3>
@@ -427,7 +429,7 @@
                                                 </a>
                                             </div>
                                             <div class="read-notf">
-                                  
+
                                                 <a href="#">
                                                     <h3>+62 656577657657
                                                     </h3>
@@ -482,52 +484,100 @@
 
             <!-- Content Begin -->
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-4">
                        <!-- Bootstrap Content -->
+                       <div>
+                            <form class="navbar-form-chat" style="position:relative" role="search">
+                                <!-- Search | has-form wrapper -->
+                                <div class="dark"></div>
+                                <input class="input-chat-search" type="text" placeholder="Cari">
+                            </form>
 
-                        <a class="btn btn-default" href="#" role="button">Link</a>
-                        <button class="btn btn-default" type="submit">Button</button>
-                        <input class="btn btn-default" type="button" value="Input">
-                        <input class="btn btn-default" type="submit" value="Submit">
-                        <br>
-                        <br>
+                       </div>
 
-
-                        <!-- Standard button -->
-                        <button type="button" class="btn btn-default">Default</button>
-
-                        <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-                        <button type="button" class="btn btn-primary">Primary</button>
-
-                        <!-- Indicates a successful or positive action -->
-                        <button type="button" class="btn btn-success">Success</button>
-
-                        <!-- Contextual button for informational alert messages -->
-                        <button type="button" class="btn btn-info">Info</button>
-
-                        <!-- Indicates caution should be taken with this action -->
-                        <button type="button" class="btn btn-warning">Warning</button>
-
-                        <!-- Indicates a dangerous or potentially negative action -->
-                        <button type="button" class="btn btn-danger">Danger</button>
-
-                        <!-- Deemphasize a button by making it look like a link while maintaining button behavior -->
-                        <button type="button" class="btn btn-link">Link</button>
-
-                        <br>
-                        <br>
+                       <ul class="history-chat">
+                       
                         
-                        <div class="btn-group" role="group" aria-label="...">
-                          <button type="button" class="btn btn-default">Left</button>
-                          <button type="button" class="btn btn-default">Middle</button>
-                          <button type="button" class="btn btn-default">Right</button>
-                        </div>
+
+                         <li class="devider"></li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/29.jpg">
+                            <h4>Putera Kahfi <small>2 Maret 2016</small></h4>
+                            <p>Bookmark gan..</p>
+
+                        </li>
+                        <li class="devider"></li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/women/29.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016</small></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
+
+                        </li>
+                         <li class="devider"></li>
+                          <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/women/30.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016</small></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
+
+                        </li>
+                         <li class="devider"></li>
+                          <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/31.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016</small></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
+
+                        </li>
+                         <li class="devider"></li>
+                          <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/32.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016</small></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
+
+                        </li>
+                         <li class="devider"></li>
+                       </ul>
+
 
 
                        <!-- End of Bootstrap Content -->
 
 
                     @yield('content')
+                </div>
+                <div class="col-md-8">
+                    <div class="history-chat-detail-nest">
+                    <ul class="history-chat-detail">
+                      
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/29.jpg">
+                            <h4>Putera Kahfi <small>2 Maret 2016</small></h4>
+                            <p>Bookmark gan..</p>
+
+                        </li>
+                        <li class="devider"><span>12 Februari 2016</span></li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/women/29.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016 </small><span>11:20 PM</span></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch ... sekelas MOTO 3 dan mengikuti mimpinya untuk bertanding di ajang Asia </p>
+
+                        </li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/men/29.jpg">
+                            <h4>Putera Kahfi <small>2 Maret 2016 </small><span>10:05 PM</span></h4>
+                            <p>mengikuti mimpinya untuk bertanding di ajang Asia</p>
+
+                        </li>
+                         <li class="devider"><span>11 Februari 2016</span></li>
+                        <li>
+                            <img alt="" src="http://api.randomuser.me/portraits/thumb/women/29.jpg">
+                            <h4>Ayu Masahita <small>2 Maret 2016 </small><span>09:10 PM</span></h4>
+                            <p>Andi Farid Izdihar atau andi gilang masuk sebagai salah satu daftar men to watch </p>
+
+                        </li>
+                      
+                     
+                       </ul>
+                       </div>
                 </div>
             </div>
             <!-- end of content -->
@@ -539,7 +589,7 @@
                         <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Blink</a>
                         <div class="webui-popover-content">
-                          
+
                                 <div class="chat-conversation slim-scroll-chat">
                                      <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
                                     <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
@@ -548,45 +598,59 @@
                                     <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya mau pesan tiket bioskop bisa?</p>
                                     <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
                                 </div>
-                          
+
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>  
+                             
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                    <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
                             <!-- /input-group -->
                         </div>
                 </div>
-         
+
                <div class="chat-list chat-active">
                         <div class="close-box">X</div>
                         <a class="chat-pop-over" data-title="Olivia Zalianti Putri" href="#">Aktif</a>
                         <div class="webui-popover-content">
                             <div class="chat-conversation slim-scroll-chat">
-                                          <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
-                            <p class="ajaib-client"><small>Sat 7:19 PM</small>ha</p>
-                            <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat .</p>
-                            <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya </p>
-                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
-                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
-                            <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                                <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ha</br><i class="material-icons">done</i></p>
+                                <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat<i class="material-icons">done_all</i></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>Saya lorem ipsum dolor si amet amet jabang bayi. iki nyobo yo mbul<i class="material-icons">done_all</i></p>
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Belum dibaca <i class="material-icons">done</i></p>
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Tidak terkirim<i class="material-icons failed">error</i></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>Tidak terkirim<i class="material-icons failed">error</i></p>
+              
+                                <p class="ajaib-operator"><small>Sat 7:19 PM</small>Unt</p>
+                                <p class="ajaib-operator ajaib-operator-media lightbox"><a href="./img/al-ghazali.jpg"><img alt="image-load" src="./img/al-ghazali.jpg"></a><span>Saya lorem ipsum dolor si amet amet jabang bayi. iki nyobo yo mbu</span><i class="material-icons">done</i></p>
+                                <p class="ajaib-client"><small>Sat 7:19 PM</small>ini contoh gambarnya mba.. </p>
+                                <p class="ajaib-client ajaib-operator-media lightbox"><a href="./img/03.jpg"><img alt="image-load" src="./img/03.jpg"></a><span>Saya lorem ipsum dolor si amet amet jabang bayi. iki nyobo yo mbu</span><i class="material-icons failed">error</i></p>
                             </div>
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>  
+                             
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                  <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
+                                     <span class="ajaib-chat-loader">
+                                       
+                                    </span>
+                                    
+
+                                    
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
+                                  <span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#myModal">
+                                        <i class="fontello-attach"></i>
+                                    </span>
                             </div>
-                           
+
                         </div>
                 </div>
 
@@ -596,7 +660,6 @@
                         <div class="webui-popover-content">
                             <div class="chat-conversation slim-scroll-chat">
                             <p class="ajaib-devider-chat"><span>Friday, 2 Feb 2016</span></p>
-                            
                             <p class="ajaib-client"><small>Sat 7:19 PM</small>halo, ajaib</p>
                             <p class="ajaib-operator"><small>Sat 7:21 PM</small>Selamat pagi, ada yang bisa saya bantu?
                                 kami menyediakan jasa untuk pemesanan tiket bioskop, tiket pesawat dan reservasi hotel.</p>
@@ -605,21 +668,24 @@
                             <p class="ajaib-operator"><small>Sat 7:19 PM</small>Untuk film apa ?</p>
                             </div>
                             <div class="textarea-nest">
-                                <div class="form-group">
-                                    <span class="fontello-attach"></span>
-                                    <span class="fontello-camera"></span>
-                                </div>  
+                            
                                 <div class="form-group">
                                     <textarea class="form-control" rows="3"></textarea>
                                 </div>
+                                    <span class="btn btn-default btn-file-ajaib">
+                                        <i class="fontello-attach"></i><input type="file">
+                                    </span>
+                                
                                   <button type="submit" class="btn pull-right btn-default btn-ajaib">Submit</button>
                             </div>
-                      
+
                         </div>
-                </div> 
+                </div>
 
             </div>
             <!-- Chat bottom -->
+
+
             @show
 
             <!-- end of Container Begin -->
@@ -634,11 +700,51 @@
 
         <!-- End of Container Begin -->
 
-    
+
     </div>
     <!-- end paper bg -->
 
+
+
 </div>
+<!--     <div class="ajaib-media-uploader">
+                <div class="close-box"></div>
+                <img src="./img/03.jpg">
+                <span>Lorem Ipsum dollor si amet amet jabang bayi</span>
+                <textarea class="form-control" rows="3"></textarea>
+                <button type="submit" class="btn btn-default">Submit</button>
+
+    </div> -->
+    <!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+         <div class="ajaib-media-uploader">
+                
+                <img class="img-responsive" src="./img/03.jpg">
+                <span>Lorem Ipsum dollor si amet amet jabang bayi</span>
+                <textarea class="form-control" rows="3"></textarea>
+               
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Camcel</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
     <div id="right-chat-menu-off" class="sidetogglemenu">
             <!-- Your right Slidebar content. -->
             <!-- Right Menu -->
@@ -650,7 +756,7 @@
                         </label>
                     </li>
                     <li>
-                        <a href="#"><img alt="" class="chat-pic" src="http://api.randomuser.me/portraits/thumb/men/25.jpg"><b>Walter M. Reed</b>
+                        <a href="#"><img alt="" class="chat-pic" src="http://api.randomuser.me/portraits/thumb/men/27.jpg"><b>Walter M. Reed</b>
                             <br>Hi, there...</a>
                     </li>
                     <li>
@@ -714,6 +820,7 @@
 <script type='text/javascript' src="{{asset('/js/slicknav/jquery.slicknav.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/sliding-menu-fixed.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/scriptbreaker-multiple-accordion-1.js')}}"></script>
+<script type='text/javascript' src="{{asset('/js/lightgallery.min.js')}}"></script>
 <script type='text/javascript' src="{{asset('/js/app.js')}}"></script>
 
 <!-- FLOT CHARTS -->

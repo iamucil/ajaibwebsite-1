@@ -37,17 +37,24 @@ Route::get('auth/login', [
    'as' => 'login',
    'uses' => 'Auth\AuthController@getLogin'
 ]);
+
 // Route::post('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
 Route::post('auth/login', ['as' => 'login', 'uses' => 'Auth\AuthController@doLogin']);
 Route::get('auth/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
+Route::get('/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
+Route::get('/login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
+Route::post('/login', ['as' => 'login', 'uses' => 'Auth\AuthController@doLogin']);
 
 Route::get('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@getRegister']);
+Route::get('/register', ['as' => 'register', 'uses' => 'Auth\AuthController@getRegister']);
 Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
+Route::post('/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
 
 /**
  * Success Register
  */
 Route::get('auth/success', ['as' => 'auth.success.get', 'uses' => 'UserController@confirmation']);
+Route::get('/register-success', ['as' => 'auth.success.get', 'uses' => 'UserController@confirmation']);
 
 /**
  * chat client example
@@ -95,31 +102,46 @@ Route::get('/api/random-user', function () {
 });
 
 Route::get('/geo-ip', function (App\Country $country) {
-    $url    = 'https//freegeoip.net/json/';
+    $url    = 'http://ipinfo.io';
     $client         = new Client([
-        'base_uri' => '//freegeoip.net',
+        'base_uri' => $url,
     ]);
-    $response       = $client->request('GET', '/json/', [
+    $response       = $client->request('GET', '/', [
         'header' => [
             'Content-Type' => 'application/json'
         ], 'Accept' => 'application/json'
     ]);
-
     $result         = json_decode($response->getBody()->getContents());
-    $countries      = $country->where('iso_3166_2', '=', $result->country_code)->first();
-    $country_code   = $result->country_code;
-    $country_name   = $result->country_name;
+
+    $countries      = $country->where('iso_3166_2', '=', $result->country)->first();
+    $country_code   = $countries->iso_3166_2;
+    $country_name   = $countries->name;
     $ip_address     = $result->ip;
-    $latitude       = $result->latitude;
-    $longitude      = $result->longitude;
+    // $latitude       = $result->latitude;
+    // $longitude      = $result->longitude;
     $call_code      = $countries->calling_code;
     $capital        = $countries->capital;
     $country_id     = $countries->id;
-    return response()->json(compact('country_code', 'country_name', 'ip_address', 'latitude', 'longitude', 'call_code', 'capital', 'country_id'));
+    // return response()->json(compact('countries'));
+    return response()->json(compact('country_code', 'country_name', 'ip_address', 'call_code', 'capital', 'country_id'));
 
 });
 
 Route::get('/country/{name?}', ['as' => 'country.list', function(App\Country $country, $name = null) {
     $countries      = $country->where(DB::raw('LOWER(name)'), 'LIKE', '%'.strtolower($name).'%')->get();
     return $countries;
+}]);
+
+Route::get('/users/{name?}', ['as' => 'member.lists', 'middleware' => ['auth'], function (DB $database, $name = null) {
+    $members            = $database::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')
+        ->join('roles', function($join) {
+            $join->on('role_user.role_id', '=', 'roles.id')
+                ->whereIn('roles.name', ['users']);
+        })->select('users.id', 'users.name', 'users.phone_number', 'users.email')
+        ->where(DB::raw('LOWER(users.name)'), 'LIKE', '%'.strtolower($name).'%')
+        ->orWhere(DB::raw('LOWER(users.email)'), 'LIKE', '%'.strtolower($name).'%')
+        ->get();
+
+    return $members;
 }]);

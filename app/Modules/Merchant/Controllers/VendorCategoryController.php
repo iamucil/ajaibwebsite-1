@@ -105,7 +105,7 @@ class VendorCategoryController extends Controller
 
         $category       = Category::find($id);
         $validate       = Validator::make($request->all(), [
-            'name' => 'required|unique:vendor_categories,name,'.$category->id.',id',
+            'name' => 'required|unique:categories,name,'.$category->id.',id',
         ]);
 
         if($validate->fails()){
@@ -122,7 +122,6 @@ class VendorCategoryController extends Controller
                 return redirect()->route('vendor.category.edit', $id);
             }
         }
-        dd($request->all());
     }
 
     /**

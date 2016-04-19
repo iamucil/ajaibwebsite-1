@@ -38,7 +38,8 @@ class VendorController extends Controller
      */
     public function create()
     {
-        $categories     = Category::orderBy('name', 'ASC')->lists('name', 'id');
+        $categories     = Category::where('type', '=', 'vendor')
+            ->orderBy('name', 'ASC')->lists('name', 'id');
         $methods        = $this->methods;
         // dd($categories);
         return view('Merchant::create', compact('categories', 'methods'));
@@ -55,10 +56,7 @@ class VendorController extends Controller
         $vendor         = new Vendor;
         $validate       = Validator::make($request->all(), [
             'name' => 'required|unique:vendors,name',
-            'vendor_category_id' => 'required|exists:vendor_categories,id',
-            'key' => 'required_with:api',
-            'params' => 'required_with_all:api,key',
-            'method' => 'required_with_all:api,key,params|in:POST,PUT,GET,DELETE',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         if($validate->fails()){
@@ -68,13 +66,9 @@ class VendorController extends Controller
                 ->withInput($request->except(['_token']))
                 ->withErrors($validate);
         }else{
-            $vendor->vendor_category_id     = $request->vendor_category_id;
+            $vendor->category_id            = $request->category_id;
             $vendor->name                   = $request->name;
             $vendor->description            = $request->description;
-            $vendor->api                    = $request->api;
-            $vendor->key                    = $request->key;
-            $vendor->params                 = $request->params;
-            $vendor->method                 = $request->method;
 
             if($vendor->save()){
                 flash()->success('Penyimpanan data berhasil');
@@ -95,7 +89,8 @@ class VendorController extends Controller
      */
     public function show($id)
     {
-        //
+        $vendor     = Vendor::findOrFail($id);
+        return view('Merchant::show', compact('vendor'));
     }
 
     /**
@@ -107,7 +102,8 @@ class VendorController extends Controller
     public function edit($id)
     {
         $vendor         = Vendor::findOrFail($id);
-        $categories     = Category::orderBy('name', 'ASC')->lists('name', 'id');
+        $categories     = Category::where('type', '=', 'vendor')
+            ->orderBy('name', 'ASC')->lists('name', 'id');
         $methods        = $this->methods;
         return view('Merchant::edit', compact('categories', 'methods', 'vendor'));
     }
@@ -128,10 +124,7 @@ class VendorController extends Controller
         $vendor         = Vendor::findOrFail($id);
         $validate       = Validator::make($request->all(), [
             'name' => 'required|unique:vendors,name,'.$vendor->id.',id',
-            'vendor_category_id' => 'required|exists:vendor_categories,id',
-            'key' => 'required_with:api',
-            'params' => 'required_with_all:api,key',
-            'method' => 'required_with_all:api,key,params|in:POST,PUT,GET,DELETE',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         if($validate->fails()){
@@ -141,13 +134,9 @@ class VendorController extends Controller
                 ->withInput($request->except(['_token']))
                 ->withErrors($validate);
         }else{
-            $vendor->vendor_category_id     = $request->vendor_category_id;
+            $vendor->category_id            = $request->category_id;
             $vendor->name                   = $request->name;
             $vendor->description            = $request->description;
-            $vendor->api                    = $request->api;
-            $vendor->key                    = $request->key;
-            $vendor->params                 = $request->params;
-            $vendor->method                 = $request->method;
 
             if($vendor->save()){
                 flash()->success('Penyimpanan data berhasil');
