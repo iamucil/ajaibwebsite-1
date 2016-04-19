@@ -1190,6 +1190,7 @@ function TriggerUploadFile(obj) {
                             if (data.status == '201') {
                                 // success then publish message
                                 var datetime = getDate();
+                                var message_id = data.data.id;
 
                                 /**
                                  * debugging purpose only
@@ -1212,7 +1213,7 @@ function TriggerUploadFile(obj) {
                                 pubnub.publish({
                                     channel: obj.sender_channel,
                                     message: {
-                                        "message_id"    : data.data.id,
+                                        "message_id"    : message_id,
                                         "user_name"     : firstname,
                                         "message"       : text,
                                         "ip"            : ip,
@@ -1240,7 +1241,7 @@ function TriggerUploadFile(obj) {
                                 pubnub.publish({
                                     channel: authUser.channel,
                                     message: {
-                                        "message_id"    : data.data.id,
+                                        "message_id"    : message_id,
                                         "user_name"     : obj.user_name,
                                         "sender_id"     : authUser.id,
                                         "message"       : text,
@@ -1255,7 +1256,7 @@ function TriggerUploadFile(obj) {
                                     }
                                 });
 
-                                renderMessage(data.data.id,'operator', text, datetime, obj.user_name, type, imagePath, "done");
+                                renderMessage(message_id,'operator', text, datetime, obj.user_name, type, imagePath, "done");
 
                                 // append the text to conversation area
                                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';
