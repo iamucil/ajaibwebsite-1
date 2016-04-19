@@ -28,6 +28,7 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
 
     Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:operator|admin|root']], function() {
         Route::get('/users/list', ['as' => 'user.list.operator', 'uses' => 'UserController@getListUsersOperator']);
+        Route::get('/users/photo/{user}', ['as' => 'user.profile.getphotopath', 'uses' => 'UserController@getPhotoPath']);
     });
 
     Route::group(['prefix'=>'/profile', 'middleware' => 'auth'], function(){
