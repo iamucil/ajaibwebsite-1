@@ -461,7 +461,18 @@ function prependChatNotificationsPublic(user_name,sender_id,user,time) {
 function presence(details) {
     var uuid = 'uuid' in details && (''+details.uuid).toLowerCase();
     if (uuid && uuid.split("-",1)[0]!=="operator") {
-        AppendListUsers(details.data,details.action);
+        var id = details.data.sender_id;
+        // get photo path
+        $.ajax({
+            type: "GET",
+            url: "https://" + domain + "/dashboard/users/photo/"+id,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                details.data.photo = data.data.path;
+                AppendListUsers(details.data,details.action);
+            }
+        });
     }
 }
 //================== end presence function ===================
@@ -1190,6 +1201,7 @@ function TriggerUploadFile(obj) {
                             if (data.status == '201') {
                                 // success then publish message
                                 var datetime = getDate();
+                                var message_id = data.data.id;
 
                                 /**
                                  * debugging purpose only
@@ -1212,7 +1224,7 @@ function TriggerUploadFile(obj) {
                                 pubnub.publish({
                                     channel: obj.sender_channel,
                                     message: {
-                                        "message_id"    : data.data.id,
+                                        "message_id"    : message_id,
                                         "user_name"     : firstname,
                                         "message"       : text,
                                         "ip"            : ip,
@@ -1240,7 +1252,7 @@ function TriggerUploadFile(obj) {
                                 pubnub.publish({
                                     channel: authUser.channel,
                                     message: {
-                                        "message_id"    : data.data.id,
+                                        "message_id"    : message_id,
                                         "user_name"     : obj.user_name,
                                         "sender_id"     : authUser.id,
                                         "message"       : text,
@@ -1255,7 +1267,7 @@ function TriggerUploadFile(obj) {
                                     }
                                 });
 
-                                renderMessage(data.data.id,'operator', text, datetime, obj.user_name, type, imagePath, "done");
+                                renderMessage(message_id,'operator', text, datetime, obj.user_name, type, imagePath, "done");
 
                                 // append the text to conversation area
                                 //var appendElm = '<p class="ajaib-operator"><small>'+parseTime(datetime)+'</small>'+text+'</p><br />';

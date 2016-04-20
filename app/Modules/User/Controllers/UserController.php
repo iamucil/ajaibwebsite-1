@@ -408,7 +408,12 @@ class UserController extends Controller {
         }
     }
 
-    public function getPhoto($id)
+    public function getPhotoPath($id) {
+        $user       = User::find($id);
+        return response()->json(['code' => 200, 'message' => 'success', 'data' => array('path' => $user->photo)], 200);
+    }
+
+    public function getPhoto($id,$path=false)
     {
         $user       = User::find($id);
         $pathPhoto  = storage_path() . '/' . $user->photo;
