@@ -57,28 +57,20 @@
             @include('common.dashboard.leftnav')
         @endif
         <div class="wrap-fluid" id="paper-bg">
-            @include('common.dashboard.topbar')
-
-            @section('breadcrumbs')
-            <ul class="breadcrumbs">
-                @if (Breadcrumbs::exists($routing->getName))
-                    {!! Breadcrumbs::renderIfExists() !!}
-                @else
-                    <li class="active">
-                        <i class="fontello-home"></i>
-                    </li>
-                @endif
-            </ul>
-            <!-- breadcrumbs -->
-            {{-- <ul class="breadcrumbs">
-                <li>
-                    <a href="{{ route('admin::dashboard') }}">
-                        <span class="fontello-home"></span>
-                    </a>
+            @include('common.dashboard.topbar')            
+            <ul class="breadcrumbs" ng-controller="BreadcrumbController">                
+                <li class="">
+                    <i class="fontello-home"></i>
+                </li>
+                <li ng-repeat="breadcrumb in breadcrumbs.getAll()" ng-if="!isNumber([[breadcrumb.name]])" ng-class="{'active' : $last}">
+                    <ng-switch on="$last"> 
+                        <span ng-switch-when="true">[[breadcrumb.name]]</span> 
+                        <span ng-switch-default>
+                            <a href="[[breadcrumb.path]]">[[breadcrumb.name]]</a>
+                        </span> 
+                    </ng-switch>
                 </li>
             </ul>
-            <!-- end of breadcrumbs --> --}}
-            @show
 
             <!-- Container Begin -->
 
