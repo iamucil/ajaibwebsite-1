@@ -24,10 +24,25 @@ angular.module('app', [
     'ui.bootstrap',
     'appRoutes',
     'datatables',
-    'internationalPhoneNumber'    
+    'internationalPhoneNumber',
+    'services.breadcrumbs'
 ], function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
+}).run(function($rootScope, $location, breadcrumbs) {
+    $rootScope.$on('$routeChangeSuccess', function(event, current){
+        var pathElements = $location.path().split('/'), result = [], i;
+        var breadcrumbPath = function (index) {
+          return '/' + (pathElements.slice(0, index + 1)).join('/');
+        };
+
+        pathElements.shift();
+        for (i=0; i<pathElements.length; i++) {
+          result.push({name: pathElements[i], path: breadcrumbPath(i)});
+        }
+
+        breadcrumbs.setBreadcrumbs(result);
+    });
 });
 
 angular.module('app.config', ['angular-loading-bar']);

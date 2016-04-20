@@ -1,9 +1,10 @@
 angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '$httpProvider',
-    function($routeProvider, $locationProvider, $httpProvider) {
+    function($routeProvider, $locationProvider, $httpProvider,$routeParams) {
         $routeProvider
             .when('/', {
                 // templateUrl: '',
-                controller: 'MainController'
+                controller: 'MainController',
+                label: ''
             })
             .when('/:category/:action?/:id?', {
                 templateUrl: function(params) {

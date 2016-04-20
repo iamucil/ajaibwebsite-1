@@ -24,17 +24,18 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::post('/users/store', ['as' => 'user.store', 'uses' => 'UserController@storeLocal']);
         Route::get('/users/{user}/edit', ['as' => 'user.edit', 'uses' => 'UserController@edit']);
         Route::PUT('/users/{user}', ['as' => 'user.update', 'uses' => 'UserController@updateProfile']);
+        
+        Route::group(['prefix'=>'/profile', 'middleware' => 'auth'], function(){
+            Route::get('/{user}', ['as' => 'user.profile', 'uses' => 'UserController@showProfile']);
+            Route::post('/upload/photo', ['as' => 'user.profile.uploadphoto', 'uses' => 'UserController@uploadPhoto']);
+            Route::get('/photo/{user}', ['as' => 'user.profile.getphoto', 'uses' => 'UserController@getPhoto']);
+        });
     });
 
     Route::group(['prefix' => 'ajaib', 'module' => 'User', 'middleware' => ['auth', 'role:operator|admin|root']], function() {
         Route::get('/users/list', ['as' => 'user.list.operator', 'uses' => 'UserController@getListUsersOperator']);
     });
 
-    Route::group(['prefix'=>'/profile', 'middleware' => 'auth'], function(){
-        Route::get('/{user}', ['as' => 'user.profile', 'uses' => 'UserController@showProfile']);
-        Route::post('/upload/photo', ['as' => 'user.profile.uploadphoto', 'uses' => 'UserController@uploadPhoto']);
-        Route::get('/photo/{user}', ['as' => 'user.profile.getphoto', 'uses' => 'UserController@getPhoto']);
-    });
     // Route::resource('User', 'UserController');
 
 });

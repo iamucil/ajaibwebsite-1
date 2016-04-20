@@ -41,7 +41,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('menus.index') }}" title="Menu Management">Menu
+                                        <a href="/menus" title="Menu Management">Menu
                                         </a>
                                     </li>
                                 </ul>
