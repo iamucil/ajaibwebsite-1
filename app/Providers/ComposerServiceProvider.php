@@ -40,6 +40,12 @@ class ComposerServiceProvider extends ServiceProvider
             // PAM_PUBNUB_KEY -> using pubnub access manager
             // PUBNUB_KEY -> without access manager
 
+            if (env('ASSET_STORAGE')!="local") {
+                $storage = "https://".env('ASSET_STORAGE').'-'.env('S3_REGION').".amazonaws.com/".env('S3_BUCKET').'/';
+            } else {
+                $storage = "/";
+            }
+
             JavaScript::put([
                 'authUser' => $user,
                 'authRoles' => $user->roles,
@@ -47,7 +53,7 @@ class ComposerServiceProvider extends ServiceProvider
                 'subnub_key' => env('PAM_SUBNUB_KEY'),
                 'skey' => env('PAM_SECRET_KEY'),
                 'public_channel' => env('PUBLIC_CHANNEL'),
-                'storage_path' => "https://".env('ASSET_STORAGE').'-'.env('S3_REGION').".amazonaws.com/".env('S3_BUCKET').'/'
+                'storage_path' => $storage
             ]);
 
             $view->with(['authUser' => $user, 'country' => $country, 'routing' => $routing]);
