@@ -28,7 +28,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('logout') }}">
+                            <a href="#" ng-click="logout()">
                                 <i class="icon-upload"></i> Log Out <span class="text-aqua fontello-cd"></span>
                             </a>
                         </li>

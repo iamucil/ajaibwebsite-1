@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js" lang="en" ng-app="app">
 <head>
    <!-- Basic Page Needs
     ================================================== -->
@@ -18,15 +18,22 @@
     <link rel="stylesheet" type="text/css" href="{{ secure_asset('/css/authentication.css') }}">
     <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="icon"/>
     <link href="{{ secure_asset('/favicon.ico') }}" type="image/x-icon" rel="shortcut icon"/>
+    <link rel="stylesheet" type="text/css" href="{{elixir('css/main.css')}}">
+    <base href="/" />
+    <script>
+        document.cookie = 'XSRF-TOKEN={{csrf_token()}}';
+    </script>
 </head>
 <body>
     @yield('content')
 
     @section('script-bottom')
-        {{-- place javascript here --}}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type='text/javascript' src="{{elixir('js/vendor.js')}}"></script>
+        <script type='text/javascript' src="{{elixir('js/main.js')}}"></script>
         {{-- Include all compiled plugins (below), or include individual files as needed --}}
         <script src="{{ secure_asset('/js/bootstrap.js') }}"></script>
     @show
+<toasty></toasty>
 </body>
 </html>

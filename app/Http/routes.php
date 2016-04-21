@@ -50,6 +50,11 @@ Route::get('/register', ['as' => 'register', 'uses' => 'Auth\AuthController@getR
 Route::post('auth/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
 Route::post('/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
 
+/* with restangular */
+Route::get('/ajaib/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
+Route::post('/ajaib/login', ['as' => 'login', 'uses' => 'Auth\AuthController@doLogin']);
+Route::post('/ajaib/register', ['as' => 'register', 'uses' => 'Auth\AuthController@doRegister']);
+/* end with restangular */
 /**
  * Success Register
  */
