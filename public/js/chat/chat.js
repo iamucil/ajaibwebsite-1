@@ -461,7 +461,21 @@ function prependChatNotificationsPublic(user_name,sender_id,user,time) {
 function presence(details) {
     var uuid = 'uuid' in details && (''+details.uuid).toLowerCase();
     if (uuid && uuid.split("-",1)[0]!=="operator") {
-        AppendListUsers(details.data,details.action);
+        if (details.data !== undefined && (details.data.sender_id !== undefined || details.data.sender_id !== undefined)) {
+            // get photo path
+            $.ajax({
+                type: "GET",
+                url: "https://" + domain + "/dashboard/users/photo/"+details.data.sender_id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    details.data.photo = data.data.path;
+                    AppendListUsers(details.data,details.action);
+                }
+            });
+        } else {
+            AppendListUsers(details.data,details.action);
+        }
     }
 }
 //================== end presence function ===================
