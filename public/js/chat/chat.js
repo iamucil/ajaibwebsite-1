@@ -461,7 +461,11 @@ function prependChatNotificationsPublic(user_name,sender_id,user,time) {
 function presence(details) {
     var uuid = 'uuid' in details && (''+details.uuid).toLowerCase();
     if (uuid && uuid.split("-",1)[0]!=="operator") {
-        var id = details.data.sender_id;
+        if (details.data.sender_id === undefined) {
+            var id = "";
+        } else {
+            var id = details.data.sender_id;
+        }
         // get photo path
         $.ajax({
             type: "GET",
