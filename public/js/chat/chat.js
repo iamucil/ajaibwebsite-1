@@ -465,7 +465,7 @@ function presence(details) {
             // get photo path
             $.ajax({
                 type: "GET",
-                url: "https://" + domain + "/dashboard/users/photo/"+id,
+                url: "https://" + domain + "/dashboard/users/photo/"+details.data.sender_id,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (data) {
