@@ -14,7 +14,7 @@
                         <div class="checkbox">
                             <label>
                                 <input type="hidden" name="set_parent" value="0" />
-                                <input type="checkbox" name="set_parent" value="1" @unless ($request->set_parent == 0) checked="true" @endunless> Check me out as parent Menu
+                                <input type="checkbox" name="set_parent" value="1" @unless ($request->set_parent == 0) checked="true" @endunless> Check me out as child Menu
                             </label>
                         </div>
                     </div>
