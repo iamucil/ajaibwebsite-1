@@ -44,7 +44,7 @@ class MenuController extends Controller {
         $parent_item    = $items[0];
         $grid           = self::_createTree($items, $parent_item);
         $data           = response()->json($grid);*/
-        return view("Menu::index", compact('data'));
+        return response()->json($data,200);
     }
 
     /**
@@ -56,10 +56,10 @@ class MenuController extends Controller {
     {
         $roles      = Role::lists('name', 'id');
         $request->merge([
-            'set_parent' => (int)$request->old('set_parent', 0)
+            
         ]);
 
-        return view('Menu::create', compact('roles', 'request'));
+        return response()->json(['data'=>['set_parent' => false],'roles'=> $roles],200);
     }
 
     /**
@@ -119,8 +119,8 @@ class MenuController extends Controller {
 
     public function listParentMenu()
     {
-        $menus      = $parents    = Menu::where('parent_id', '=', '0')->get();
-        return view('Menu::list_parent_menu', compact('menus'));
+        $parents    = Menu::where('parent_id', '=', '0')->get();
+        return response()->json(['data' => $parents],200);
     }
 
     public function routeCollections(Router $router)
@@ -151,8 +151,7 @@ class MenuController extends Controller {
             $index+=1;
         }
         $routes     = collect((array)$route_lists);
-        // dd($routes->toJson());
-        return view('Menu::route_lists', compact('routes'));
+        return response()->json(['data'=>$routes],200);
     }
 
     /**

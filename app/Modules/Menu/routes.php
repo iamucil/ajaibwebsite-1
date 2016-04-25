@@ -1,13 +1,10 @@
 <?php
 
-Route::group(['module' => 'Menu', 'prefix' => 'dashboard', 'namespace' => 'App\Modules\Menu\Controllers', 'middleware' => ['auth', 'role:admin|root']], function() {
+Route::group(['module' => 'Menu', 'prefix' => 'ajaib', 'namespace' => 'App\Modules\Menu\Controllers', 'middleware' => ['auth', 'role:admin|root']], function() {
 
     Route::group(['prefix' => 'menus', ], function() {
-        Route::get('route-list', 'MenuController@routeCollections')->name('route-list');
-        Route::get('parent', 'MenuController@listParentMenu')->name('parent_menu');
-        Route::get('icons-pack', function () {
-            return view('Menu::dripicons');
-        })->name('icons-pack');
+        Route::get('route_list', 'MenuController@routeCollections')->name('route-list');
+        Route::get('parent', 'MenuController@listParentMenu')->name('parent_menu');        
     });
 
     Route::resource('menus', 'MenuController', [
