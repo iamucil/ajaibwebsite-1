@@ -722,7 +722,7 @@ function publish(senderId) {
                         "role"          : roles,
                         "path"          : null,
                         "type"          : "text",
-                        "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
+                        "pn_gcm"        : {"data": {"title": 'Ajaib', "chat_id": message_id, "message": text}}
                     },
                     callback: function (m) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -1238,7 +1238,7 @@ function TriggerUploadFile(obj) {
                                         "role"          : roles,
                                         "type"          : type,
                                         "path"          : imagePath,
-                                        "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
+                                        "pn_gcm"        : {"data": {"title": 'Ajaib',"chat_id": message_id, "message": imagePath}}
                                     },
                                     callback: function (m) {
                                         //TODO: publish event -> don't forget to disable this debug when it goes online
