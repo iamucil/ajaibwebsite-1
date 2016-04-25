@@ -461,18 +461,21 @@ function prependChatNotificationsPublic(user_name,sender_id,user,time) {
 function presence(details) {
     var uuid = 'uuid' in details && (''+details.uuid).toLowerCase();
     if (uuid && uuid.split("-",1)[0]!=="operator") {
-        var id = details.data.sender_id;
-        // get photo path
-        $.ajax({
-            type: "GET",
-            url: "https://" + domain + "/dashboard/users/photo/"+id,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (data) {
-                details.data.photo = data.data.path;
-                AppendListUsers(details.data,details.action);
-            }
-        });
+        if (details.data !== undefined && (details.data.sender_id !== undefined || details.data.sender_id !== undefined)) {
+            // get photo path
+            $.ajax({
+                type: "GET",
+                url: "https://" + domain + "/dashboard/users/photo/"+details.data.sender_id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    details.data.photo = data.data.path;
+                    AppendListUsers(details.data,details.action);
+                }
+            });
+        } else {
+            AppendListUsers(details.data,details.action);
+        }
     }
 }
 //================== end presence function ===================
@@ -719,7 +722,7 @@ function publish(senderId) {
                         "role"          : roles,
                         "path"          : null,
                         "type"          : "text",
-                        "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
+                        "pn_gcm"        : {"data": {"title": 'Ajaib', "chat_id": message_id, "message": text}}
                     },
                     callback: function (m) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -1235,7 +1238,7 @@ function TriggerUploadFile(obj) {
                                         "role"          : roles,
                                         "type"          : type,
                                         "path"          : imagePath,
-                                        "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
+                                        "pn_gcm"        : {"data": {"title": 'Ajaib',"chat_id": message_id, "message": imagePath}}
                                     },
                                     callback: function (m) {
                                         //TODO: publish event -> don't forget to disable this debug when it goes online
