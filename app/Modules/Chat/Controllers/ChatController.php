@@ -57,7 +57,7 @@ class ChatController extends Controller
         $ownerId = Authorizer::getResourceOwnerId();
         $chat = Chat::where('sender_id', $ownerId)
             ->orWhere('receiver_id', $ownerId)
-            ->get(['id AS chat_id', 'sender_id', 'message', 'read', 'created_at'])
+            ->get(['id AS chat_id', 'sender_id', 'message', 'read', 'created_at', 'type', 'path'])
 			->toArray();
 
         return response()->json(array(
@@ -340,10 +340,14 @@ class ChatController extends Controller
                 case "1":
                     $return = $this->updateProcess($chat, $data);
                     break;
+                case "2":
+                    // update status by id
+                    $return = $this->updateProcess($chat, $data, false, true);
+                    break;
                 default:
                     if ($this->valueValidation($chat->receiver_id) && !($this->valueValidation($chat->read)) && $chat->receiver_id === auth()->user()->id) {
                         // sudah ada operator yang handle dan pesan belum dibaca
-                        $return = $this->updateProcess($chat, $data, false);
+                        $return = $this->updateProcess($chat, $data, false, false);
                     } else if ($this->valueValidation($chat->receiver_id) && $chat->receiver_id != auth()->user()->id) {
                         // if operator trying to handle users that still serviced by other operator
                         // return to be parse as json
@@ -353,7 +357,7 @@ class ChatController extends Controller
                         );
                     } else if (!$this->valueValidation($chat->receiver_id)){
                         // belum ada yg handle
-                        $return = $this->updateProcess($chat, $data, true);
+                        $return = $this->updateProcess($chat, $data, true, false);
                     } else if ($this->valueValidation($chat->receiver_id) && $chat->receiver_id === auth()->user()->id) {
                         // show notif, this is the owner
                         // return to be parse as json
@@ -381,7 +385,7 @@ class ChatController extends Controller
      * @param $data, used to be parameter and value to be updated
      * @return array
      */
-    protected function updateProcess($chat, $data, $isPublic)
+    protected function updateProcess($chat, $data, $isPublic, $id)
     {
         /**
         // pop the action key from data array
@@ -395,16 +399,21 @@ class ChatController extends Controller
          */
 
         // update chat
-        if ($isPublic) {
-            $parameter = ["read"=>$data["read"],"receiver_id"=>auth()->user()->id];
+        if ($id) {
+            $success = $chat::where("id",$chat->id)
+                ->update(["status"=>$data["status"]]);
         } else {
-            $parameter = ["read"=>$data["read"]];
-        }
+            if ($isPublic) {
+                $parameter = ["read"=>$data["read"],"receiver_id"=>auth()->user()->id];
+            } else {
+                $parameter = ["read"=>$data["read"]];
+            }
 
-        $success = $chat::where("receiver_id",$chat->receiver_id)
-            ->where("sender_id",$chat->sender_id)
-            ->whereRaw("date(chats.created_at) > date(now())-integer '".env("UNSEEN_MESSAGE")."'")
-            ->update($parameter);
+            $success = $chat::where("receiver_id",$chat->receiver_id)
+                ->where("sender_id",$chat->sender_id)
+                ->whereRaw("chats.read is null AND date(chats.created_at) > date(now())-integer '".env("UNSEEN_MESSAGE")."'")
+                ->update($parameter);
+        }
 
         if ($success) {
             $status = 201;
@@ -509,9 +518,9 @@ class ChatController extends Controller
         if ($userId) {
             $chat       = Chat::find($chatid);
             $type       = $chat->type;
-            if($type != 'image/png' && $type != 'image/jpg' && $type != 'image/gif' && $type != 'image/jpeg' ) {
-                if(!is_null($chat->message)){
-                    $return = $this->asset->downloadFile($chat->message);
+            if($type == 'image/png' || $type == 'image/jpg' || $type == 'image/gif' || $type == 'image/jpeg' ) {
+                if(!is_null($chat->path)){
+                    $return = $this->asset->downloadFile($chat->path);
                 }else{
                     $return = response()->json('Not Found', 404);
                 }

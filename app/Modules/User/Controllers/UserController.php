@@ -326,7 +326,7 @@ class UserController extends Controller {
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereIn('roles.name', ['users'])
             ->orderBy('users.name', 'DESC')
-            ->selectRaw('users.id,users.name as user_name,case when users.firstname = \'\' then users.name else users.firstname end as user,users.lastname,users.channel,users.photo')
+            ->selectRaw('users.id,users.device_id,users.name as user_name,case when users.firstname = \'\' then users.name else users.firstname end as user,users.lastname,users.channel,users.photo')
             ->get();
         return response()->json(array(
             'status'=>200,
@@ -382,7 +382,12 @@ class UserController extends Controller {
         }
     }
 
-    public function getPhoto($id)
+    public function getPhotoPath($id) {
+        $user       = User::find($id);
+        return response()->json(['code' => 200, 'message' => 'success', 'data' => array('path' => $user->photo)], 200);
+    }
+
+    public function getPhoto($id,$path=false)
     {
         $user       = User::find($id);
         return $this->Asset->downloadFile($user->photo);
