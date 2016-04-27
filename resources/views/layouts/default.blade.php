@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <!--[if IE]><meta http-equiv="x-ua-compatible" content="IE=9" /><![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Online Chat - @yield('title')</title>
+    <title> Ajaib - Tell Me Your Wishes - @yield('title')</title>
     <meta name="description" content="Ajaib is personal assistant application">
     <meta name="keywords" content="assistant, personal assistant">
     <meta name="author" content="getajaib.com">

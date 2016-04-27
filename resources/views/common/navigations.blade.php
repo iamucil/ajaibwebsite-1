@@ -20,13 +20,13 @@
                     <li class="devider"></li>
                     <li><a href="#tf-team" class="page-scroll">Cara kerja</a></li>
                     <li class="devider"></li>
-                    <li><a href="#tf-works" class="page-scroll">Testimoni</a></li>
-                    <li class="devider"></li>
+                   <!--  <li><a href="#tf-works" class="page-scroll">Testimoni</a></li>
+                    <li class="devider"></li> -->
                     <li><a href="#" class="page-scroll">Download</a></li>
                     <li class="devider"></li>
-                    <li><a href="#tf-contact" class="page-scroll">F.A.Q</a></li>
+                    <li><a href="#tf-works" class="page-scroll">F.A.Q</a></li>
                     <li class="devider"></li>
-                    <li><a href="#" class="page-scroll">Hubungi Kami</a></li>
+                    <li><a href="#tf-contact" class="page-scroll">Hubungi Kami</a></li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
