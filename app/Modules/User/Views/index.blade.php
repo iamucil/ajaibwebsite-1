@@ -145,6 +145,11 @@
         eXcell_button.prototype = new eXcell;
 
         function setStatus (state, id) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
             var url_setactive   = "{{ route('user.setactive', ['id' => "id"]) }}";
             var url_destroy     = "{{ route('user.destroy', ['id' => "id"]) }}";
             url_setactive       = url_setactive.replace(/id/g, id);
@@ -171,7 +176,6 @@
                     });
                     break;
                 case 'ACTIVATE':
-                    console.log(url_setactive);
                     $.ajax({
                         cache: false,
                         url : url_setactive,
