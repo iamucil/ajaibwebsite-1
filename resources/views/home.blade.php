@@ -202,7 +202,7 @@
                         <div class="clearfix"></div>
             </div>
 
-            <div class="space"></div>
+            {{--<div class="space"></div>--}}
          <!--    <div class="row">
                 <div class="col-md-4">
                     <div class="testi-chat">
@@ -233,22 +233,16 @@
                 </div>
             </div> -->
                       <div class="row">
-                        <div class="col-md-6">
+                        {{--<div class="col-md-6">--}}
                             <div class="faq-nest">
-                                <h4>How does the free trial work?</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                                <h4>Can I switch plans later?</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+                                <h4>Apa itu AJAIB?</h4>
+                                <p>Ajaib adalah asisten pribadi yang siap membantu memenuhi kebutuhan anda.</p>
+                                <h4>Bagaimana cara menggunakannya?</h4>
+                                <p>Pastikan aplikasi ajaib sudah terinstall di device anda. Lakukan chat pada menu chat yang telah disediakan, beri tahu kami apa kebutuhan anda, operator kami akan memberikan rekomendasi terbaik untuk memenuhi kebutuhan anda.</p>
+                                <h4>Aplikasi sudah terinstall dan saya sudah register tapi kenapa saya tidak mendapatkan kode konfirmasi baik melalui email maupun sms?</h4>
+                                <p>Setiap pengguna yang telah melakukan registrasi maka akan masuk ke antrian untuk menggunakan aplikasi Ajaib, jika anda belum mendapatkan kode konfirmasi maka anda belum diverifikasi oleh admin kami dan mohon untuk dapat menunggu sampai pada antrian anda.</p>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="faq-nest">
-                                <h4>Do I need to choose plan now?</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                                <h4>What payment types do you accept?</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. </p>
-                            </div>
-                        </div>
+                        {{--</div>--}}
                     </div>
      
             <br>
