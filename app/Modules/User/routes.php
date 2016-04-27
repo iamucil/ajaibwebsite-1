@@ -24,6 +24,7 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
         Route::post('/users/store', ['as' => 'user.store', 'uses' => 'UserController@storeLocal']);
         Route::get('/users/{user}/edit', ['as' => 'user.edit', 'uses' => 'UserController@edit']);
         Route::PUT('/users/{user}', ['as' => 'user.update', 'uses' => 'UserController@updateProfile']);
+        Route::get('/users/data', ['as' => 'user.json', 'uses' => 'UserController@getUsers']);
     });
 
     Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:operator|admin|root']], function() {

@@ -8,6 +8,7 @@ Route::group(['module' => 'Menu', 'prefix' => 'dashboard', 'namespace' => 'App\M
         Route::get('icons-pack', function () {
             return view('Menu::dripicons');
         })->name('icons-pack');
+        Route::get('assign-roles', 'MenuController@assignRole')->name('menus.assign-roles');
     });
 
     Route::resource('menus', 'MenuController', [

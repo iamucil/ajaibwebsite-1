@@ -291,15 +291,33 @@ class UserController extends Controller {
         if(!$request->has('_method') OR $request->_method !== 'DELETE'){
             App::abort(403, 'Unauthorized action.');
         }
-        $result         = $user->where('id', '=', $id)->update(['status' => false]);
-        flash()->success('Your data has been deleted');
 
-        return redirect()->route('user.list');
+        $result         = $user->where('id', '=', $id)->update(['status' => false]);
+        if (request()->ajax()){
+            if((bool)$result === true) {
+                return response()->json([
+                    'result' => true,
+                    'message' => 'Your data has been deleted',
+                    'status' => 201
+                ], 201, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+            } else {
+                return response()->json([
+                    'result' => false,
+                    'message' => 'Error occured when deleting your data',
+                    'status' => 500
+                ], false, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+            }
+        }else{
+            flash()->success('Your data has been deleted');
+
+            return redirect()->route('user.list');
+        }
     }
 
     public function getListUsers(Request $request)
     {
-        $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
+        $users          = [];
+        /*$users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->whereNotIn('roles.name', ['root'])
             ->orderBy('users.name', 'DESC')
@@ -307,10 +325,11 @@ class UserController extends Controller {
             ->orderBy('roles.name', 'ASC')
             ->selectRaw('users.name as username, roles.id as role_id, users.*')
             // ->distinct()
-            ->paginate(15);
+            ->paginate(15);*/
         // $sms    = Twilio::message('+6285640427774', 'Your Ajaib Verification code is 801753');
 
         // dd(Twilio::message('+6285227052004', 'shit'));
+        // dd($users);
         return view('User::index', compact('users'));
     }
 
@@ -362,13 +381,33 @@ class UserController extends Controller {
         // dd($user->roles());
         $this->authorize('setStatus', $user);
 
-        if($this->User->setActive($id)){
-            flash()->success('Activated user success');
-        }else{
-            flash()->error('Error occured');
+        if(!$request->has('_method') OR $request->_method !== 'PUT'){
+            App::abort(403, 'Unauthorized action.');
         }
+        $result         = $this->User->setActive($id);
+        if (request()->ajax()){
+            if((bool)$result === true) {
+                return response()->json([
+                    'result' => true,
+                    'message' => 'User has ben activated',
+                    'status' => 201
+                ], 201, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+            } else {
+                return response()->json([
+                    'result' => false,
+                    'message' => 'Error occured when processing your request. Please try again',
+                    'status' => 500
+                ], false, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+            }
+        }else{
+            if($result){
+                flash()->success('Activated user success');
+            }else{
+                flash()->error('Error occured');
+            }
 
-        return redirect()->route('user.list');
+            return redirect()->route('user.list');
+        }
     }
 
     public function uploadPhoto(Request $request)
@@ -412,7 +451,7 @@ class UserController extends Controller {
         }
 
         $this->authorize('showProfile', $User);
-        $user       = $User->find($id);
+        $user               = $User->find($id);
         $user->firstname    = $request->firstname;
         $user->lastname     = $request->lastname;
         $user->country_id   = $request->country_id;
@@ -426,4 +465,66 @@ class UserController extends Controller {
         return redirect()->route('user.profile', $id);
     }
 
+    public function getUsers()
+    {
+        $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', function ($join) {
+                return $join->on('roles.id', '=', 'role_user.role_id');
+            })
+            ->select('roles.name as role_name', 'roles.id as role_id', 'users.*')
+            ->orderBy('users.status', 'ASC')
+            ->orderBy('users.created_at', 'DESC')
+            ->get();
+
+        $rows       = [];
+        $idx        = 0;
+        foreach ($users as $user) {
+            $rows[$idx]['id']       = (int)$user->id;
+            $link_profile           = route("user.profile", $args = ['id' => $user->id]);
+            switch ((bool)$user->status) {
+                case true:
+                    $status_img     = asset("/img/icons/green.gif");
+                    $link_aktivasi  = '<i class="fontello-ok-outline">&nbsp;</i>^javascript:alertify.log("This user is already active");;^_self';
+                    if(strtoupper($user->role_name) == 'USERS'){
+                        $link_delete    = '<i class="fontello-cancel-circled">&nbsp;</i>^javascript:setStatus("deactive", "'.$user->id.'");^_self';
+                    }else{
+                        $link_delete    = '<i class="fontello-cancel-circled-outline">&nbsp;</i>^javascript:alertify.log("You can not delete this data. Data is not yet activated.");;^_self';
+                    }
+                    break;
+                case false:
+                    $status_img     = asset("/img/icons/red.gif");
+                    $link_aktivasi  = '<i class="fontello-ok">&nbsp;</i>^javascript:setStatus("activate", "'.$user->id.'");^_top';
+                    $link_delete    = '<i class="fontello-cancel-circled-outline">&nbsp;</i>^javascript:alertify.log("You can not delete this data. Data is not yet activated.");;^_self';
+                    break;
+                default:
+                    $status_img     = asset("/img/icons/yellow.gif");
+                    $link_aktivasi  = '<i class="fontello-ok-outline">&nbsp;</i>^javascript:alertify.log("This user is already active");;^_self';
+                    $link_delete    = '<i class="fontello-cancel-circled-outline">&nbsp;</i>^javascript:alertify.log("You can not delete this data. Data is not yet activated.");;^_self';
+                    break;
+            }
+            $rows[$idx]['data']   = [
+                (int)$user->id,
+                $user->firstname ?: $user->name,
+                $user->phone_number,
+                $user->email,
+                $user->role_name,
+                date('F d, Y', strtotime($user->created_at)),
+                $status_img,
+                '<i class="glyphicon glyphicon-user" title="Profile User">&nbsp;</i>^'.$link_profile.'^_self',
+                $link_delete,
+                $link_aktivasi,
+            ];
+
+            $idx++;
+        }
+
+        // id - (mixed) the column's id
+        // width - (number) the column's width
+        // type - (string) the column's type
+        // align - (string) the column's alignment
+        // sort - (mixed) the sorting type
+        // value - (string) the column's title
+
+        return response()->json(compact('head', 'rows'), 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+    }
 }
