@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/dhtmlx/grid/skins/web/dhtmlxgrid.css') }}">
     <style type="text/css">
         div.gridbox .objbox {
-            height: auto !important;
+            /*height: auto !important;*/
         }
     </style>
 @stop
@@ -87,7 +87,7 @@
         grid.enableAutoHeight(true,400);
         grid.setColSorting('na,str,na,na,str,date,na');
         grid.setColTypes("cntr,ro,ro,ro,ro,ro,img,button,button,button");
-        grid.enableAutoHeight(true);
+        // grid.enableAutoHeight(true);
         grid.init();
         grid.load(json_data,'json');
 
