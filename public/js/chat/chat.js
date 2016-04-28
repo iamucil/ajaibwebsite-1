@@ -1532,12 +1532,12 @@ function load_js(id_obj,obj) {
     //script.href = lightboxcss;
     //head.appendChild(script);
 
+    // enter event -> send message
     $("#ct_"+obj.user_name).on('keyup', function(e) {
         if (e.which == 13 && ! e.shiftKey) {
             publish(id_obj);
         }
     });
-
     $('.chat-pop-over').webuiPopover({
         placement: 'auto-top',
         padding: false,
@@ -1550,7 +1550,7 @@ function load_js(id_obj,obj) {
         dismissible: true, // if popover can be dismissed by  outside click or escape key
         closeable: true, //display close button or not
         onShow: function ($element) {
-            $("#cc_"+obj.user_name).scrollTop($("#cc_"+obj.user_name)[0].scrollHeight);
+            $("#cc_"+obj.user_name).scrollTop($('#cc_'+obj.user_name).prop("scrollHeight"));
         }
     });
 }
@@ -1710,7 +1710,7 @@ function renderMessage(id, actor, text, time, user, type, path, status) {
     }
 
     $('.chat-conversation#cc_' + user).append(appendElm);
-    $('.chat-conversation#cc_' + user).animate({scrollTop:$('.chat-conversation#cc_' + user)[0].scrollHeight},500);
+    $('.chat-conversation#cc_' + user).scrollTop(9999);
 }
 
 function displayCallback(m, e, c, d, f) {
