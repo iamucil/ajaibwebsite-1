@@ -1,127 +1,65 @@
-<!-- top nav -->
-<nav class="navbar navbar-default top-bar-nest" ng-controller="TopbarController">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-
-                <li class="dropdown" uib-dropdown>
-                    <a href="#" class="dropdown-toggle text-gray" id="simple-dropdown" uib-dropdown-toggle role="button"
-                       aria-expanded="false"><img alt="" class="admin-pic img-circle" src="{{ $authUser->photo }}">
-                        Hi, {{ Auth::user()->name }} <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-nest profile-dropdown" uib-dropdown-menu aria-labelledby="simple-dropdown" role="menu">
-                        <li>
-                            <a href="{{ route('user.profile', AUTH::user()->id) }}"><i class="icon-user"></i>
-                                Profile<span class="text-aqua fontello-record"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" ng-click="logout()">
-                                <i class="icon-upload"></i> Log Out <span class="text-aqua fontello-cd"></span>
-                            </a>
-                        </li>
-
-                    </ul>
-                </li>
+<li>
+    <a href="#!"><img class="akram-logo" src="img/ajaib-logo-web.png"></a>
+</li>
+<!-- User profile -->
+<li>
+    <a class='codrops-icon codrops-icon-prev dropdown-button' href='#' data-activates='dropdown1'>
+        <img src="{{ $authUser->photo }}" alt="" class="acram-id circle responsive-img"> Hi, <strong>{{ Auth::user()->name }}</strong><i class="material-icons"></i></a>    
+    <ul id='dropdown1' class='dropdown-content'>        
+        <li>
+            <a href="{{ route('user.profile', AUTH::user()->id) }}"><i class="icon-user"></i>
+                Profile<span class="text-aqua fontello-record"></span>
+            </a>
+        </li>
+        <li>
+            <a href="#" ng-click="logout()">
+                <i class="icon-upload"></i> Log Out <span class="text-aqua fontello-cd"></span>
+            </a>
+        </li>
+    </ul>    
+</li>
 
 
-            </ul>
-            <form class="navbar-form navbar-left" style="position:relative" role="search">
-                <!-- Search | has-form wrapper -->
-                <div class="dark"></div>
-                <input class="input-top" type="text" placeholder="search">
-            </form>
 
-            
-            <ul class="nav navbar-nav navbar-right">
-                <!--  message end -->
-                <li class="dropdown" id="chat-notification-public" uib-dropdown>
-                    <a title="Public Chats"  href="#" class="dropdown-toggle" id="chat-public" uib-dropdown-toggle role="button" aria-expanded="false"><i
-                                class="fontello-chat"></i>&nbsp;&nbsp;<span
-                                class="label edumix-msg-noft"></span><span class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-nest" role="menu" uib-dropdown-menu aria-labelledby="chat-public">
-                        <li class="top-dropdown-nest"><span class="label round bg-blue">PUBLIC CHATS</span>
-                        </li>
-                        <li class="edumix-sticky-title">
-                            {{--<a href="#">--}}
-                            {{--<h3 class=" text-black"> Big Boss<b class="text-red fontello-record" ></b><span>Just Now<small></small></span>--}}
-                            {{--</h3>--}}
-                            {{--<p class=" text-black">Important task!</p>--}}
-                            {{--</a>--}}
-                        </li>
-
-                        <li>
-                            <div class="slim-scroll">
-                                {{--<div>--}}
-                                    {{--<a href="#">--}}
-                                        {{--<h3>Noel A. Riley<b class="text-green fontello-record"></b><span>12:23<small>--}}
-                                                    {{--PM--}}
-                                                {{--</small></span>--}}
-                                        {{--</h3>--}}
-                                        {{--<p>Dua dua sayang adik kakak</p>--}}
-                                    {{--</a>--}}
-                                {{--</div>--}}
-                                {{--<div>--}}
-                                    {{--<a href="#">--}}
-                                        {{--<h3>Shirley J. Carneal<b class="text-gray fontello-record"></b><span>10:11<small>--}}
-                                                    {{--PM--}}
-                                                {{--</small></span>--}}
-                                        {{--</h3>--}}
-                                        {{--<p>Tiga tiga sayang kekasihku</p>--}}
-                                    {{--</a>--}}
-                                {{--</div>--}}
-                            </div>
-                        </li>
-                        <li class="bg-white pull-right" >
-                            <a href="#" >
-                                <div class="label bg-white">View All</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- message end -->
-                <!--  notification nest -->
-                <li class="dropdown" id="chat-notification" uib-dropdown>
-                    <a title="Private Chats" href="#" class="dropdown-toggle" id="chat-public" uib-dropdown-toggle role="button" aria-expanded="false"><i
-                                class="fontello-comment"></i>&nbsp;&nbsp;<span class="label edumix-noft"></span><span
-                                class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-nest" role="menu" uib-dropdown-menu aria-labelledby="chat-private">
-                        <li class="top-dropdown-nest"><span class="label round bg-red">PRIVATE CHATS</span>
-                        </li>
-                        <li>
-                            <div class="slim-scroll">
-
-                            </div>
-                        </li>
-                        <li class="bg-white pull-right">
-                            <a href="#">
-                                <div class="label bg-white">View All</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- notification nest end -->
-                <li>
-                    <button style="margin-top:9px;border" ng-click="menu2().toggle()"
-                            class="sideviewtoggle btn btn-default btn-xs icon-view-list">
-                    </button>
-                </li>
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-    </div>
-    <!-- /.container-fluid -->
-</nav>
-<!-- end of top nav -->
+<!-- Chat -->
+<li>
+    <a href="#" data-activates="slide-out" class="button-collapse"> <i class="small material-icons">perm_contact_calendar</i></a>
+</li>
+<li><a class='codrops-icon codrops-icon-prev dropdown-button' href='#' data-activates='dropdown-call'><i class="small material-icons">chat</i><span class="akram-badge">4</span></a>
+    <ul id='dropdown-call' class='dropdown-content chat-profile'>
+        <li>
+            <img src="img/thumb/27.jpg" alt="" class="circle responsive-img">
+            <h3>Agus Riyadi<small>Jus a second</small></h3>
+            <p>Hai ajaib aku lagi pengen sesuatu nih, kamu bisa bantu ga ? pastinya bisa dong yah namanya juga ajaib</p>
+        </li>
+        <li>
+            <img src="img/thumb/28.jpg" alt="" class="circle responsive-img">
+            <h3>Desi<small>1 minute ago</small></h3>
+            <p>Hai ajaib aku lagi pengen sesuatu nih, kamu bisa bantu ga ? pastinya bisa dong yah namanya juga ajaib</p>
+        </li>
+        <li>
+            <img src="img/thumb/29.jpg" alt="" class="circle responsive-img">
+            <h3>Anton<small>1 hour ago</small></h3>
+            <p>Hai ajaib aku lagi pengen sesuatu nih, kamu bisa bantu ga ? pastinya bisa dong yah namanya juga ajaib</p>
+        </li>
+    </ul>
+</li>
+<li><a class='codrops-icon codrops-icon-prev dropdown-button' href='#' data-activates='dropdown-call-02'><i class="small material-icons">announcement</i><span class="akram-badge">23</span></a>
+    <ul id='dropdown-call-02' class='dropdown-content chat-profile'>
+        <li>
+            <img src="img/thumb/27.jpg" alt="" class="circle responsive-img">
+            <h3>Agus Riyadi<small>Jus a second</small></h3>
+            <p>Hai ajaib aku lagi pengen sesuatu nih, kamu bisa bantu ga ? pastinya bisa dong yah namanya juga ajaib</p>
+        </li>
+        <li>
+            <img src="img/thumb/28.jpg" alt="" class="circle responsive-img">
+            <h3>Desi<small>1 minute ago</small></h3>
+            <p>Hai ajaib aku lagi pengen sesuatu nih, kamu bisa bantu ga ? pastinya bisa dong yah namanya juga ajaib</p>
+        </li>
+        <li>
+            <img src="img/thumb/29.jpg" alt="" class="circle responsive-img">
+            <h3>Anton<small>1 hour ago</small></h3>
+            <p>Hai ajaib aku lagi pengen sesuatu nih, kamu bisa bantu ga ? pastinya bisa dong yah namanya juga ajaib</p>
+        </li>
+    </ul>
+</li>

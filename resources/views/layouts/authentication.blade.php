@@ -28,7 +28,7 @@
     @yield('content')
 
     @section('script-bottom')
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type='text/javascript' src="{{secure_asset('/js/jquery.js')}}"></script>
         <script type='text/javascript' src="{{elixir('js/vendor.js')}}"></script>
         <script type='text/javascript' src="{{elixir('js/main.js')}}"></script>
         {{-- Include all compiled plugins (below), or include individual files as needed --}}
