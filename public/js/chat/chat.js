@@ -665,7 +665,7 @@ function publish(senderId) {
         var text = $('.chat-text#ct_' + obj.user_name).val();
 
         // adding device
-        addDeviceToChannel(obj);
+        //addDeviceToChannel(obj);
 
         var param = {
             sender_id: authUser.id,
@@ -1074,7 +1074,7 @@ function GenerateChatBox(obj,public,status) {
         $('.chat-bottom').append(elm);
         RenderHistory(obj, obj.user_name);
         // reload js
-        load_js();
+        load_js(publish_object,obj);
         //PUBNUB.bind( 'keyup', $("#ct_"+obj.user_name), function(e) {
         //
         //    (e.keyCode || e.charCode) === 13 && publish('\'' + obj.sender_id + '\'');
@@ -1179,7 +1179,7 @@ function TriggerUploadFile(obj) {
                         //logging(obj);
 
                         // adding device
-                        addDeviceToChannel(obj);
+                        //addDeviceToChannel(obj);
 
                         var param = {
                             sender_id: authUser.id,
@@ -1442,7 +1442,7 @@ function AppendChat(elm) {
 /**
  * It used to reload webuipopover.js, because after render oen the fly, the popup doesn't show
  */
-function load_js() {
+function load_js(id_obj,obj) {
     //$(".input-file").change(function(){
     //    if ($(this)[0].files && $(this)[0].files[0]) {
     //        //Get count of selected files
@@ -1519,7 +1519,7 @@ function load_js() {
     $('.chat-pop-over').webuiPopover({
         placement: 'auto-top',
         padding: false,
-        width: '300',//can be set with  number
+        width: '300',//can be set with  numbe   plr
         //height:'300',//can be set with  number
         height: '400',//can be set with  number
         animation: 'pop',
@@ -1528,9 +1528,14 @@ function load_js() {
         dismissible: true, // if popover can be dismissed by  outside click or escape key
         closeable: true, //display close button or not
         onShow: function ($element) {
-            lmnt = $element;
-            //console.log(lmnt);
-            $(lmnt).find('.chat-conversation').scrollTop(9999);
+            var lmnt = $element;
+
+            $("#ct_"+obj.user_name).on('keyup', function(e) {
+                if (e.which == 13 && ! e.shiftKey) {
+                    publish(id_obj);
+                }
+            });
+            $("#cc_"+obj.user_name).find('.chat-conversation').scrollTop(9999);
         }
     });
 }
@@ -1670,6 +1675,8 @@ function renderMessage(id, actor, text, time, user, type, path, status) {
 
         if (text === null || text === undefined) {
             text = "";
+        } else {
+            text = linkify(text);
         }
 
         switch(str) {
@@ -1722,5 +1729,14 @@ function updateStatusChat(message_id,m,action) {
         success: function (data) {
             console.log(data);
         }
+    });
+}
+
+function linkify(text) {
+    var urlRegex =/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(urlRegex, function(url) {
+        var a = '<a href="' + url + '">' + url + '</a>';
+        console.log(a);
+        return a;
     });
 }
