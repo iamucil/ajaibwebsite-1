@@ -490,6 +490,7 @@ class ChatController extends Controller
             chats.message,
             chats.read,
             chats.created_at as time,
+            chats.type,
             users.id as user_id,
             users.channel as sender_channel,
             users.name as user_name,
