@@ -116,6 +116,43 @@ class UserRepository
 
     }
 
+    public function maintenanceMode($status = 'offline')
+    {
+        $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', function ($join) {
+                return $join->on('roles.id', '=', 'role_user.role_id')->where('roles.name', '=', 'users');
+            })
+            ->select('roles.name as role_name', 'roles.id as role_id', 'users.*')
+            ->orderBy('users.status', 'ASC')
+            ->orderBy('users.created_at', 'DESC')
+            ->get();
+
+        if($users){
+            foreach ($users as $user) {
+                switch (strtoupper($status)) {
+                    case 'OFFLINE':
+                        $message    = 'System Maintenance';
+                        break;
+                    case 'ONLINE':
+                        $message    = 'System Online';
+                        break;
+                    default:
+                        $message    = 'System Maintenance';
+                        break;
+                }
+                Twilio::message('+'.$user->phone_number, $message);
+                Mail::send('emails.maintenance', ['user' => $user], function ($mail) use ($user) {
+                    $mail->from('noreply@getajaib.com', 'Ajaib');
+                    $mail->to($user->email, $user->name)->subject('Maintenance Mode');
+                });
+            }
+
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     protected function generateVerificationCode()
     {
         // $length = 6;

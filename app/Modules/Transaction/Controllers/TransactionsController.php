@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Modules\Transaction\Models\Transaction;
 use App\Modules\Transaction\Models\Category;
 use App\Modules\Transaction\Models\TransactionDetail;
+use App\Modules\Merchant\Models\Vendor;
 use Validator;
 use DB;
 use Crypt;
@@ -36,13 +37,14 @@ class TransactionsController extends Controller {
         $satuan_qty     = DB::table('quantities')
             ->orderBy('name', 'ASC')
             ->get();
+        $vendors        = Vendor::lists('name', 'id');
         $transactions   = response()->json($request->old('transactions', []));
         $satuan_qty     = response()->json($satuan_qty);
 
         $categories     = Category::where('type', '=', 'transaction')
             ->orderBy('name', 'ASC')->lists('name', 'id');
             // dd($satuan_qty);
-        return view('Transaction::create', compact('categories', 'satuan_qty', 'transactions'));
+        return view('Transaction::create', compact('categories', 'satuan_qty', 'transactions', 'vendors'));
     }
 
     /**
@@ -124,6 +126,7 @@ class TransactionsController extends Controller {
             $transaction->operator_id   = auth()->user()->id;
             $transaction->invoice_number    = $request->invoice_number;
             $transaction->number        = $request->invoice_number;
+            $transaction->vendor_id     = $request->vendor_id;
 
             if($transaction->save()){
                 $transaction->TransactionDetails()->saveMany($details);
@@ -147,13 +150,6 @@ class TransactionsController extends Controller {
     public function show($id)
     {
         $data       = Transaction::findOrFail($id);
-        // dd($data->AccountPayable);
-        // $transaction    = DB::table('transactions')
-        //     ->join('categories as Category', function ($join) {
-        //         $join->on('transactions.category_id', '=', 'Category.id');
-        //     })
-        //     ->where('transactions.id', '=', $id)->get();
-        // dd($transaction);
         return view('Transaction::show', compact('data'));
     }
 

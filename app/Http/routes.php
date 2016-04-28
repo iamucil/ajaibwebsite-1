@@ -29,6 +29,49 @@ Route::group([
     Route::get('/', ['as' => 'dashboard', function () {
         return view('admin');
     }]);
+
+    Route::post('/maintenance_mode', ['as' => 'set_maintenance', function () {
+        if(!request()->ajax()) {
+            App::abort(403, 'Unauthorized action.');
+        }
+        Storage::disk('local')->put('maintenance_mode.txt', ['maintenance_mode' => true]);
+        $exists = Storage::disk('local')->has('maintenance_mode.txt');
+        if($exists) {
+            $mUser      = new App\Repositories\UserRepository;
+            $mUser->maintenanceMode();
+        }
+        return response()->json(['status' => 200, 'message' => 'Maintenance'], 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+    }]);
+
+    Route::delete('/maintenance_mode', ['as' => 'unset_maintenance', function () {
+        if(!request()->ajax()) {
+            App::abort(403, 'Unauthorized action.');
+        }
+        $exists = Storage::disk('local')->has('maintenance_mode.txt');
+        if($exists) {
+            Storage::disk('local')->delete('maintenance_mode.txt');
+        }
+
+        return response()->json(['status' => 200, 'message' => 'Maintenance Off'], 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+    }]);
+
+    Route::get('/maintenance_mode', ['as' => 'check_maintenance', function () {
+        if(!request()->ajax()) {
+            App::abort(403, 'Unauthorized action.');
+        }
+        $exists = Storage::disk('local')->has('maintenance_mode.txt');
+        if($exists) {
+            return response()->json([
+                'status' => 201,
+                'message' => 'System is maintenance Mode'
+            ], 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+        } else {
+           return response()->json([
+                'status' => 404,
+                'message' => 'System alive'
+            ], 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+        }
+    }]);
 });
 
 Entrust::routeNeedsRole('/dashboard/*', ['root', 'admin', 'operator']);

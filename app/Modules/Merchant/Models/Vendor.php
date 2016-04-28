@@ -11,4 +11,9 @@ class Vendor extends Model
     {
         return $this->belongsTo('App\Modules\Merchant\Models\VendorCategory', 'category_id');
     }
+
+    public function transactions()
+    {
+        return $this->hasMany('App\Modules\Transaction\Models\Transaction');
+    }
 }

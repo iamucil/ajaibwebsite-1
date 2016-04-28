@@ -33,7 +33,7 @@ class AuthTimeOut
             if(auth()->check() AND !auth()->user()->hasRole('users')){
                 $this->session->forget('lastActivityTime');
                 Auth::logout();
-                return redirect()->route('login')->with(['warning' => 'You did not have activity about 20 '.$timeout/60 .' minutes.']);
+                return redirect()->route('login')->with(['warning' => 'You did not have activity about '.$timeout/60 .' minutes.']);
             }
         }
         $this->session->put('lastActivityTime',time());
