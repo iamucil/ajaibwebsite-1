@@ -10,20 +10,11 @@
             <form class="form-horizontal" novalidate="true" method="post" action="{{ route('menus.store') }}" enctype="mutipart/form-data">
                 {{ csrf_field() }}
                 <div class="form-group">
-                    <label for="select-role" class="col-sm-2 control-label">
-                        Select a Role
-                    </label>
-
-                    <div class="col-sm-2">
-                        {!! Form::select('role_id', $roles, old('role_id'), ['placeholder' => 'Pick a role...', 'class' => 'form-control', 'id' => 'select-roles']) !!}
-                    </div>
-                </div>
-                <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <div class="checkbox">
                             <label>
                                 <input type="hidden" name="set_parent" value="0" />
-                                <input type="checkbox" name="set_parent" value="1" @unless ($request->set_parent == 0) checked="true" @endunless> Check me out as parent Menu
+                                <input type="checkbox" name="set_parent" value="1" @unless ($request->set_parent == 0) checked="true" @endunless> Check me out as child Menu
                             </label>
                         </div>
                     </div>

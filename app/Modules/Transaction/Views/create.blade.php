@@ -54,6 +54,12 @@
                 </div>
             </div>
             <div class="form-group">
+                <label for="select-vendor" class="col-sm-2 control-label">Vendor</label>
+                <div class="col-sm-6">
+                    {!! Form::select('vendor_id', $vendors, old('vendor_id'), ['placeholder' => 'Pick a vendor...', 'class' => 'form-control', 'id' => 'select-vendor']) !!}
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-2 control-label" for="sub-total">Amount</label>
                 <div class="col-sm-5">
                     <input type="text" name="total" id="sub-total" readonly />

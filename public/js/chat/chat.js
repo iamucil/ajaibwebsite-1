@@ -1053,7 +1053,7 @@ function GenerateChatBox(obj,public,status) {
         }
         var elm = '<div id=\"cb_' + obj.user_name + '\"class=\"'+style+'\">' +
             '<div class="close-box">X</div>' +
-            '<a class="chat-pop-over" data-cn="' + obj.sender_channel + '" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
+            '<a class="chat-pop-over" data-id="'+obj.sender_id+'" data-cn="' + obj.sender_channel + '" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
             '<div class="chat-conversation slim-scroll-chat" id="cc_' + obj.user_name + '">' +
                 //chatText +
@@ -1062,11 +1062,11 @@ function GenerateChatBox(obj,public,status) {
             '<div class="form-group">' +
             '<textarea class="form-control chat-text" id="ct_' + obj.user_name + '" rows="3"></textarea>' +
             '</div>' +
-            '<span class="btn btn-default btn-file-ajaib"><i class="fontello-attach"></i><input id="input_'+obj.user_name+'" type="file" class="input-file" name="file"></span>' +
+            //'<span class="btn btn-default btn-file-ajaib"><i class="fontello-attach"></i><input id="input_'+obj.user_name+'" type="file" class="input-file" name="file"></span>' +
             //'<span class="btn lightbox"><a id="image_'+obj.user_name+'" href="#">Open</a></span>' +
             '<span style="display:none;" id="file_loader_'+obj.user_name+'" class="ajaib-chat-loader">uploading...</span>'+
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
-            //'<span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#upload-modal"><i class="fontello-attach"></i></span>'+
+            '<span data-id="'+obj.sender_id+'" class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#upload-modal"><i class="fontello-attach"></i></span>'+
             '</div>' +
             '</div>' +
             '</div>';
@@ -1116,7 +1116,7 @@ function CreateModal() {
         '</div>'+
         '<div class="modal-footer">'+
         '<button type="button" class="btn btn-default" data-dismiss="modal">Camcel</button>'+
-        '<button type="button" class="btn btn-primary">Save changes</button>'+
+        '<button type="button" class="btn btn-primary upload-submit">Save changes</button>'+
     '</div>'+
     '</div>'+
     '</div>';
@@ -1125,6 +1125,10 @@ function CreateModal() {
 
 function DestroyModal() {
     $("#myModal").remove();
+}
+
+function UploadModalProcess() {
+
 }
 
 function TriggerUploadFile(obj) {
@@ -1443,37 +1447,49 @@ function AppendChat(elm) {
  * It used to reload webuipopover.js, because after render oen the fly, the popup doesn't show
  */
 function load_js() {
-    //$(".input-file").change(function(){
-    //    if ($(this)[0].files && $(this)[0].files[0]) {
-    //        //Get count of selected files
-    //        var countFiles = $(this)[0].files.length;
-    //        var imgPath = $(this)[0].value;
-    //        var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
-    //        var image_holder = $("#image-holder");
-    //        image_holder.empty();
-    //        if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
-    //            if (typeof(FileReader) != "undefined") {
-    //                //loop for each file selected for uploaded.
-    //                for (var i = 0; i < countFiles; i++)
-    //                {
-    //                    var reader = new FileReader();
-    //                    reader.onload = function(e) {
-    //                        $("<img />", {
-    //                            "src": e.target.result,
-    //                            "class": "img-responsive"
-    //                        }).appendTo(image_holder);
-    //                    }
-    //                    image_holder.show();
-    //                    reader.readAsDataURL($(this)[0].files[i]);
-    //                }
-    //            } else {
-    //                alert("This browser does not support FileReader.");
-    //            }
-    //        } else {
-    //            alert("Pls select only images");
-    //        }
-    //    }
-    //});
+    $(".fontello-attach").click(function(){
+        $(".upload-submit").attr("data-id",$(this).parent().attr("data-id"));
+        $("#image-holder").children().remove();
+        $("#fileUpload").val("");
+    });
+
+    $(".upload-submit").click(function(){
+        var temp_obj = GetParam($(this).attr("data-id")+".private");
+        console.log(temp_obj);
+    });
+
+    $("#fileUpload").change(function(){
+        if ($(this)[0].files && $(this)[0].files[0]) {
+            //Get count of selected files
+            var countFiles = $(this)[0].files.length;
+            alert(countFiles);
+            var imgPath = $(this)[0].value;
+            var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+            var image_holder = $("#image-holder");
+            image_holder.empty();
+            if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
+                if (typeof(FileReader) != "undefined") {
+                    //loop for each file selected for uploaded.
+                    //for (var i = 0; i < countFiles; i++)
+                    //{
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $("<img />", {
+                                "src": e.target.result,
+                                "class": "img-responsive"
+                            }).appendTo(image_holder);
+                        }
+                        image_holder.show();
+                        reader.readAsDataURL($(this)[0].files[0]);
+                    //}
+                } else {
+                    alert("This browser does not support FileReader.");
+                }
+            } else {
+                alert("Pls select only images");
+            }
+        }
+    });
 
     // file js to be reload on the page
     var jsToBeLoaded = 'https://' + domain + '/js/jquery.webui-popover.js';
