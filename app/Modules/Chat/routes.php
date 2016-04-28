@@ -7,6 +7,8 @@ Route::group(array('module' => 'Chat', 'namespace' => 'App\Modules\Chat\Controll
 
         // api for get data chat
         Route::get('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.index', 'uses' => 'ChatController@index']);
+		// api for get data chat
+        Route::get('/chat/{chatid}', ['middleware' => 'oauth', 'as' => 'api.chat.item', 'uses' => 'ChatController@show']);
         // api for insert data chat
         Route::post('/chat', ['middleware' => 'oauth', 'as' => 'api.chat.store', 'uses' => 'ChatController@store']);
 		// api for get image chat
