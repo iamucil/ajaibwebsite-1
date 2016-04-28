@@ -722,7 +722,7 @@ function publish(senderId) {
                         "role"          : roles,
                         "path"          : null,
                         "type"          : "text",
-                        "pn_gcm"        : {"data": {"title": 'Ajaib', "chat_id": message_id, "message": text}}
+                        "pn_gcm"        : {"data": {"title": 'Ajaib', "chat_id": message_id, "type":"text", "message": text}}
                     },
                     callback: function (m) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -1242,7 +1242,7 @@ function TriggerUploadFile(obj) {
                                         "role"          : roles,
                                         "type"          : type,
                                         "path"          : imagePath,
-                                        "pn_gcm"        : {"data": {"title": 'Ajaib',"chat_id": message_id, "message": imagePath}}
+                                        "pn_gcm"        : {"data": {"title": 'Ajaib',"chat_id": message_id, "type":type, "message": imagePath}}
                                     },
                                     callback: function (m) {
                                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -1446,7 +1446,7 @@ function AppendChat(elm) {
 /**
  * It used to reload webuipopover.js, because after render oen the fly, the popup doesn't show
  */
-function load_js() {
+function load_js(id_obj,obj) {
     //$(".fontello-attach").click(function(){
     //    $(".upload-submit").attr("data-id",$(this).parent().attr("data-id"));
     //    $("#image-holder").children().remove();
@@ -1532,6 +1532,12 @@ function load_js() {
     //script.href = lightboxcss;
     //head.appendChild(script);
 
+    $("#ct_"+obj.user_name).on('keyup', function(e) {
+        if (e.which == 13 && ! e.shiftKey) {
+            publish(id_obj);
+        }
+    });
+
     $('.chat-pop-over').webuiPopover({
         placement: 'auto-top',
         padding: false,
@@ -1544,14 +1550,7 @@ function load_js() {
         dismissible: true, // if popover can be dismissed by  outside click or escape key
         closeable: true, //display close button or not
         onShow: function ($element) {
-            var lmnt = $element;
-
-            $("#ct_"+obj.user_name).on('keyup', function(e) {
-                if (e.which == 13 && ! e.shiftKey) {
-                    publish(id_obj);
-                }
-            });
-            $("#cc_"+obj.user_name).find('.chat-conversation').scrollTop(9999);
+            $("#cc_"+obj.user_name).scrollTop($("#cc_"+obj.user_name)[0].scrollHeight);
         }
     });
 }
@@ -1711,7 +1710,7 @@ function renderMessage(id, actor, text, time, user, type, path, status) {
     }
 
     $('.chat-conversation#cc_' + user).append(appendElm);
-    $('.chat-conversation#cc_' + user).scrollTop(9999);
+    $('.chat-conversation#cc_' + user).animate({scrollTop:$('.chat-conversation#cc_' + user)[0].scrollHeight},500);
 }
 
 function displayCallback(m, e, c, d, f) {
