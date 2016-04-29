@@ -112,9 +112,26 @@ class ChatController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function show($id)
+    public function show($chatid)
     {
-        //
+		$userId = $this->getOwnerId();
+        if ($userId) {
+			$chat = Chat::where('id', $chatid)
+					->get(['id AS chat_id', 'sender_id', 'message', 'read', 'created_at', 'type', 'path'])
+					->toArray();
+			
+			if($chat){
+				$return = response()->json(array(
+							'status' => 200,
+							'message' => 'success retrieve',
+							'data' => $chat
+						), 200);
+			}else{
+				$return = response()->json('Not Found', 404);
+			}
+			
+			return $return;
+		}
     }
 
     /**
