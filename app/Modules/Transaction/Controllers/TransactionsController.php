@@ -8,11 +8,10 @@ use Illuminate\Http\Request;
 use App\Modules\Transaction\Models\Transaction;
 use App\Modules\Transaction\Models\Category;
 use App\Modules\Transaction\Models\TransactionDetail;
-use App\Modules\Merchant\Models\Vendor;
 use Validator;
 use DB;
 use Crypt;
-
+use Auth;
 class TransactionsController extends Controller {
 
     /**
@@ -22,9 +21,12 @@ class TransactionsController extends Controller {
      */
     public function index()
     {
-        $transactions   = Transaction::orderBy('created_at', 'DESC')
-            ->paginate(10);
-        return view("Transaction::index", compact('transactions'));
+        $transactions   = Transaction::orderBy('created_at', 'DESC')->get();
+        foreach ($transactions as $key => $value) {
+            # code...
+            $transactions[$key]['enc_id'] = Crypt::encrypt($value['id']);
+        }
+        return response()->json($transactions,200);
     }
 
     /**
@@ -34,18 +36,13 @@ class TransactionsController extends Controller {
      */
     public function create(Request $request)
     {
-        $satuan_qty     = DB::table('quantities')
-            ->orderBy('name', 'ASC')
-            ->get();
-        $vendors        = Vendor::lists('name', 'id');
-        $transactions   = response()->json($request->old('transactions', []));
-        $satuan_qty     = response()->json($satuan_qty);
-
-        $categories     = Category::where('type', '=', 'transaction')
-            ->orderBy('name', 'ASC')->lists('name', 'id');
-            // dd($satuan_qty);
-        return view('Transaction::create', compact('categories', 'satuan_qty', 'transactions', 'vendors'));
+        $satuan_qty     = DB::table('quantities')->orderBy('name', 'ASC')->get();
+        $categories     = Category::where('type', '=', 'transaction')->orderBy('name', 'ASC')->lists('name', 'id');
+        $form = array();
+        $form['auth_user_name'] = Auth::user()->name;
+        return response()->json(['category' => $categories , 'satuan' => $satuan_qty, 'form' => $form] ,200);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -76,15 +73,16 @@ class TransactionsController extends Controller {
         // $check          = date_parse_from_format('m/d/YYYY', $request->tanggal);
         // $tanggal        = $request->tanggal;
         // dd(compact('tanggal', 'check'));
-        if($request->transactions AND is_array($request->transactions)) {
-            foreach ($request->transactions as $trans) {
-                $quantity+=$trans['quantity'];
-                $amount+=$trans['amount'];
+        $transactions = $request->transactions;
+        if($transactions AND is_array($transactions)) {
+            foreach ($transactions['quantity'] as $key => $qty) {
+                $quantity+=$qty;
+                $amount+=$transactions['amount'][$key];
                 $details[$index]    = new TransactionDetail([
-                    'quantity' => $trans['quantity'],
-                    'quantity_id' => $trans['satuan'],
-                    'amount' => $trans['amount'],
-                    'keterangan' => $trans['keterangan'],
+                    'quantity' => $qty,
+                    'quantity_id' => $transactions['satuan'][$key],
+                    'amount' => $transactions['amount'][$key],
+                    'keterangan' => $transactions['keterangan'][$key],
                     'item' => 'detail-#'.$index,
                 ]);
                 $index++;
@@ -111,11 +109,10 @@ class TransactionsController extends Controller {
         ]);
 
         if($validate->fails()){
-            flash()->error($validate->errors()->first());
-
-            return redirect()->route('transactions.create')
-                ->withInput($request->except(['_token']))
-                ->withErrors($validate);
+            return response()->json(array(
+                'status' => 500,
+                'message' => $validate->errors()->first()
+            ),500);
         }else{
             $transaction->category_id   = $request->category_id;
             $transaction->tanggal       = date('Y-m-d', strtotime($request->tanggal));
@@ -126,17 +123,18 @@ class TransactionsController extends Controller {
             $transaction->operator_id   = auth()->user()->id;
             $transaction->invoice_number    = $request->invoice_number;
             $transaction->number        = $request->invoice_number;
-            $transaction->vendor_id     = $request->vendor_id;
 
             if($transaction->save()){
-                $transaction->TransactionDetails()->saveMany($details);
-                flash()->success('Penyimpanan data berhasil');
-                return redirect()->route('transactions.index')
-                    ->withInput($request->except(['_token']));
+                $transaction->TransactionDetails()->saveMany($details);                
+                return response()->json(array(
+                    'status' => 200,
+                    'message' => 'Penyimpanan data berhasil'
+                ),200);
             }else{
-                flash()->error('Penyimpanan data gagal');
-                return redirect()->route('transactions.create')
-                    ->withInput($request->except(['_token']));
+                return response()->json(array(
+                    'status' => 500,
+                    'message' => 'Penyimpanan data gagal'
+                ),200);
             }
         }
     }
@@ -150,7 +148,11 @@ class TransactionsController extends Controller {
     public function show($id)
     {
         $data       = Transaction::findOrFail($id);
-        return view('Transaction::show', compact('data'));
+        $data['phone_number'] = $data->AccountPayable->phone_number;
+        $data['email'] = $data->AccountPayable->email;
+        $data['category_name'] = $data->Category->name;
+        $detail = $data->TransactionDetails;
+        return response()->json(['transaction'=>$data,'detail_transaction'=>$detail],200);
     }
 
     /**

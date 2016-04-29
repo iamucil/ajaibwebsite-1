@@ -56,6 +56,15 @@ class Handler extends ExceptionHandler
             return response()->view('errors.sql', ['exception' => $e]);
         }
 
+        //check if not login then redirect to login page
+        if($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException){
+            if(!Auth::check() AND !Cache::has('isLoggedIn') ){
+                return redirect('/login')->header('Content-Type' , 'text/html');                
+            }else{
+                return response()->view('layout.dashboard')->header('Content-Type' , 'text/html');
+            }
+        }
+
         return parent::render($request, $e);
     }
 }

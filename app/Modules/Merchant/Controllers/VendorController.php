@@ -27,8 +27,13 @@ class VendorController extends Controller
     {
         $vendors    = Vendor::orderBy('category_id', 'ASC')
             ->orderBy('created_at', 'DESC')
-            ->paginate(15);
-        return view('Merchant::index', compact('vendors'));
+            // ->paginate(15)
+            ->get();
+        foreach ($vendors as $key => $value) {
+            # code...
+            $value['category_name'] = $value->category->name;
+        }
+        return response()->json($vendors,200);
     }
 
     /**
@@ -39,10 +44,8 @@ class VendorController extends Controller
     public function create()
     {
         $categories     = Category::where('type', '=', 'vendor')
-            ->orderBy('name', 'ASC')->lists('name', 'id');
-        $methods        = $this->methods;
-        // dd($categories);
-        return view('Merchant::create', compact('categories', 'methods'));
+            ->orderBy('name', 'ASC')->lists('name', 'id');        
+        return response()->json(['categories' => $categories],200);
     }
 
     /**
@@ -59,24 +62,26 @@ class VendorController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        if($validate->fails()){
-            flash()->error($validate->errors()->first());
-
-            return redirect()->route('vendor.create')
-                ->withInput($request->except(['_token']))
-                ->withErrors($validate);
+        if($validate->fails()){            
+            return response()->json(array(
+                'status' => 500,
+                'message' => $validate->errors()->first()
+            ),500);
         }else{
             $vendor->category_id            = $request->category_id;
             $vendor->name                   = $request->name;
             $vendor->description            = $request->description;
 
             if($vendor->save()){
-                flash()->success('Penyimpanan data berhasil');
-                return redirect()->route('vendor.index');
-            }else{
-                flash()->error('Penyimpanan data gagal');
-                return redirect()->route('vendor.create')
-                    ->withInput($request->except(['_token']));
+                    return response()->json(array(
+                    'status' => 200,
+                    'message' => 'Penyimpanan data berhasil'
+                ),200);
+            }else{                
+                return response()->json(array(
+                    'status' => 500,
+                    'message' => 'Penyimpanan data gagal'
+                ),200);
             }
         }
     }
@@ -90,7 +95,8 @@ class VendorController extends Controller
     public function show($id)
     {
         $vendor     = Vendor::findOrFail($id);
-        return view('Merchant::show', compact('vendor'));
+        $vendor['category_name'] = $vendor->category->name;
+        return response()->json($vendor,200);
     }
 
     /**
@@ -101,11 +107,11 @@ class VendorController extends Controller
      */
     public function edit($id)
     {
-        $vendor         = Vendor::findOrFail($id);
         $categories     = Category::where('type', '=', 'vendor')
             ->orderBy('name', 'ASC')->lists('name', 'id');
-        $methods        = $this->methods;
-        return view('Merchant::edit', compact('categories', 'methods', 'vendor'));
+        $vendor         = Vendor::findOrFail($id);
+        $vendor['category_id'] = (string) $vendor['category_id'];
+        return response()->json(['vendors' => $vendor,'categories' => $categories] ,200);
     }
 
     /**
@@ -118,7 +124,10 @@ class VendorController extends Controller
     public function update(Request $request, $id)
     {
         if(!$request->isMethod('put')){
-            app::abort('403', 'unauthorized');
+                return response()->json(array(
+                    'status' => 403,
+                    'message' => 'Unauthorized action.'
+                ),403);
         }
 
         $vendor         = Vendor::findOrFail($id);
@@ -127,24 +136,27 @@ class VendorController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        if($validate->fails()){
-            flash()->error($validate->errors()->first());
+        if($validate->fails()){            
 
-            return redirect()->route('vendor.edit', $vendor->id)
-                ->withInput($request->except(['_token']))
-                ->withErrors($validate);
+            return response()->json(array(
+                'status' => 500,
+                'message' => $validate->errors()->first()
+            ),200);
         }else{
             $vendor->category_id            = $request->category_id;
             $vendor->name                   = $request->name;
             $vendor->description            = $request->description;
 
-            if($vendor->save()){
-                flash()->success('Penyimpanan data berhasil');
-                return redirect()->route('vendor.index');
-            }else{
-                flash()->error('Penyimpanan data gagal');
-                return redirect()->route('vendor.edit', $vendor->id)
-                    ->withInput($request->except(['_token']));
+            if($vendor->save()){                
+                return response()->json(array(
+                    'status' => 200,
+                    'message' => 'Penyimpanan data berhasil'
+                ),200);
+            }else{                
+                return response()->json(array(
+                    'status' => 500,
+                    'message' => 'Penyimpanan data gagal'
+                ),200);
             }
         }
     }
@@ -158,10 +170,16 @@ class VendorController extends Controller
     public function destroy($id)
     {
         $vendor     = Vendor::findOrFail($id);
-        $vendor->delete();
-
-        flash()->success('Data terhapus');
-
-        return redirect()->route('vendor.index');
+        $delete = $vendor->delete();
+        if($delete)
+            return response()->json(array(
+                    'status' => 200,
+                    'message' => 'Data berhasil dihapus.'
+                ),200);
+        else
+            return response()->json(array(
+                    'status' => 500,
+                    'message' => 'Data gagal dihapus.'
+                ),200);        
     }
 }

@@ -117,10 +117,8 @@ class AuthController extends Controller
         if ($validator->fails()) {
             if(request()->ajax()){
                 return response()->json([
-                    'status' => [
-                        'code' => 400,
-                        'message' => 'The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing)'
-                    ],
+                    'status' => 400,                        
+                    'message' => 'The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing)',
                     'data' => $request->all(),
                     'errors' => $validator->errors()
                 ]);
@@ -133,15 +131,31 @@ class AuthController extends Controller
         }
 
         $user           = $this->user->createOrUpdateUser($request->all());
-        if(request()->ajax()){
-            return response()->json(['status' => [
-                'code' => 200,
-                'message' => 'Success'
-            ], 'data' => $request->all(), 'errors' => NULL]);
+        if($user){
+            if(request()->ajax()){
+                return response()->json(
+                    ['status' => 200,                
+                    'message' => 'Success',
+                    'data' => $request->all(), 'errors' => NULL]
+                );
+            }else{
+                return redirect()->route('auth.success.get')
+                    ->with('user', $user['user'])
+                    ->with('status', (bool)$user['exists']);
+            }
         }else{
-            return redirect()->route('auth.success.get')
-                ->with('user', $user['user'])
-                ->with('status', (bool)$user['exists']);
+            if(request()->ajax()){
+                return response()->json(
+                    ['status' => 200,                
+                    'message' => 'Failed to register. Please contact our Administrator.'                    
+                    ]
+                );
+            }else{
+                return redirect()->route('register')
+                    ->withErrors($validator, 'register')
+                    ->withInput()
+                    ->with('errors', $validator->errors());
+            }
         }
     }
 
@@ -168,7 +182,24 @@ class AuthController extends Controller
 
 
         if (Auth::attempt($credentials, $request->has('remember'))) {
-            return $this->handleUserWasAuthenticated($request, $throttles);
+            // return $this->handleUserWasAuthenticated($request, $throttles);
+            if ($throttles) {
+                $this->clearLoginAttempts($request);
+            }
+
+            if(request()->ajax()){
+                return response()->json([
+                    'status' => 200,
+                    'message' => '',                    
+                    'data' => $request->all()                
+                ]);
+            }else{
+                return redirect($this->loginPath())
+                ->withInput($request->only($this->loginUsername(), 'remember'))
+                ->withErrors([
+                    $this->loginUsername() => $this->getFailedLoginMessage(),
+                ]);
+            }
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts
@@ -178,10 +209,33 @@ class AuthController extends Controller
             $this->incrementLoginAttempts($request);
         }
 
-        return redirect($this->loginPath())
-            ->withInput($request->only($this->loginUsername(), 'remember'))
-            ->withErrors([
-                $this->loginUsername() => $this->getFailedLoginMessage(),
+        if($this->getFailedLoginMessage() != ''){
+            if(request()->ajax()){
+                return response()->json([
+                    'status' => 400,
+                    'message' => $this->getFailedLoginMessage()?: 'The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing)',
+                    'data' => $request->all()                    
+                ]);
+            }else{
+                return redirect($this->loginPath())
+                ->withInput($request->only($this->loginUsername(), 'remember'))
+                ->withErrors([
+                    $this->loginUsername() => $this->getFailedLoginMessage(),
+                ]);
+            }
+        }
+    }
+
+    public function getLogout()
+    {
+        Auth::logout();        
+        if(request()->ajax()){
+            return response()->json([
+                'status' => 200,
+                'message' => 'You are logged out.'                            
             ]);
+        }else{
+            return redirect($this->redirectAfterLogout);
+        }        
     }
 }
