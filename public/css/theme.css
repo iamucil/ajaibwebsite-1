@@ -569,11 +569,6 @@ Foundation Coustom
     content: " " !important;
 }
 
-.breadcrumbs > li.active span {
-    top: 1px;
-    position: relative;
-}
-
 .slim_scroll {
     margin-top: 5px;
 }
