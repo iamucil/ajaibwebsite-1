@@ -4,58 +4,7 @@
 
 @section('content')
 
-    <div id="tf-home" class="text-center" ng-controller="AuthController" ng-init="getCountry()">
-        <!-- Modal -->
-        <script type="text/ng-template" id="modalRegister.html">    
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="register" style="font-size: 1.1em; font-weight: normal;">
-                            Masukan email dan no hp untuk menjadikan Ajaib sebagai asisten Anda! Gratis.
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-                        <form ng-submit="actRegister(frm_register.$valid)" name="frm_register" id="form-register" novalidate>
-                            <div class="form-group"  ng-class="{'has-error' : frm_register.email.$invalid && submitted }">
-                                <label for="exampleInputEmail1" class="control-label">Email address</label>
-                                <input 
-                                    type="email" 
-                                    class="form-control" 
-                                    id="exampleInputName2" 
-                                    placeholder="Alamat email anda" 
-                                    name="email"
-                                    ng-model="form.email"
-                                    ng-required="true">
-                                <p ng-show="frm_register.email.$invalid && submitted" class="help-block pull-left">Email is required.</p>
-                            </div>
-                            <br/>
-                            <div class="form-group" ng-class="{'has-error' : frm_register.phone_number.$invalid && submitted }">
-                                <label for="exampleInputPassword1" class="control-label">Phone Number</label>
-                                <div class="clearfix"></div>
-                                <div class="input-group">                                            
-                                    <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        id="exampleInputEmail2" 
-                                        placeholder="" 
-                                        name="phone_number"
-                                        ng-required="true"
-                                        ng-model="form.phone_number"
-                                        international-phone-number 
-                                        default-country="id"
-                                        preferred-countries="id,us,gb">
-                                </div>
-                                <p ng-show="frm_register.phone_number.$invalid && submitted" class="help-block pull-left">Phone Number is required.</p>
-                            </div>
-                            <br/>
-
-                            <button type="submit" class="btn btn-default btn-block btn-ajaib">Sign Up</button>
-                            <button type="button" class="btn btn-default btn-block" ng-click="cancel()">Cancel</button>
-                        </form>
-                    </div>
-                </div>
-            
-        </script>
+    <div id="tf-home" class="text-center">
         <div class="content">
             <div class="container">
                 <div class="row">
@@ -66,7 +15,7 @@
                             <h3><strong>Ajaib</strong> adalah asisten pribadi anda<br>Keperluan apapun yang anda butuhkan kami akan membantu anda.</h3>
                             <hr style="opacity:0.25">
                             <p>
-                            <a class="btn btn-default btn-ajaib btn-lg" ng-click="openModal()">Daftar Akun di Ajaib!</a>
+                            <a class="btn btn-default btn-ajaib btn-lg" data-toggle="modal" data-target="#modal__register">Daftar Akun di Ajaib!</a>
                             </p>
                             <!--
                             <p>Masukan email dan no hp untuk menjadikan Ajaib
@@ -350,7 +299,39 @@
             </div>
         </div>
     </div>
-
+<!-- Modal -->
+<div class="modal fade" id="modal__register" tabindex="-1" role="dialog" aria-labelledby="register">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="register" style="font-size: 1.1em; font-weight: normal;">
+                    Masukan email dan no hp untuk menjadikan Ajaib sebagai asisten Anda! Gratis.
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form class="frm-signup" method="POST" action="/auth/register" novalidate name="form-register" id="form-register">
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <label for="inpEmailRegister" style="float: none !important; font-weight: 400;">Email</label>
+                        <input type="email" class="form-control" id="inpEmailRegister" placeholder="Eg: name@example.com" name="email">
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="inpPhoneRegister" style="float: none !important; font-weight: 400;">Nomor Telephon</label>
+                        {{-- <div class="input-group"> --}}
+                            <input type="tel" id="phone" class="form-control">
+                            <span id="valid-msg" class="hide">✓ Valid</span>
+                            <span id="error-msg" class="hide">Invalid number</span>
+                        {{-- </div> --}}
+                    </div>
+                    <p>
+                        <button type="submit" class="btn btn-default btn-ajaib btn-lg btn-block">Sign Up</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script-bottom')

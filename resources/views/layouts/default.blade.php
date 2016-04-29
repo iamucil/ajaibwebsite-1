@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en" ng-app="app">
+<html lang="en">
 
 <head>
     <!-- Basic Page Needs
@@ -35,11 +35,6 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <link rel="stylesheet" type="text/css" href="{{elixir('css/main.css')}}">
-    <base href="/" />
-    <script>
-        document.cookie = 'XSRF-TOKEN={{csrf_token()}}';
-    </script>
 </head>
 
 <body>
@@ -72,8 +67,8 @@
         var protocol    = 'https:' == document.location.protocol ? 'https:' : 'http:';
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script type='text/javascript' src="{{elixir('js/vendor.js')}}"></script>
-        <script type='text/javascript' src="{{elixir('js/main.js')}}"></script>
+        <script type="text/javascript" src="{{ secure_asset('/js/intlTelInput.js') }}"></script>
+        {{-- Include all compiled plugins (below), or include individual files as needed --}}
         <script src="{{ secure_asset('/js/bootstrap.js') }}"></script>
         <script type="text/javascript" src="{{ secure_asset('/js/SmoothScroll.js') }}"></script>
         <script type="text/javascript" src="{{ secure_asset('/js/jquery.isotope.js') }}"></script>
@@ -81,7 +76,6 @@
         {{-- Javascripts mail --}}
         <script type="text/javascript" src="{{ secure_asset('/js/main.js') }}"></script>
     @show
-<toasty></toasty>
 </body>
 
 </html>
