@@ -722,7 +722,7 @@ function publish(senderId) {
                         "role"          : roles,
                         "path"          : null,
                         "type"          : "text",
-                        "pn_gcm"        : {"data": {"title": 'Ajaib', "message": text}}
+                        "pn_gcm"        : {"data": {"title": 'Ajaib', "chat_id": message_id, "type":"text", "message": text}}
                     },
                     callback: function (m) {
                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -1053,7 +1053,7 @@ function GenerateChatBox(obj,public,status) {
         }
         var elm = '<div id=\"cb_' + obj.user_name + '\"class=\"'+style+'\">' +
             '<div class="close-box">X</div>' +
-            '<a class="chat-pop-over" data-cn="' + obj.sender_channel + '" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
+            '<a class="chat-pop-over" data-id="'+obj.sender_id+'" data-cn="' + obj.sender_channel + '" data-title="' + obj.user + '" href="#">' + obj.user + '</a>' +
             '<div class="webui-popover-content">' +
             '<div class="chat-conversation slim-scroll-chat" id="cc_' + obj.user_name + '">' +
                 //chatText +
@@ -1066,7 +1066,7 @@ function GenerateChatBox(obj,public,status) {
             //'<span class="btn lightbox"><a id="image_'+obj.user_name+'" href="#">Open</a></span>' +
             '<span style="display:none;" id="file_loader_'+obj.user_name+'" class="ajaib-chat-loader">uploading...</span>'+
             '<button type="submit" class="btn pull-right btn-default btn-ajaib" onclick="publish(\'' + publish_object + '\')">Submit</button>' +
-            //'<span class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#upload-modal"><i class="fontello-attach"></i></span>'+
+            //'<span data-id="'+obj.sender_id+'" class="btn btn-default btn-file-ajaib" data-toggle="modal" data-target="#upload-modal"><i class="fontello-attach"></i></span>'+
             '</div>' +
             '</div>' +
             '</div>';
@@ -1074,7 +1074,7 @@ function GenerateChatBox(obj,public,status) {
         $('.chat-bottom').append(elm);
         RenderHistory(obj, obj.user_name);
         // reload js
-        load_js();
+        load_js(publish_object,obj);
         //PUBNUB.bind( 'keyup', $("#ct_"+obj.user_name), function(e) {
         //
         //    (e.keyCode || e.charCode) === 13 && publish('\'' + obj.sender_id + '\'');
@@ -1116,7 +1116,7 @@ function CreateModal() {
         '</div>'+
         '<div class="modal-footer">'+
         '<button type="button" class="btn btn-default" data-dismiss="modal">Camcel</button>'+
-        '<button type="button" class="btn btn-primary">Save changes</button>'+
+        '<button type="button" class="btn btn-primary upload-submit">Save changes</button>'+
     '</div>'+
     '</div>'+
     '</div>';
@@ -1125,6 +1125,10 @@ function CreateModal() {
 
 function DestroyModal() {
     $("#myModal").remove();
+}
+
+function UploadModalProcess() {
+
 }
 
 function TriggerUploadFile(obj) {
@@ -1238,7 +1242,7 @@ function TriggerUploadFile(obj) {
                                         "role"          : roles,
                                         "type"          : type,
                                         "path"          : imagePath,
-                                        "pn_gcm"        : {"data": {"title": 'Ajaib', "message": imagePath}}
+                                        "pn_gcm"        : {"data": {"title": 'Ajaib',"chat_id": message_id, "type":type, "message": imagePath}}
                                     },
                                     callback: function (m) {
                                         //TODO: publish event -> don't forget to disable this debug when it goes online
@@ -1442,11 +1446,23 @@ function AppendChat(elm) {
 /**
  * It used to reload webuipopover.js, because after render oen the fly, the popup doesn't show
  */
-function load_js() {
-    //$(".input-file").change(function(){
+function load_js(id_obj,obj) {
+    //$(".fontello-attach").click(function(){
+    //    $(".upload-submit").attr("data-id",$(this).parent().attr("data-id"));
+    //    $("#image-holder").children().remove();
+    //    $("#fileUpload").val("");
+    //});
+    //
+    //$(".upload-submit").click(function(){
+    //    var temp_obj = GetParam($(this).attr("data-id")+".private");
+    //    console.log(temp_obj);
+    //});
+    //
+    //$("#fileUpload").change(function(){
     //    if ($(this)[0].files && $(this)[0].files[0]) {
     //        //Get count of selected files
     //        var countFiles = $(this)[0].files.length;
+    //        alert(countFiles);
     //        var imgPath = $(this)[0].value;
     //        var extn = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
     //        var image_holder = $("#image-holder");
@@ -1454,8 +1470,8 @@ function load_js() {
     //        if (extn == "gif" || extn == "png" || extn == "jpg" || extn == "jpeg") {
     //            if (typeof(FileReader) != "undefined") {
     //                //loop for each file selected for uploaded.
-    //                for (var i = 0; i < countFiles; i++)
-    //                {
+    //                //for (var i = 0; i < countFiles; i++)
+    //                //{
     //                    var reader = new FileReader();
     //                    reader.onload = function(e) {
     //                        $("<img />", {
@@ -1464,8 +1480,8 @@ function load_js() {
     //                        }).appendTo(image_holder);
     //                    }
     //                    image_holder.show();
-    //                    reader.readAsDataURL($(this)[0].files[i]);
-    //                }
+    //                    reader.readAsDataURL($(this)[0].files[0]);
+    //                //}
     //            } else {
     //                alert("This browser does not support FileReader.");
     //            }
@@ -1516,6 +1532,12 @@ function load_js() {
     //script.href = lightboxcss;
     //head.appendChild(script);
 
+    // enter event -> send message
+    $("#ct_"+obj.user_name).on('keyup', function(e) {
+        if (e.which == 13 && ! e.shiftKey) {
+            publish(id_obj);
+        }
+    });
     $('.chat-pop-over').webuiPopover({
         placement: 'auto-top',
         padding: false,
@@ -1528,9 +1550,7 @@ function load_js() {
         dismissible: true, // if popover can be dismissed by  outside click or escape key
         closeable: true, //display close button or not
         onShow: function ($element) {
-            lmnt = $element;
-            //console.log(lmnt);
-            $(lmnt).find('.chat-conversation').scrollTop(9999);
+            $("#cc_"+obj.user_name).scrollTop($('#cc_'+obj.user_name).prop("scrollHeight"));
         }
     });
 }
@@ -1670,6 +1690,8 @@ function renderMessage(id, actor, text, time, user, type, path, status) {
 
         if (text === null || text === undefined) {
             text = "";
+        } else {
+            text = linkify(text);
         }
 
         switch(str) {
@@ -1722,5 +1744,14 @@ function updateStatusChat(message_id,m,action) {
         success: function (data) {
             console.log(data);
         }
+    });
+}
+
+function linkify(text) {
+    var urlRegex =/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(urlRegex, function(url) {
+        var a = '<a href="' + url + '">' + url + '</a>';
+        console.log(a);
+        return a;
     });
 }

@@ -729,10 +729,14 @@
       <div class="modal-body">
          <div class="ajaib-media-uploader">
                 
-                <img class="img-responsive" src="./img/03.jpg">
+                <!-- <img class="img-responsive" src="./img/03.jpg"> -->
+                <div class="browse-upload-ajaib">
+                    <div class="upload">
+                        <input type="file" name="upload"/>
+                    </div>
+                </div>
                 <span>Lorem Ipsum dollor si amet amet jabang bayi</span>
-                <textarea class="form-control" rows="3"></textarea>
-               
+                <textarea class="form-control" rows="3"></textarea>     
 
         </div>
       </div>

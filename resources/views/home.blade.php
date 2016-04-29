@@ -35,7 +35,7 @@
                             </form>
                             -->
                             <ul>
-                                <li><img src="{{ secure_asset('img/playstore.png') }}"></li>
+                                <li><a target="_blank" href="https://play.google.com/store/apps/details?id=com.getajaib"><img src="{{ secure_asset('img/playstore.png') }}">Ajaib</a></li>
                                 <li><img src="{{ secure_asset('img/appstore.png') }}"></li>
                             </ul>
                             <div style="clear: both;"></div>
@@ -53,10 +53,10 @@
         <div class="overlay">
             <div class="container">
                 <div class="section-title text-center">
-                    <h2>Diliput<strong>oleh</strong></h2>
+                <!--     <h2>Diliput<strong>oleh</strong></h2>
                     <div class="text-center line">
                         <hr>
-                    </div>
+                    </div> -->
                 </div>
                 <ul class="client-item">
                     <li><img src="{{ secure_asset('/img/client/client_01.png') }}"></li>
@@ -152,31 +152,32 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="how-to-work text-center">
-                            <span>Describe Your Needs</span>
+                            <span>Ceritakan Kebutuhan Anda</span>
                             <br>
                             <i class="flaticon-telephone117"></i>
-                            <h3>Purchase tickets, food delivery, hotel reservations, all in just a text message!</h3>
-                            <p>Personalised service that is fast and easy We do the research to give you the best recommendations</p>
+                           
+                            <h3>Kami membantu merekomendasikan yang terbaik untuk anda</h3>
+                            <p>Beli tiket nonton, pesawat, kereta api, pesan makanan, hotel, bahkan kebutuhan yang membutuhkan kustomisasi anda, kami akan mewujudkannya dengan cepat dan mudah</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="how-to-work text-center">
-                            <span>Process Your Request</span>
+                            <span>Proses Pesanan Anda</span>
                             <br>
                             <i class="flaticon-profession12"></i>
                             <i class="flaticon-profession7"></i>
-                            <h3>We will serve you in a matter of minutes!</h3>
+                            <h3>Kami melayani anda hanya dalam beberapa menit</h3>
                             <p>Personalised service that is fast and easyWe do the research to give you the best recommendations</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="how-to-work text-center">
-                            <span>Mission Accomplished!</span>
+                            <span>Pesanan Anda Terpenuhi</span>
                             <br>
                             <i class="flaticon-restaurant9"></i>
                             <i class="flaticon-package27"></i>
-                            <h3>We work behind the scenes to ensure your request is placed and delivere</h3>
-                            <p>Time saving! Goods received fast and in the best condition</p>
+                            <h3>Kami bekerja untuk memastikan semua berjalan dengan sempurna</h3>
+                            <p>Menghemat waktu ! Cepat dan pesanan tepat sesuai kebutuhan anda</p>
                         </div>
                     </div>
                 </div>
@@ -188,14 +189,21 @@
     <div id="tf-works">
         <div class="container">
             <!-- Container -->
-            <div class="section-title text-center">
-                <h2><strong>Testimonal</strong></h2>
+       <!--      <div class="section-title text-center">
+                <h2><strong>Frequently Asked Questions</strong></h2>
+                <p>Anda punya ertanyaan? Kami mempunyai jawabannya.</p>
                 <div class="text-center line">
                     <hr>
                 </div>
+            </div> -->
+            <div class="section-title center text-center">
+                        <h3>Frequently Asked Questions</h3>
+                        <p>Got questions? We have answers.</p>
+                        <div class="clearfix"></div>
             </div>
-            <div class="space"></div>
-            <div class="row">
+
+            {{--<div class="space"></div>--}}
+         <!--    <div class="row">
                 <div class="col-md-4">
                     <div class="testi-chat">
                         <span>Startup is really a great template to get strarted with. With its awesome features and easy customization with unbounce. This template made my day. Very recommended.</span>
@@ -223,8 +231,20 @@
                         <p>Founder and CEO of Square Inc</p>
                     </div>
                 </div>
-            </div>
-            <br>
+            </div> -->
+                      <div class="row">
+                        {{--<div class="col-md-6">--}}
+                            <div class="faq-nest">
+                                <h4>Apa itu AJAIB?</h4>
+                                <p>Ajaib adalah asisten pribadi yang siap membantu memenuhi kebutuhan anda.</p>
+                                <h4>Bagaimana cara menggunakannya?</h4>
+                                <p>Pastikan aplikasi ajaib sudah terinstall di device anda. Lakukan chat pada menu chat yang telah disediakan, beri tahu kami apa kebutuhan anda, operator kami akan memberikan rekomendasi terbaik untuk memenuhi kebutuhan anda.</p>
+                                <h4>Aplikasi sudah terinstall dan saya sudah register tapi kenapa saya tidak mendapatkan kode konfirmasi baik melalui email maupun sms?</h4>
+                                <p>Setiap pengguna yang telah melakukan registrasi maka akan masuk ke antrian untuk menggunakan aplikasi Ajaib, jika anda belum mendapatkan kode konfirmasi maka anda belum diverifikasi oleh admin kami dan mohon untuk dapat menunggu sampai pada antrian anda.</p>
+                            </div>
+                        {{--</div>--}}
+                    </div>
+     
             <br>
             <br>
             <br>
@@ -236,13 +256,14 @@
     <div id="tf-contact">
         <div class="container">
             <div class="row">
-                <div class="col-md-10 col-md-offset-1">
-                    <div class="section-title center text-center">
-                        <h3>Frequently Asked Questions</h3>
-                        <p>Got questions? We have answers.</p>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="section-title text-center">
+                        <h2>Contact <strong>Us</strong></h2>
+                        <div class="text-center line">
+                            <hr>
+                        </div>
+                </div>
+          <!--           <div class="row">
                         <div class="col-md-6">
                             <div class="faq-nest">
                                 <h4>How does the free trial work?</h4>
@@ -259,6 +280,20 @@
                                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. </p>
                             </div>
                         </div>
+                    </div> -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="faq-nest text-center">
+                                <h3>C&C Building</h3>
+                                <p>Jalan Tanah Abang I No 10-D, Jakarta Pusat, Indonesia. 10160.<br>
+                                    Kelurahan Petojo, Kecamatan Gambir.<br><br>
+                                    phone: +62-21-3140982&nbsp;&nbsp;/&nbsp;&nbsp;
+                                    fax: +62-21-31934470&nbsp;&nbsp;/&nbsp;&nbsp;
+                                    email: info@getajaib.com
+                               
+                            </div>
+                        </div>
+           
                     </div>
                 </div>
             </div>
@@ -302,6 +337,23 @@
 @section('script-bottom')
     @parent
     <script type="text/javascript">
+        function animationHover(element, animation){
+            element = $(element);
+            element.hover(
+                function() {
+                    element.addClass('animated ' + animation);        
+                },
+                function(){
+                    //wait for animation to finish before removing classes
+                    window.setTimeout( function(){
+                        element.removeClass('animated ' + animation);
+                    }, 2000);         
+                });
+        }
+        $('.fa').each(function() {
+        animationHover(this, 'bounce');
+        });     
+
         // $('.intl-tel-input').addClass('input-group');
 
         var url     = '{!! url("/geo-ip") !!}';

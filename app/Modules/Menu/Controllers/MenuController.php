@@ -19,11 +19,33 @@ class MenuController extends Controller {
     {
         // create new array
         $data       = [];
-        /*$query      = Menu::all();
         $items      = [];
-        if(!$query->isEmpty()){
+        $data_tree  = [];
+        $menu_items = [[
+            'id' => "new",
+            'text' => "Add New",
+            'img' => "/new.gif",
+            'imgdis' => '/new_dis.gif'
+        ], [
+            'id' => "edit",
+            'text' => "Edit",
+            'img' => "/page_setup.gif",
+            'imgdis' => "/page_setup_dis.gif"
+        ], [
+            'id' => 'file_sep_1',
+            'type' => 'separator'
+        ], [
+            'id' => "about",
+            'text' => "Detail",
+            'img' => "/help.gif",
+            'imgdis' => "/help_dis.gif"
+        ]];
+        $query      = Menu::with('parents')
+            ->get();
+
+        if(false === $query->isEmpty()) {
             foreach ($query as $menu) {
-                $parents            = $menu->parents();
+                $parents    = $menu->parents();
                 $menu->parent_id    = 0;
                 if($parents->exists()){
                     $parent             = $parents->first();
@@ -33,6 +55,7 @@ class MenuController extends Controller {
                     $menu->parent_id    = 0;
                     $menu->kode_sistem  = $menu->id;
                 }
+
                 $items[$menu->parent_id][]    = [
                     'id' => $menu->id,
                     'text' => $menu->name,
@@ -43,8 +66,12 @@ class MenuController extends Controller {
 
         $parent_item    = $items[0];
         $grid           = self::_createTree($items, $parent_item);
-        $data           = response()->json($grid);*/
-        return view("Menu::index", compact('data'));
+        $data_tree['id']    = 0;
+        $data_tree['item']  = $grid;
+        $data           = response()->json($data_tree);
+        $menus          = response()->json($menu_items);
+        // dd($data->content());
+        return view("Menu::index", compact('data', 'menus'));
     }
 
     /**
@@ -69,8 +96,29 @@ class MenuController extends Controller {
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        return redirect()->route('menus.create')->withInput($request->except(['_token']));
+        /*"set_parent"
+        "parent_id"
+        "parent_name"
+        "name"
+        "icon"
+        "route"
+        "description" */
+        $menu       = new Menu;
+        $menu->parent_id    = ((int)$request->set_parent === 0) ? 0 : $request->parent_id;
+        $menu->name         = $request->name;
+        $menu->description  = $request->description;
+        $menu->route        = $request->route;
+        $menu->icons        = $request->icon;
+
+        if($menu->save()){
+            flash()->success('Penyimpanan data berhasil');
+            return redirect()->route('menus.index')
+                ->withInput($request->except(['_token']));
+        } else {
+            flash()->error('Penyimpanan data gagal');
+            return redirect()->route('menus.create')
+                ->withInput($request->except(['_token']));
+        }
     }
 
     /**
@@ -153,6 +201,13 @@ class MenuController extends Controller {
         $routes     = collect((array)$route_lists);
         // dd($routes->toJson());
         return view('Menu::route_lists', compact('routes'));
+    }
+
+    public function assignRole(Request $request)
+    {
+        $roles      = Role::lists('name', 'id');
+
+        return view('Menu::assign_roles', compact('roles'));
     }
 
     /**

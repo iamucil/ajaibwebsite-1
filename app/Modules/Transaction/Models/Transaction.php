@@ -26,4 +26,9 @@ class Transaction extends Model {
         return $this->belongsTo('App\User', 'customer_id', 'id');
     }
 
+    public function vendors()
+    {
+        return $this->belongsTo('App\Modules\Merchant\Models\Vendor', 'vendor_id', 'id');
+    }
+
 }
