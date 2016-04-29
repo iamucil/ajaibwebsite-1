@@ -35,7 +35,7 @@
                             </form>
                             -->
                             <ul>
-                                <li><img src="{{ secure_asset('img/playstore.png') }}"></li>
+                                <li><a target="_blank" href="https://play.google.com/store/apps/details?id=com.getajaib"><img src="{{ secure_asset('img/playstore.png') }}">Ajaib</a></li>
                                 <li><img src="{{ secure_asset('img/appstore.png') }}"></li>
                             </ul>
                             <div style="clear: both;"></div>
