@@ -99,7 +99,7 @@
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-default">Simpan</button>
-                        <button type="Reset" class="btn btn-default">Batal</button>
+                        <a href="{{ route('user.list') }}" class="btn btn-default">Batal</a>
                     </div>
                 </div>
             </form>
