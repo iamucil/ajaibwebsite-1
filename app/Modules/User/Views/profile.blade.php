@@ -63,8 +63,8 @@
                                 </div><!--/col-->
                                 @unless (auth()->user()->id !== $user->id)
                                     {{-- expr --}}
-                                    <div class="col-xs-12 col-sm-4">
-                                        <a class="btn btn-danger btn-block"><span class="fa fa-gear"></span> Change Password </a>
+                                    <div class="col-xs-12 col-sm-4" style="display: block;">
+                                        <a class="btn btn-danger btn-block" href="{{ route('users.reset-password') }}"><span class="fa fa-gear"></span> Change Password </a>
                                     </div><!--/col-->
                                 @endunless
                             </div>

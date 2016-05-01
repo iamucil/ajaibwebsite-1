@@ -463,11 +463,12 @@ class UserController extends Controller {
     {
         $users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', function ($join) {
-                return $join->on('roles.id', '=', 'role_user.role_id');
+                return $join->on('roles.id', '=', 'role_user.role_id')->whereNotIn('roles.name', ['administrator', 'root']);
             })
             ->select('roles.name as role_name', 'roles.id as role_id', 'users.*')
             ->orderBy('users.status', 'ASC')
             ->orderBy('users.created_at', 'DESC')
+            ->where('users.id', '!=', auth()->user()->id)
             ->get();
 
         $rows       = [];
@@ -551,5 +552,10 @@ class UserController extends Controller {
             }
             return response()->json($return, 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
         }
+    }
+
+    public function getResetPassword($id, Request $request)
+    {
+        return view('users::reset_password');
     }
 }
