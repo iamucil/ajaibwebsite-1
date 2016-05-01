@@ -317,17 +317,6 @@ class UserController extends Controller {
     public function getListUsers(Request $request)
     {
         $users          = [];
-        /*$users      = User::join('role_user', 'users.id', '=', 'role_user.user_id')
-            ->join('roles', 'role_user.role_id', '=', 'roles.id')
-            ->whereNotIn('roles.name', ['root'])
-            ->orderBy('users.name', 'DESC')
-            ->orderBy('users.created_at', 'DESC')
-            ->orderBy('roles.name', 'ASC')
-            ->selectRaw('users.name as username, roles.id as role_id, users.*')
-            // ->distinct()
-            ->paginate(15);*/
-        // $sms    = Twilio::message('+6285640427774', 'Your Ajaib Verification code is 801753');
-
         // dd(Twilio::message('+6285227052004', 'shit'));
         // dd($users);
         return view('User::index', compact('users'));
@@ -486,6 +475,11 @@ class UserController extends Controller {
         foreach ($users as $user) {
             $rows[$idx]['id']       = (int)$user->id;
             $link_profile           = route("user.profile", $args = ['id' => $user->id]);
+            if(auth()->user()->hasRole(['administrator', 'admin'])) {
+                $link_reset_password    = '<i class="glyphicon glyphicon-lock">&nbsp;</i>^javascript:resetPassword("'.$user->id.'");;^_self';
+            } else {
+                $link_reset_password    = null;
+            }
             switch ((bool)$user->status) {
                 case true:
                     $status_img     = asset("/img/icons/green.gif");
@@ -518,6 +512,7 @@ class UserController extends Controller {
                 '<i class="glyphicon glyphicon-user" title="Profile User">&nbsp;</i>^'.$link_profile.'^_self',
                 $link_delete,
                 $link_aktivasi,
+                $link_reset_password
             ];
 
             $idx++;
@@ -531,5 +526,30 @@ class UserController extends Controller {
         // value - (string) the column's title
 
         return response()->json(compact('head', 'rows'), 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+    }
+
+    public function resetPasswordDefault(Request $request)
+    {
+        if (!$request->isMethod('post') OR !request()->ajax()) {
+            App::abort(403, 'Unauthorized action.');
+        } else {
+            $user               = User::find($request->id);
+            $user->password     = bcrypt(env('PASSWORD_DEFAULT','secret'));
+            $result             = $user->save();
+            if($result === false) {
+                $return         = [
+                    'result' => false,
+                    'message' => 'Error occured when processing your request. Please try again',
+                    'status' => 500
+                ];
+            }else{
+                $return         = [
+                    'result' => true,
+                    'message' => 'Password reset to default',
+                    'status' => 201
+                ];
+            }
+            return response()->json($return, 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+        }
     }
 }
