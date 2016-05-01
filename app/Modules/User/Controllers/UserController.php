@@ -556,6 +556,15 @@ class UserController extends Controller {
 
     public function getResetPassword($id, Request $request)
     {
-        return view('users::reset_password');
+        return view('User::reset_password');
+    }
+
+    public function postResetPassword(Request $request)
+    {
+        if(auth()->user()->hasRole(['root', 'admin'])){
+            return redirect()->route('user.list');
+        }else{
+            return redirect()->route('admin::dashboard');
+        }
     }
 }

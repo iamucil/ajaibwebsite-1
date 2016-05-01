@@ -32,10 +32,10 @@
                 <div class="form-group">
                     <label for="input-retype-password" class="col-sm-2 control-label">Real Name</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control" id="input-retype-password" placeholder="" name="firstname" value="{{ old('firstname') }}">
+                        <input type="text" class="form-control" id="input-firstname" placeholder="" name="firstname" value="{{ old('firstname') }}">
                     </div>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control" id="input-retype-password" placeholder="" name="lastname" value="{{ old('lastname') }}">
+                        <input type="text" class="form-control" id="input-lastname" placeholder="" name="lastname" value="{{ old('lastname') }}">
                     </div>
                 </div>
                 <div class="form-group">
