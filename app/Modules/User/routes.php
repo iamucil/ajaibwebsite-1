@@ -31,8 +31,8 @@ Route::group(array('module' => 'User', 'namespace' => 'App\Modules\User\Controll
     Route::group(['prefix' => 'dashboard', 'module' => 'User', 'middleware' => ['auth', 'role:operator|admin|root']], function() {
         Route::get('/users/list', ['as' => 'user.list.operator', 'uses' => 'UserController@getListUsersOperator']);
         Route::get('/users/photo/{user}', ['as' => 'user.profile.getphotopath', 'uses' => 'UserController@getPhotoPath']);
-        Route::get('/users/reset-password/{id}', ['as' => 'users.reset-password', 'uses' => 'UserController@getResetPassword']);
-        Route::post('/users/reset-password', ['as' => 'users.reset-password', 'uses' => 'UserController@postResetPassword']);
+        Route::get('/users/{id}/reset/', ['as' => 'users.reset-password', 'uses' => 'UserController@getResetPassword']);
+        Route::post('/users/reset-password', ['as' => 'users.do-reset-password', 'uses' => 'UserController@postResetPassword']);
     });
 
     Route::group(['prefix'=>'/profile', 'middleware' => 'auth'], function(){

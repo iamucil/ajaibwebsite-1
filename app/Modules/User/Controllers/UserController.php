@@ -13,6 +13,7 @@ use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use App\Repositories\AssetRepository;
 use Storage;
 use File;
+use Hash;
 
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
@@ -556,15 +557,57 @@ class UserController extends Controller {
 
     public function getResetPassword($id, Request $request)
     {
-        return view('User::reset_password');
+        $user   = User::findOrFail($id);
+
+        return view('User::reset_password', compact('user'));
     }
 
     public function postResetPassword(Request $request)
     {
-        if(auth()->user()->hasRole(['root', 'admin'])){
-            return redirect()->route('user.list');
-        }else{
-            return redirect()->route('admin::dashboard');
-        }
+        $data       = $request->all();
+        Validator::extend('check_hash', function ($attribute, $value, $parameters, $validator) {
+            return Hash::check($value, auth()->user()->password);
+        });
+        $this->validate($request, [
+            'user_id' => 'required',
+            'current_password' => 'required|check_hash',
+            'password' => 'required|alpha_num',
+            'password_confirmation' => 'required_with:password|same:password'
+        ], [
+            'current_password.check_hash' => 'Current Password yang Anda masukkan tidak valid.',
+            'current_password.required' => 'Current Password Mandatory',
+            'password.required' => 'Password Mandatory',
+            'password.alpha_num' => 'Masukkan Password Alpha Numeric',
+            'password_confirmation.required_with' => 'Konfirmasi password anda'
+        ]);
+
+        $user           = User::findOrFail($request->user_id);
+        $user->password = bcrypt($request->password);
+
+        $user->save();
+        auth()->login($user);
+        $request->session()->flash('warning', 'Task was successful!');
+
+        return response()->json([
+            'message' => 'Perubahan password berhasil',
+            'status' => 201,
+            'url' => route("admin::dashboard")
+        ], 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+        // return response()->json($request->all(), 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+
+        // if(auth()->user()->hasRole(['root', 'admin'])){
+        //     return redirect()->route('user.list');
+        // }else{
+        //     return redirect()->route('admin::dashboard');
+        // }
+    }
+
+    protected function resetPassword($user, $password)
+    {
+        $user->password = bcrypt($password);
+
+        $user->save();
+
+        Auth::login($user);
     }
 }

@@ -15,14 +15,15 @@
             </h3>
         </div>
         <div class="box-body">
-            <form class="form-horizontal" method="post" action="{{ route('users.reset-password') }}" name="frm-user-reset" id="frm-user-reset" novalidate="true">
+            <form class="form-horizontal" method="POST" action="{{ route('users.do-reset-password') }}" name="frm-user-reset" id="frm-user-reset" novalidate="true">
                 {{ csrf_field() }}
+                <input type="hidden" name="user_id" value="{{ $user->id }}" />
                 <div class="form-group">
-                    <label for="old-password" class="col-sm-2 control-label">
-                        Old Password
+                    <label for="current_password" class="col-sm-2 control-label">
+                        Current Paswword
                     </label>
                     <div class="col-sm-4">
-                        <input type="password" name="old_password"  class="form-control" />
+                        <input type="password" name="current_password"  id="current_password" class="form-control" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -38,7 +39,7 @@
                         Retype Password
                     </label>
                     <div class="col-sm-4">
-                        <input type="password" name="retype_password"  class="form-control" />
+                        <input type="password" name="password_confirmation"  class="form-control" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -58,4 +59,56 @@
 
 @section('script-bottom')
     @parent
+    <script type="text/javascript">
+        $('form[name="frm-user-reset"').on('submit', function (evt) {
+            var Form        = this;
+            var $action     = Form.action;
+            var $data       = {};
+            $.each(this.elements, function(i, v){
+                var input = $(v);
+                $data[input.attr("name")] = input.val();
+                delete $data["undefined"];
+            });
+            // console.log($action);
+            $.ajax({
+                cache: false,
+                url : $action,
+                type: "POST",
+                dataType : "json",
+                data : $data,
+                context : Form,
+                beforeSend: function (jqXHR, settings) {
+                    return true;
+                }
+            }).done(function(data,  status, jqXHR) {
+                alertify.success(data.message);
+                setTimeout(function(){
+                    window.location.assign(data.url);
+                }, 3000);
+
+            }).error(function(jqXHR, status, errors) {
+                var $errors     = jqXHR.responseJSON;
+                if(jqXHR.status == 422) {
+                    $.each($errors, function ( index, value) {
+                        var elSpanError     = document.createElement('span');
+                        elSpanError.classList.add('glyphicon', 'glyphicon-remove', 'form-control-feedback');
+                        elSpanError.setAttribute('aria-hidden', true);
+                        var elSpanStatus    = document.createElement('span');
+                        elSpanStatus.classList.add('sr-only');
+                        elSpanStatus.innerHTML  = '(error)';
+                        var parentIndex     = $('input[name="'+index+'"]').parent();
+                        parentIndex.children('.control-label').css('font-weight', 'bold');
+                        parentIndex.addClass('has-error has-feedback');
+                        parentIndex.append(elSpanError, elSpanStatus);
+                        alertify.error(value);
+                    });
+                }
+
+                evt.preventDefault();
+                return false;
+            });
+
+            evt.preventDefault();
+        })
+    </script>
 @stop
