@@ -79,14 +79,14 @@
         grid            = new dhtmlXGridObject('gridbox');
         grid.enableColSpan(true);
         grid.setImagePath(skins + '/imgs/dhxgrid_web/');
-        grid.setHeader("&nbsp;,Username, Phone Number, Email, Role, Register Date, Status,&nbsp,#cspan,#cspan");
+        grid.setHeader("&nbsp;,Username, Phone Number, Email, Role, Register Date, Status,&nbsp,#cspan,#cspan,#cspan");
         grid.enableAutoWidth(true);
         grid.setInitWidths("40,195,135,215,125,115,65");
-        grid.setColAlign("right,left,left,left,left,center, center");
+        grid.setColAlign("right,left,left,left,left,center, center,center");
         grid.enableSmartRendering(true);
         grid.enableAutoHeight(true,400);
-        grid.setColSorting('na,str,na,na,str,date,na');
-        grid.setColTypes("cntr,ro,ro,ro,ro,ro,img,button,button,button");
+        grid.setColSorting('na,str,str,str,str,date,na');
+        grid.setColTypes("cntr,ro,ro,ro,ro,ro,img,button,button,button,button");
         // grid.enableAutoHeight(true);
         grid.init();
         grid.load(json_data,'json');
@@ -194,6 +194,27 @@
                     });
                     break;
             }
+        }
+
+        function resetPassword (id) {
+            var url_reset   = "{{ route('user.password_default') }}";
+            $.ajax({
+                cache: false,
+                url : url_reset,
+                type: "POST",
+                dataType : "json",
+                data : {'id' : id},
+                context : document.body
+            }).done(function(data,  status, jqXHR) {
+                if (data.status == 201) {
+                    alertify.success(data.message);
+                    grid.clearAll();
+                    grid.load(json_data, 'json');
+                    // grid.updateFromJSON(json_data, false, false);
+                } else if (data.status == 500) {
+                    alertify.success(data.message);
+                }
+            });
         }
 
         /*$('button#btn-delete').bind('click', function (event){

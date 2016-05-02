@@ -50,9 +50,23 @@
                                         <span class="fa fa-user"></span> Update Profile
                                     </a>
                                 </div><!--/col-->
-                                <div class="col-xs-12 col-sm-4">
-                                    <a class="btn btn-danger btn-block"><span class="fa fa-gear"></span> Change Password </a>
+                                <div class="col-xs-12 col-sm-3">
+                                    @if (Auth::user()->hasRole(['root', 'admin']))
+                                        <a class="btn btn-primary btn-block" href="{{ route('user.list', $user->id) }}">
+                                            <span class="fa fa-list"></span> Back
+                                        </a>
+                                    @else
+                                        <a class="btn btn-default btn-block" href="{{ route('admin::dashboard') }}">
+                                            <span class="fa fa-list"></span> Back
+                                        </a>
+                                    @endif
                                 </div><!--/col-->
+                                @unless (auth()->user()->id !== $user->id)
+                                    {{-- expr --}}
+                                    <div class="col-xs-12 col-sm-4" style="display: block;">
+                                        <a class="btn btn-danger btn-block" href="{{ route('users.reset-password', [$user->id]) }}"><span class="fa fa-gear"></span> Change Password </a>
+                                    </div><!--/col-->
+                                @endunless
                             </div>
                         </div><!--/col-->
                     </div><!--/row-->
