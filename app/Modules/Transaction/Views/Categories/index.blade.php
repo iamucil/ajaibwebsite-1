@@ -3,6 +3,10 @@
 Transaction Categories
 @stop
 
+@section('css')
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/dhtmlx/grid/skins/web/dhtmlxgrid.css') }}">
+@stop
+
 @section('content')
     <div class="box">
         <div class="box-header bg-transparent">
@@ -24,91 +28,115 @@ Transaction Categories
         </div>
         <!-- /.box-header -->
         <div class="box-body " style="display: block;">
-            <table class="table">
-                <thead>
-                <th style="width: 20px;">
-                    #
-                </th>
-                <th style="width: ">
-                    Nama
-                </th>
-                <th>
-                    Deskripsi
-                </th>
-                <th style="width: 30px;">
-                    Transaksi
-                </th>
-                <th style="width: 90px;">
-                    Aksi
-                </th>
-                </thead>
-                <tbody>
-                {{--*/ $nomor   = $categories->currentPage() /*--}}
-                @forelse ($categories as $category)
-                    <tr>
-                        <td>
-                            {{ $nomor }}
-                        </td>
-                        <td>
-                            {{ $category->name }}
-                        </td>
-                        <td>
-                            @unless (!is_null($category->description))
-                            &mdash;
-                            @endunless
-                            {{ $category->description }}
-                        </td>
-                        <td>
-                            <a class="btn btn-success"
-                               href="">
-                                Transactions
-                                <span class="badge">
-                                    {{ $category->Transactions->count() }}
-                                </span>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ route('transaction.category.edit', $category->id) }}" class="btn btn-default">
-                                <i class="glyphicon glyphicon-pencil"></i>
-                            </a>
-                            @if ($category->Transactions->count() > 0)
-                                <a class="btn btn-default btn-danger" disabled="disabled" href="#" role="button">
-                                    <i class="glyphicon glyphicon-trash"></i>
-                                </a>
-                            @else
-                                <form action="{{ route('transaction.category.destroy', $category->id) }}" method="POST"
-                                      class="inline">
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-
-                                    <button class="btn btn-danger" id="btn-delete" type="submit">
-                                        <i class="glyphicon glyphicon-trash"></i>
-                                    </button>
-                                </form>
-                            @endif
-                        </td>
-                    </tr>
-                    <?php $nomor++; ?>
-                @empty
-                    <tr>
-                        <td colspan="5">
-                            <center>
-                                Data Kosong
-                            </center>
-                        </td>
-                    </tr>
-                @endforelse
-                </tbody>
-            </table>
-            {{ $categories->render() }}
-        </div>
+            <div id="recinfoArea"></div>
+            <div id="gridbox" style="width: 100%; height: 100%; min-height: 100%; background-color:white;"></div>
+            <div><span id="pagingArea"></span>&nbsp;<span id="infoArea"></span></div>
     </div>
 @stop
 
 @section('script-bottom')
     @parent
+    <script type="text/javascript" src="{{ secure_asset('/js/vendor/dhtmlx/grid/dhtmlxgrid.js') }}"></script>
     <script type="text/javascript">
-        $('button#btn-delete').bind('click', function (event) {
+        var grid, destroyDataProcessor;
+        var url_data    = "{{ route('transactions.category.data') }}";
+        var image_path  = "{{ asset('/js/vendor/dhtmlx/grid/imgs/') }}";
+        var skins       = "{{ asset('/js/vendor/dhtmlx/grid/skins/') }}";
+        grid            = new dhtmlXGridObject('gridbox');
+        grid.enableColSpan(true);
+        grid.setImagePath(skins + '/imgs/dhxgrid_web/');
+        grid.setHeader("&nbsp;,#text_filter,#cspan,#cspan,#cspan,#cspan");
+        grid.attachHeader("#rspan,Nama, Deskripsi, Transaksi,&nbsp,#cspan");
+        grid.enableAutoWidth(true);
+        grid.setInitWidths("40,195,*,95,65,65");
+        grid.setColAlign("right,left,left,center,center,center");
+        grid.enableSmartRendering(true);
+        grid.enableAutoHeight(true,400);
+        grid.setColSorting('na,str,str,int,na');
+        grid.setColTypes("cntr,ro,ro,ro,button,button");
+        grid.enableAutoHeight(true);
+        grid.init();
+        grid.load(url_data,'json');
+
+        function eXcell_button(a){
+            this.cell = a;
+            this.grid = this.cell.parentNode.grid;
+            this.isDisabled = function () {
+                return true
+            };
+            this.edit = function () {
+            };
+            this.getValue = function () {
+                if (this.cell.firstChild.getAttribute) {
+                    var b = this.cell.firstChild.getAttribute("target");
+                    return this.cell.firstChild.innerHTML + "^" + this.cell.firstChild.getAttribute("href") + (b ? ("^" + b) : "")
+                } else {
+                    return ""
+                }
+            };
+            this.setValue = function (c) {
+                if ((typeof(c) != "number") && (!c || c.toString()._dhx_trim() == "")) {
+                    this.setCValue("&nbsp;", b);
+                    return (this.cell._clearCell = true)
+                }
+                var b = c.split("^");
+                if (b.length == 1) {
+                    b[1] = ""
+                } else {
+                    if (b.length > 1) {
+                        b[1] = "href='" + b[1] + "'";
+                        if (b.length == 3) {
+                            b[1] += " target='" + b[2] + "'"
+                        } else {
+                            b[1] += " target='_blank'"
+                        }
+                    }
+                }
+                this.setCValue("<a class='btn btn-link' " + b[1] + " onclick='(_isIE?event:arguments[0]).cancelBubble = true;'>" + b[0] + "</a>", b)
+            }
+        }
+        // nests all other methods from the base class
+        eXcell_button.prototype = new eXcell;
+
+        function doDelete (id) {
+            var url     = "{{ route('transaction.category.destroy', ['id']) }}";
+            url         = url.replace(/id/g, id);
+            console.log(url);
+            $ajax       = $.ajax({
+                cache: false,
+                url : url,
+                type: "POST",
+                dataType : "json",
+                data : {'id' : id, '_method' : 'DELETE'},
+                context : document.body
+            });
+
+            return alertify.confirm('Apakah Anda yakin akan menghapus data kategori transaksi dengan ID '+id+'?', function (e) {
+                if(e) {
+                    $ajax.done(function(data,  status, jqXHR) {
+                        if (data.status == 201) {
+                            alertify.success(data.message);
+                            grid.clearAll();
+                            grid.load(url_data, 'json');
+                        } else if (data.status == 500) {
+                            alertify.success(data.message);
+                        }
+                        // console.log(data);
+                        // if (data.status == 201) {
+                        //     alertify.success(data.message);
+                        //     grid.clearAll();
+                        //     grid.load(json_data, 'json');
+                        //     // grid.updateFromJSON(json_data, false, false);
+                        // } else if (data.status == 500) {
+                        //     alertify.success(data.message);
+                        // }
+                    });
+                }else{
+
+                }
+            });
+        }
+        /*$('button#btn-delete').bind('click', function (event) {
             var $form = this.form;
             event.preventDefault();
             // return confirm(
@@ -121,6 +149,6 @@ Transaction Categories
                     // nothing happend
                 }
             });
-        })
+        })*/
     </script>
 @stop

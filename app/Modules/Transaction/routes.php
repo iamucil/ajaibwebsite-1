@@ -6,6 +6,10 @@
         'prefix'     => 'dashboard',
         'middleware' => 'auth',], function () {
 
+        Route::group(['prefix' => 'transaction-categories', 'middleware' => ['auth', 'role:admin|root']], function() {
+            Route::get('/data', 'CategoriesController@getDataGrid')->name('transactions.category.data');
+        });
+
         Route::resource ('transactions', 'TransactionsController', [
             'names' => [
                 'create'  => 'transactions.create',
@@ -33,11 +37,5 @@
         ]);
 
         Route::get('/transactions/invoice/{invoice}/{print?}', 'TransactionsController@printInvoice')->name('transactions.invoice.print');
-        // Route::group(['prefix' => 'invoice/{transaction}'], function() {
-        //     Route::get('/pdf', 'TransactionsController@exportInvoice')->name('transactions.invoice.export');
-        //     Route::get('/print', 'TransactionsController@printInvoice')->name('transactions.invoice.print');
-        // });
 
-        // Route::get('/transactions/invoice/{invoice}/pdf', 'TransactionsController@exportInvoice')->name('transactions.invoice');
-        // Route::get('/transactions/invoice/{invoice}', 'TransactionsController@printInvoice')->name('transactions.invoice');
     });
