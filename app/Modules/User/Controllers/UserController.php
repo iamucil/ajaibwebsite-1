@@ -14,10 +14,10 @@ use App\Repositories\AssetRepository;
 use Storage;
 use File;
 use Hash;
-
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
 // use Twilio;
+
 
 class UserController extends Controller {
     protected $User;
@@ -318,8 +318,6 @@ class UserController extends Controller {
     public function getListUsers(Request $request)
     {
         $users          = [];
-        // dd(Twilio::message('+6285227052004', 'shit'));
-        // dd($users);
         return view('User::index', compact('users'));
     }
 
@@ -593,21 +591,5 @@ class UserController extends Controller {
             'status' => 201,
             'url' => route("admin::dashboard")
         ], 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
-        // return response()->json($request->all(), 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
-
-        // if(auth()->user()->hasRole(['root', 'admin'])){
-        //     return redirect()->route('user.list');
-        // }else{
-        //     return redirect()->route('admin::dashboard');
-        // }
-    }
-
-    protected function resetPassword($user, $password)
-    {
-        $user->password = bcrypt($password);
-
-        $user->save();
-
-        Auth::login($user);
     }
 }
