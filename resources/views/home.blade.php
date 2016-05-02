@@ -155,7 +155,7 @@
                             <span>Ceritakan Kebutuhan Anda</span>
                             <br>
                             <i class="flaticon-telephone117"></i>
-                           
+
                             <h3>Kami membantu merekomendasikan yang terbaik untuk anda</h3>
                             <p>Beli tiket nonton, pesawat, kereta api, pesan makanan, hotel, bahkan kebutuhan yang membutuhkan kustomisasi anda, kami akan mewujudkannya dengan cepat dan mudah</p>
                         </div>
@@ -244,7 +244,7 @@
                             </div>
                         {{--</div>--}}
                     </div>
-     
+
             <br>
             <br>
             <br>
@@ -290,10 +290,10 @@
                                     phone: +62-21-3140982&nbsp;&nbsp;/&nbsp;&nbsp;
                                     fax: +62-21-31934470&nbsp;&nbsp;/&nbsp;&nbsp;
                                     email: info@getajaib.com
-                               
+
                             </div>
                         </div>
-           
+
                     </div>
                 </div>
             </div>
@@ -341,18 +341,18 @@
             element = $(element);
             element.hover(
                 function() {
-                    element.addClass('animated ' + animation);        
+                    element.addClass('animated ' + animation);
                 },
                 function(){
                     //wait for animation to finish before removing classes
                     window.setTimeout( function(){
                         element.removeClass('animated ' + animation);
-                    }, 2000);         
+                    }, 2000);
                 });
         }
         $('.fa').each(function() {
         animationHover(this, 'bounce');
-        });     
+        });
 
         // $('.intl-tel-input').addClass('input-group');
 
