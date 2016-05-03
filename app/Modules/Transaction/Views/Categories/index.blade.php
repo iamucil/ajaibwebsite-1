@@ -121,34 +121,11 @@ Transaction Categories
                         } else if (data.status == 500) {
                             alertify.success(data.message);
                         }
-                        // console.log(data);
-                        // if (data.status == 201) {
-                        //     alertify.success(data.message);
-                        //     grid.clearAll();
-                        //     grid.load(json_data, 'json');
-                        //     // grid.updateFromJSON(json_data, false, false);
-                        // } else if (data.status == 500) {
-                        //     alertify.success(data.message);
-                        // }
                     });
                 }else{
-
+                    alertify.log('Cancel proses hapus!');
                 }
             });
         }
-        /*$('button#btn-delete').bind('click', function (event) {
-            var $form = this.form;
-            event.preventDefault();
-            // return confirm(
-            //     'Are you sure you wish to delete this recipe?'
-            // );
-            return alertify.confirm("Are you sure you wish to delete this recipe?", function (e) {
-                if (e) {
-                    $form.submit();
-                } else {
-                    // nothing happend
-                }
-            });
-        })*/
     </script>
 @stop

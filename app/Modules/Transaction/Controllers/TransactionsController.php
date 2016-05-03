@@ -126,7 +126,7 @@ class TransactionsController extends Controller {
             $transaction->operator_id   = auth()->user()->id;
             $transaction->invoice_number    = $request->invoice_number;
             $transaction->number        = $request->invoice_number;
-            $transaction->vendor_id     = $request->vendor_id;
+            $transaction->vendor_id     = $request->vendor_id ?: null;
 
             if($transaction->save()){
                 $transaction->TransactionDetails()->saveMany($details);
@@ -212,5 +212,51 @@ class TransactionsController extends Controller {
                 # code...
                 break;
         }
+    }
+
+    public function getDataGrid()
+    {
+        $head       = [];
+        $rows       = [];
+        $idx        = 0;
+        $assignee   = auth()->user();
+        $transactions   = Transaction::with('Category')
+            ->has('TransactionDetails')
+            ->whereHas('Assigne', function ($query) use ($assignee) {
+                if($assignee->hasRole(['admin', 'root'])) {
+                    // return $query->where('1','=','1');
+                } else{
+                    return $query->where('id', '=', $assignee->id);
+                }
+            })
+            ->has('AccountPayable')
+            ->orderBy('tanggal', 'DESC')
+            ->orderBy('category_id', 'ASC')
+            ->get();
+        if(false === $transactions->isEmpty()) {
+            foreach ($transactions as $transaction) {
+                $details                = $transaction->TransactionDetails;
+                $account_payable        = $transaction->AccountPayable;
+                $signer                 = $transaction->Assigne;
+                $rows[$idx]['id']       = (int)$transaction->id;
+                $rows[$idx]['data']     = [
+                    $transaction->invoice_number, // use this field to show detail transaction
+                    date('Y-m-d', strtotime($transaction->tanggal)),
+                    $transaction->Category->name, // use this field to show all transaction in category
+                    $signer->firstname ?: $signer->name,
+                    $account_payable->phone_number,
+                    $account_payable->email,
+                    $transaction->keterangan,
+                    null,   // action edit
+                    null,   // action delete
+                    null,   // print html
+                    null,   // print pdf
+                    null,   // export image
+                ];
+
+                $idx+=1;
+            }
+        }
+        return response()->json(compact('rows'), 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
     }
 }

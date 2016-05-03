@@ -10,6 +10,10 @@
             Route::get('/data', 'CategoriesController@getDataGrid')->name('transactions.category.data');
         });
 
+        Route::group(['prefix' => 'transactions', 'middleware' => ['auth', 'role:admin|root|operator']], function() {
+            Route::get('/data', 'TransactionsController@getDataGrid')->name('transactions.data');
+        });
+
         Route::resource ('transactions', 'TransactionsController', [
             'names' => [
                 'create'  => 'transactions.create',
