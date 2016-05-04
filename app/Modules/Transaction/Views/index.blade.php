@@ -39,71 +39,6 @@ Transaction
             <div id="gridbox" style="width: 100%; height: 100%; min-height: 100%; background-color:white;"></div>
             <div><span id="pagingArea"></span>&nbsp;<span id="infoArea"></span></div>
             {{-- end data table --}}
-
-            <table class="table" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>
-                            #
-                        </th>
-                        <th>
-                            Tanggal
-                        </th>
-                        <th>
-                            Nomor Transaksi
-                        </th>
-                        <th>
-                            Kategori
-                        </th>
-                        <th>
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{--*/ $nomor   = $transactions->currentPage() /*--}}
-                    @forelse ($transactions as $transaction)
-                        <tr>
-                            <td align="center">
-                                {!! $nomor !!}
-                            </td>
-                            <td>
-                                {{ date('d F, Y', strtotime($transaction->tanggal)) }}
-                            </td>
-                            <td>
-                                {{ $transaction->invoice_number }}
-                            </td>
-                            <td>
-                                {{ $transaction->category->name }}
-                            </td>
-                            <td style="width: 195px;">
-                                <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-default">
-                                    <i class="glyphicon glyphicon-list-alt"></i>
-                                </a>
-                                <a href="{{ route('transactions.invoice.print', [\Crypt::encrypt($transaction->id), 'pdf']) }}" class="btn btn-default" title="invoice PDF" target="_blank">
-                                    <i class="glyphicon glyphicon-credit-card" alt="invoice"></i>
-                                </a>
-                                <a href="{{ route('transactions.invoice.print', \Crypt::encrypt($transaction->id)) }}" class="btn btn-default" target="_blank" title="invoice html">
-                                    <i class="glyphicon glyphicon-duplicate"></i>
-                                </a>
-                                <a href="{{ route('transactions.invoice.print', [
-                                \Crypt::encrypt($transaction->id),
-                                'image']) }}" class="btn btn-default" target="_blank" title="invoice image">
-                                    <i class="glyphicon glyphicon-save-file"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <?php $nomor++; ?>
-                    @empty
-                        <tr>
-                            <th colspan="4">
-                                Data Kosong
-                            </th>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            {!! $transactions->render() !!}
         </div>
     </div>
 @stop
@@ -118,11 +53,11 @@ Transaction
         var skins       = "{{ asset('/js/vendor/dhtmlx/grid/skins/') }}";
         grid            = new dhtmlXGridObject('gridbox');
         grid.enableColSpan(true);
-        grid.setImagePath(skins + '/imgs/dhxgrid_web/');
-        grid.setHeader("Invoice,Tanggal, Kategori, Signer,Phone Number, Email, Deskripsi,&nbsp;,#cspan,#cspan,#cspan,#cspan");
+        grid.setImagePath(skins + '/web/imgs/dhxgrid_web/');
+        grid.setHeader("Invoice,Tanggal, Kategori, Signer,Phone Number, Email, Deskripsi,&nbsp;,#cspan,#cspan");
         grid.enableAutoWidth(true);
-        grid.setInitWidths("95,95,115,115,115,135,*,45,45,45,45,45");
-        grid.setColAlign("right,center,left,left,left,left,left,center,center,center,center,center");
+        grid.setInitWidths("95,95,115,115,115,135,*,45,45,45");
+        grid.setColAlign("right,center,left,left,left,left,left,center,center,center");
         grid.enableSmartRendering(true);
         grid.setColSorting('str,date,str,str,str');
         grid.setColTypes("link,ro,link,ro,ro,ro,ro,button,button,button,button,button");

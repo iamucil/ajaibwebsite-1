@@ -34,16 +34,6 @@ class TransactionsController extends Controller {
      */
     public function create(Request $request)
     {
-        $satuan_qty     = DB::table('quantities')
-            ->orderBy('name', 'ASC')
-            ->get();
-        $vendors        = Vendor::lists('name', 'id');
-        $transactions   = response()->json($request->old('transactions', []));
-        $satuan_qty     = response()->json($satuan_qty);
-
-        $categories     = Category::where('type', '=', 'transaction')
-            ->orderBy('name', 'ASC')->lists('name', 'id');
-            // dd($satuan_qty);
         return view('Transaction::create', compact('categories', 'satuan_qty', 'transactions', 'vendors'));
     }
 
@@ -235,23 +225,28 @@ class TransactionsController extends Controller {
             ->get();
         if(false === $transactions->isEmpty()) {
             foreach ($transactions as $transaction) {
+                $url_detail             = route("transactions.show", $args = ['id' => $transaction->id]);
+                $url_kategori_detail    = route("transaction.category.show", $args = ['id' => $transaction->Category->id]);
+                $url_export_pdf         = route('transactions.invoice.print', [\Crypt::encrypt($transaction->id), 'pdf']);
+                $url_print_html         = route('transactions.invoice.print', \Crypt::encrypt($transaction->id));
+                $url_print_image        = route('transactions.invoice.print', [\Crypt::encrypt($transaction->id),'image']);
                 $details                = $transaction->TransactionDetails;
                 $account_payable        = $transaction->AccountPayable;
                 $signer                 = $transaction->Assigne;
                 $rows[$idx]['id']       = (int)$transaction->id;
                 $rows[$idx]['data']     = [
-                    $transaction->invoice_number, // use this field to show detail transaction
+                    $transaction->invoice_number.'^'.$url_detail.'^_self', // use this field to show detail transaction
                     date('Y-m-d', strtotime($transaction->tanggal)),
-                    $transaction->Category->name, // use this field to show all transaction in category
+                    $transaction->Category->name.'^'.$url_kategori_detail.'^_self', // use this field to show all transaction in category
                     $signer->firstname ?: $signer->name,
                     $account_payable->phone_number,
                     $account_payable->email,
                     $transaction->keterangan,
-                    null,   // action edit
-                    null,   // action delete
-                    null,   // print html
-                    null,   // print pdf
-                    null,   // export image
+                    // null,   // action edit
+                    // null,   // action delete
+                    '<i class="glyphicon glyphicon-duplicate">^'.$url_print_html,   // print html
+                    '<i class="glyphicon glyphicon-credit-card" alt="invoice"></i>^'.$url_export_pdf,   // print pdf
+                    '<i class="glyphicon glyphicon-save-file"></i>^'.$url_print_image,   // export image
                 ];
 
                 $idx+=1;
