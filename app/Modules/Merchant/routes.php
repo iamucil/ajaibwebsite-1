@@ -2,6 +2,9 @@
 
 Route::group(['module' => 'Merchant', 'namespace' => 'App\Modules\Merchant\Controllers', 'prefix' => 'dashboard', 'middleware' => ['auth', 'csrf', 'role:admin|root']], function() {
 
+    Route::group(['prefix' => 'vendor-categories'], function() {
+        Route::get('data', 'VendorCategoryController@getDataGrid')->name('vendor.category.data');
+    });
     Route::resource('vendors', 'VendorController', [
         'names' => [
             'create'    => 'vendor.create',
