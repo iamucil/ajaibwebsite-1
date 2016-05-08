@@ -178,7 +178,7 @@ class CategoriesController extends Controller
                 $link_delete    = '<i class="fontello-cancel-circled-outline">&nbsp;</i>^javascript:alertify.log("Data kategori sudah memiliki transaksi, Hapus transaksi yang berkaitan dengan kategori '.$category->name.'.");^_self';
             }else{
                 // data bisa di hapus karena tidak mempunyai data transaksi
-                $link_delete    = '<i class="fontello-cancel-circled">&nbsp;</i>^javascript:doDelete("'.$category->id.'");^_self';
+                $link_delete    = '<i class="fontello-cancel-circled">&nbsp;</i>^javascript:void(0);^_self^javascript:doDelete("'.$category->id.'");';
             }
             $rows[$idx]['id']   = (int)$category->id;
             $rows[$idx]['data'] = [
