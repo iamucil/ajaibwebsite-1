@@ -5,6 +5,11 @@ Route::group(['module' => 'Merchant', 'namespace' => 'App\Modules\Merchant\Contr
     Route::group(['prefix' => 'vendor-categories'], function() {
         Route::get('data', 'VendorCategoryController@getDataGrid')->name('vendor.category.data');
     });
+
+    Route::group(['prefix' => 'vendors'], function() {
+        Route::get('data', 'VendorController@getDataGrid')->name('vendor.data');
+    });
+
     Route::resource('vendors', 'VendorController', [
         'names' => [
             'create'    => 'vendor.create',

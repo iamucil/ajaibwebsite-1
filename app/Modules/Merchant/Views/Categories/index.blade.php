@@ -2,12 +2,15 @@
 @section('title')
     Vendor Categories
 @stop
-<link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/dhtmlx/grid/skins/web/dhtmlxgrid.css') }}">
+@section('css')
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/dhtmlx/grid/skins/web/dhtmlxgrid.css') }}">
     <style type="text/css">
     .not_m_line{
         white-space:normal !important; overflow:hidden;
     }
     </style>
+@stop
+
 @section('content')
     <div class="box">
         <div class="box-header bg-transparent">
@@ -99,14 +102,20 @@
                 } else {
                     if (b.length > 1) {
                         b[1] = "href='" + b[1] + "'";
-                        if (b.length == 3) {
-                            b[1] += " target='" + b[2] + "'"
-                        } else {
-                            b[1] += " target='_blank'"
+                        switch (b.length) {
+                            case 3:
+                                 b[1] += " target='" + b[2] + "'"
+                            break;
+                            case 4:
+                                b[1] += " target='" + b[2] + "' onclick = '(_isIE?event:arguments[0]).cancelBubble = true; " + b[3] + "'";
+                            break;
+                            default:
+                                b[1] += " target='_blank' onclick='(_isIE?event:arguments[0]).cancelBubble = true;'";
+                            break;
                         }
                     }
                 }
-                this.setCValue("<a class='btn btn-link' " + b[1] + " onclick='(_isIE?event:arguments[0]).cancelBubble = true;'>" + b[0] + "</a>", b)
+                this.setCValue("<a class='btn btn-link' " + b[1] + ">" + b[0] + "</a>", b)
             }
         }
         // nests all other methods from the base class
