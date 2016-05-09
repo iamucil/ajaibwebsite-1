@@ -67,7 +67,8 @@ return [
     |
     */
 
-    'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+    'encryption' => env('MAIL_ENCRYPTION', ''),
+    // 'encryption' => env('MAIL_ENCRYPTION', 'tls'),
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +81,7 @@ return [
     |
     */
 
-    'username' => env('ajaib@sandbox9daad78f17254f6e9165269598c0b745.mailgun.org'),
+    'username' => env('MAIL_USERNAME', 'ajaib@sandbox9daad78f17254f6e9165269598c0b745.mailgun.org'),
 
     /*
     |--------------------------------------------------------------------------
@@ -93,8 +94,7 @@ return [
     |
     */
 
-    'password' => env('@ja!b'),
-    // 'password' => env('Asv6B5+cDdDBjCLrlu8b5MJXcV16K025tCxrktyyCNAK'),
+    'password' => env('MAIL_PASSWORD', '@ja!b'),
 
     /*
     |--------------------------------------------------------------------------

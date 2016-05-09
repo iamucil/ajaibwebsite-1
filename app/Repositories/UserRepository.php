@@ -10,6 +10,7 @@ use App\Http\Requests;
 use Twilio;
 // use Services_Twilio;
 use Services_Twilio_RestException;
+use Swift_TransportException;
 
 /**
  * FILENAME     : UserRepository.php
@@ -51,7 +52,6 @@ class UserRepository
              * if user is exists reset verification data to default and status to false
              * otherwise insert new data into table users
              */
-            // $twilio         = $client = new Services_Twilio(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'));
             if ($query->exists()) {
                 $user   = $query->first();
                 $exists = true;
@@ -94,10 +94,15 @@ class UserRepository
             /**
              * And finnaly send email greeting to registered user
              */
-            Mail::send($mail_template, ['user' => $user], function ($mail) use ($user, $sender) {
-                $mail->from($sender, 'Ajaib');
-                $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
-            });
+
+            try {
+                Mail::send($mail_template, ['user' => $user], function ($mail) use ($user, $sender) {
+                    $mail->from($sender, 'Ajaib');
+                    $mail->to($user->email, $user->name)->subject('Greeting from Ajaib');
+                });
+            } catch (Swift_TransportException $e) {
+                Log::error('Register Success, but error on sending email. '.$e->getMessage().'. Check Mail Configuration!');
+            }
 
             /**
              * After action users succeed assign registered user into role user
