@@ -2,6 +2,14 @@
 @section('title')
     Vendor Categories
 @stop
+@section('css')
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('/js/vendor/dhtmlx/grid/skins/web/dhtmlxgrid.css') }}">
+    <style type="text/css">
+    .not_m_line{
+        white-space:normal !important; overflow:hidden;
+    }
+    </style>
+@stop
 
 @section('content')
     <div class="box">
@@ -27,91 +35,128 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body " style="display: block;">
-            <table class="table">
-                <thead>
-                <th style="width: 20px;">
-                    #
-                </th>
-                <th style="width: ">
-                    Nama
-                </th>
-                <th>
-                    Deskripsi
-                </th>
-                <th style="width: 30px;">
-                    Vendors
-                </th>
-                <th style="width: 90px;">
-                    Aksi
-                </th>
-                </thead>
-                <tbody>
-                {{--*/ $nomor   = $categories->currentPage() /*--}}
-                @forelse ($categories as $category)
-                    <tr>
-                        <td>
-                            {{ $nomor }}
-                        </td>
-                        <td>
-                            {{ $category->name }}
-                        </td>
-                        <td>
-                            @unless (!is_null($category->description))
-                            &mdash;
-                            @endunless
-                            {{ $category->description }}
-                        </td>
-                        <td>
-                            <a class="btn btn-success"
-                               href="{{ $category->vendors->count() > 0 ?  route('vendor.category.show', $category->id) : 'javascript:void(0);' }}">
-                                Vendors
-                                <span class="badge">
-                                    {{ $category->vendors->count() }}
-                                </span>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ route('vendor.category.edit', $category->id) }}" class="btn btn-default">
-                                <i class="glyphicon glyphicon-pencil"></i>
-                            </a>
-                            @if ($category->vendors->count() > 0)
-                                <a class="btn btn-default btn-danger" disabled="disabled" href="#" role="button">
-                                    <i class="glyphicon glyphicon-trash"></i>
-                                </a>
-                            @else
-                                <form action="{{ route('vendor.category.destroy', $category->id) }}" method="POST"
-                                      class="inline">
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-
-                                    <button class="btn btn-danger" id="btn-delete" type="submit">
-                                        <i class="glyphicon glyphicon-trash"></i>
-                                    </button>
-                                </form>
-                            @endif
-                        </td>
-                    </tr>
-                    <?php $nomor++; ?>
-                @empty
-                    <tr>
-                        <td colspan="5">
-                            <center>
-                                Data Kosong
-                            </center>
-                        </td>
-                    </tr>
-                @endforelse
-                </tbody>
-            </table>
-            {{ $categories->render() }}
+            {{-- data table --}}
+            <div id="recinfoArea"></div>
+            <div id="gridbox" style="width: 100%; height: 100%; min-height: 100%; background-color:white;"></div>
+            <div><span id="pagingArea"></span>&nbsp;<span id="infoArea"></span></div>
+            {{-- end data table --}}
         </div>
     </div>
 @stop
 
 @section('script-bottom')
     @parent
+    <script type="text/javascript" src="{{ secure_asset('/js/vendor/dhtmlx/grid/dhtmlxgrid.js') }}"></script>
     <script type="text/javascript">
-        $('button#btn-delete').bind('click', function (event) {
+        var grid;
+        var url_data    = "{{ route('vendor.category.data') }}";
+        var image_path  = "{{ asset('/js/vendor/dhtmlx/grid/imgs/') }}";
+        var skins       = "{{ asset('/js/vendor/dhtmlx/grid/skins/') }}";
+        grid            = new dhtmlXGridObject('gridbox');
+        grid.enableColSpan(true);
+        grid.setImagePath(skins + '/web/imgs/dhxgrid_web/');
+        grid.setHeader("&nbsp;,#text_filter,#cspan,#cspan,#cspan,#cspan");
+        grid.attachHeader("#rspan,Nama, Deskripsi, Vendor,&nbsp,#cspan");
+        grid.enableAutoWidth(true);
+        grid.setInitWidths("40,195,*,60,65,65");
+        grid.setColAlign("right,left,left,center,center,center");
+        grid.enableSmartRendering(true);
+        grid.setColSorting('na,str,str,int,na');
+        grid.setColTypes("cntr,link,ro,ro,button,button");
+        grid.enableAutoHeight(true);
+        grid.enableMultiline(true);
+        // grid.enableTooltips("false,false,true,true,true,true")
+        grid.init();
+        grid.load(url_data, function() {
+            grid.forEachRow(function(id){
+                grid.cells(id,2).cell.className='not_m_line';
+                // grid.cells(id,7).cell.className='not_m_line';
+                grid.enableAutoHeight(true);
+            });
+        },'json');
+
+        function eXcell_button(a){
+            this.cell = a;
+            this.grid = this.cell.parentNode.grid;
+            this.isDisabled = function () {
+                return true
+            };
+            this.edit = function () {
+            };
+            this.getValue = function () {
+                if (this.cell.firstChild.getAttribute) {
+                    var b = this.cell.firstChild.getAttribute("target");
+                    return this.cell.firstChild.innerHTML + "^" + this.cell.firstChild.getAttribute("href") + (b ? ("^" + b) : "")
+                } else {
+                    return ""
+                }
+            };
+            this.setValue = function (c) {
+                if ((typeof(c) != "number") && (!c || c.toString()._dhx_trim() == "")) {
+                    this.setCValue("&nbsp;", b);
+                    return (this.cell._clearCell = true)
+                }
+                var b = c.split("^");
+                if (b.length == 1) {
+                    b[1] = ""
+                } else {
+                    if (b.length > 1) {
+                        b[1] = "href='" + b[1] + "'";
+                        switch (b.length) {
+                            case 3:
+                                 b[1] += " target='" + b[2] + "'"
+                            break;
+                            case 4:
+                                b[1] += " target='" + b[2] + "' onclick = '(_isIE?event:arguments[0]).cancelBubble = true; " + b[3] + "'";
+                            break;
+                            default:
+                                b[1] += " target='_blank' onclick='(_isIE?event:arguments[0]).cancelBubble = true;'";
+                            break;
+                        }
+                    }
+                }
+                this.setCValue("<a class='btn btn-link' " + b[1] + ">" + b[0] + "</a>", b)
+            }
+        }
+        // nests all other methods from the base class
+        eXcell_button.prototype = new eXcell;
+
+        function doDelete (id) {
+            var url     = "{{ route('vendor.category.destroy', ['id']) }}";
+            url         = url.replace(/id/g, id);
+            console.log(url);
+            $ajax       = $.ajax({
+                cache: false,
+                url : url,
+                type: "POST",
+                dataType : "json",
+                data : {'id' : id, '_method' : 'DELETE'},
+                context : document.body
+            });
+
+            return alertify.confirm('Apakah Anda yakin akan menghapus data kategori dengan ID '+id+'?', function (e) {
+                if(e) {
+                    $ajax.done(function(data,  status, jqXHR) {
+                        if (data.status == 201) {
+                            alertify.success(data.message);
+                            grid.clearAll();
+                            grid.load(url_data, function() {
+                                grid.forEachRow(function(id){
+                                    grid.cells(id,2).cell.className='not_m_line';
+                                    // grid.cells(id,7).cell.className='not_m_line';
+                                    grid.enableAutoHeight(true);
+                                });
+                            }, 'json');
+                        } else if (data.status == 500) {
+                            alertify.success(data.message);
+                        }
+                    });
+                }else{
+                    alertify.log('Cancel proses hapus!');
+                }
+            });
+        }
+        /*$('button#btn-delete').bind('click', function (event) {
             var $form = this.form;
             event.preventDefault();
             // return confirm(
@@ -124,6 +169,6 @@
                     // nothing happend
                 }
             });
-        })
+        })*/
     </script>
 @stop
