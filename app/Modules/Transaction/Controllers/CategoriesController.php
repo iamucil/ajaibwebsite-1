@@ -19,9 +19,10 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories         = Category::where('type', '=', 'transaction')
-            ->orderBy('created_at', 'DESC')
-            ->paginate(15);
+        $categories     = [];
+        // $categories         = Category::where('type', '=', 'transaction')
+        //     ->orderBy('created_at', 'DESC')
+        //     ->paginate(15);
         // $categories         = [];
         return view("Transaction::Categories.index", compact('categories'));
     }
@@ -134,11 +135,63 @@ class CategoriesController extends Controller
     public function destroy($id)
     {
         $category       = Category::findOrFail($id);
-        $category->delete();
+        $nama           = $category->name;
+        $result         = $category->delete();
 
-        flash()->success('Data terhapus');
+        if(request()->ajax()){
+            if(true === $result){
+                $return     = [
+                    'result' => true,
+                    'message' => 'Proses penghapusan data '.$nama.' Berhasil',
+                    'status' => 201
+                ];
+            } else {
+                $return     = [
+                    'result' => true,
+                    'message' => 'Error occured',
+                    'status' => 500
+                ];
+            }
 
-        return redirect()->route('transaction.category.index');
+            return response()->json($return, (int)$return['status'], [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+        }else{
+            flash()->success('Data terhapus');
+
+            return redirect()->route('transaction.category.index');
+        }
+    }
+
+    public function getDataGrid()
+    {
+        $head       = [];
+        $rows       = [];
+        $idx        = 0;
+        $categories = Category::where('type', '=', 'transaction')
+            ->orderBy('created_at', 'DESC')
+            ->get();
+        foreach ($categories as $category) {
+            $transactions       = $category->Transactions()->count();
+            $url_edit           = route("transaction.category.edit", $args = ['id' => $category->id]);
+            $link_edit          = '<i class="fontello-pencil">&nbsp;</i>^'.$url_edit.'^_self';
+
+            if((int)$transactions <> 0) {
+                $link_delete    = '<i class="fontello-cancel-circled-outline">&nbsp;</i>^javascript:alertify.log("Data kategori sudah memiliki transaksi, Hapus transaksi yang berkaitan dengan kategori '.$category->name.'.");^_self';
+            }else{
+                // data bisa di hapus karena tidak mempunyai data transaksi
+                $link_delete    = '<i class="fontello-cancel-circled">&nbsp;</i>^javascript:void(0);^_self^javascript:doDelete("'.$category->id.'");';
+            }
+            $rows[$idx]['id']   = (int)$category->id;
+            $rows[$idx]['data'] = [
+                (int)$category->id,
+                $category->name,
+                $category->description ?: '&mdash',
+                $transactions,
+                $link_edit,
+                $link_delete,
+            ];
+            $idx++;
+        }
+        return response()->json(compact('rows'), 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
     }
 }
 ?>

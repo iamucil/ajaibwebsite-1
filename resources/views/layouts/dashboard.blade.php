@@ -139,12 +139,12 @@
     {{-- script bottom: additional script js --}}
     <script>
         // init user properties
-        if(Cookies.get('geoip') === undefined) {
-            var url     = '{!! url("/geo-ip") !!}';
-            $.getJSON( url, function( data ) {
-                Cookies.set('geoip', data, { expires: 1, path : '/'});
-            }, 'json');
-        }
+        // if(Cookies.get('geoip') === undefined) {
+        //     var url     = '{!! url("/geo-ip") !!}';
+        //     $.getJSON( url, function( data ) {
+        //         Cookies.set('geoip', data, { expires: 1, path : '/'});
+        //     }, 'json');
+        // }
 
         // console.log(geo());
         // init pubnub key

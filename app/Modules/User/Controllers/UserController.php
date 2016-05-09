@@ -476,7 +476,7 @@ class UserController extends Controller {
             $rows[$idx]['id']       = (int)$user->id;
             $link_profile           = route("user.profile", $args = ['id' => $user->id]);
             if(auth()->user()->hasRole(['administrator', 'admin'])) {
-                $link_reset_password    = '<i class="glyphicon glyphicon-lock">&nbsp;</i>^javascript:resetPassword("'.$user->id.'");;^_self';
+                $link_reset_password    = '<i class="glyphicon glyphicon-lock">&nbsp;</i>^javascript:void(0);^_self^javascript:resetPassword("'.$user->id.'");';
             } else {
                 $link_reset_password    = null;
             }
@@ -485,14 +485,14 @@ class UserController extends Controller {
                     $status_img     = asset("/img/icons/green.gif");
                     $link_aktivasi  = '<i class="fontello-ok-outline">&nbsp;</i>^javascript:alertify.log("This user is already active");;^_self';
                     if(strtoupper($user->role_name) == 'USERS'){
-                        $link_delete    = '<i class="fontello-cancel-circled">&nbsp;</i>^javascript:setStatus("deactive", "'.$user->id.'");^_self';
+                        $link_delete    = '<i class="fontello-cancel-circled">&nbsp;</i>^javascript:voi(0);^_self^javascript:setStatus("deactive", "'.$user->id.'");';
                     }else{
                         $link_delete    = '<i class="fontello-cancel-circled-outline">&nbsp;</i>^javascript:alertify.log("You can not delete this data. Data is not yet activated.");;^_self';
                     }
                     break;
                 case false:
                     $status_img     = asset("/img/icons/red.gif");
-                    $link_aktivasi  = '<i class="fontello-ok">&nbsp;</i>^javascript:setStatus("activate", "'.$user->id.'");^_top';
+                    $link_aktivasi  = '<i class="fontello-ok">&nbsp;</i>^javascript:void(0);^_top^javascript:setStatus("activate", "'.$user->id.'");';
                     $link_delete    = '<i class="fontello-cancel-circled-outline">&nbsp;</i>^javascript:alertify.log("You can not delete this data. Data is not yet activated.");;^_self';
                     break;
                 default:
