@@ -17,5 +17,10 @@ class TransactionDetail extends Model
     {
         return $this->belongsTo('App\Modules\Transaction\Models\Transaction', 'transaction_id');
     }
+
+    public function quantity()
+    {
+        return $this->belongsTo('App\Quantity', 'quantity_id');
+    }
 }
 ?>

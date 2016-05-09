@@ -158,10 +158,63 @@ class VendorController extends Controller
     public function destroy($id)
     {
         $vendor     = Vendor::findOrFail($id);
-        $vendor->delete();
+        $nama       = $vendor->name;
+        $result     = $vendor->delete();
 
-        flash()->success('Data terhapus');
+        if(request()->ajax()){
+            if(true === $result){
+                $return     = [
+                    'result' => true,
+                    'message' => 'Proses penghapusan data '.$nama.' Berhasil',
+                    'status' => 201
+                ];
+            } else {
+                $return     = [
+                    'result' => true,
+                    'message' => 'Error occured',
+                    'status' => 500
+                ];
+            }
 
-        return redirect()->route('vendor.index');
+            return response()->json($return, (int)$return['status'], [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
+        }else{
+            flash()->success('Data terhapus');
+            return redirect()->route('vendor.category.index');
+        }
+    }
+
+    public function getDataGrid($category = null)
+    {
+        $rows       = [];
+        $idx        = 0;
+
+        $vendors    = Vendor::has('category')->get();
+
+        foreach ($vendors as $vendor) {
+            $id     = (int)$vendor->id;
+            $trans  = (int)$vendor->transactions->count();
+            $link_detail        = route("vendor.show", $args = ['id' => $id]);
+            $url_edit           = route("vendor.edit", $args = ['id' => $vendor->id]);
+            $link_edit          = '<i class="fontello-pencil">&nbsp;</i>^'.$url_edit.'^_self';
+            if((int)$trans <> 0) {
+                $link_delete    = '<i class="fontello-cancel-circled-outline">&nbsp;</i>^javascript:alertify.log("Data kategori sudah memiliki data transaksi, Hapus data transaksi yang berkaitan dengan vendor '.$vendor->name.'.");^_self';
+            }else{
+                $link_delete    = '<i class="fontello-cancel-circled">&nbsp;</i>^#^_self^javascript:doDelete("'.$vendor->id.'");';
+            }
+
+            $rows[$idx]['id']   = $id;
+            $rows[$idx]['data'] = [
+                $id,
+                $vendor->name.'^'.$link_detail.'^_self',
+                $vendor->category->name,
+                $vendor->description,
+                $trans,
+                $link_edit,
+                $link_delete,
+            ];
+
+            $idx+=1;
+        }
+        return response()->json(compact('rows', 'vendors'), 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
     }
 }
