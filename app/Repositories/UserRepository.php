@@ -1,12 +1,15 @@
 <?php
 namespace App\Repositories;
 
+use Log;
 use Mail;
 use App\User;
 use App\Role;
 use App\Country;
 use App\Http\Requests;
 use Twilio;
+// use Services_Twilio;
+use Services_Twilio_RestException;
 
 /**
  * FILENAME     : UserRepository.php
@@ -48,7 +51,7 @@ class UserRepository
              * if user is exists reset verification data to default and status to false
              * otherwise insert new data into table users
              */
-
+            // $twilio         = $client = new Services_Twilio(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'));
             if ($query->exists()) {
                 $user   = $query->first();
                 $exists = true;
@@ -60,7 +63,21 @@ class UserRepository
                     $mail_template  = 'emails.authentication';
                     $sender         = env('EMAIL_NOREPLY','noreply@getajaib.com');
                     $user           = $query->first();
-                    Twilio::message('+'.$user->phone_number, 'Your Ajaib Verification code is '.$user->verification_code);
+                    $status_code    = 200;
+                    try {
+                        // Use the Twilio REST API client to send a text message
+                        $message        = Twilio::message('+'.$user->phone_number, 'Your Ajaib Verification code is '.$user->verification_code);
+                    } catch(Services_Twilio_RestException $e) {
+                        ///////////////////////////////////////////////////////////////////////////
+                        // Return and render the exception object, or handle the error as needed //
+                        ///////////////////////////////////////////////////////////////////////////
+
+                        $status_code    = $e->getStatus();
+                        $code           = $e->getCode();
+                        $message        = $e->getMessage();
+                        $info           = $e->getInfo();
+                        Log::error('Twilio service error code : '.$code .'|'.$status_code.' -> '.$message.' | More info : '.$info);
+                    };
                 }else{
                     $mail_template  = 'emails.greeting';
                     $sender         = env('EMAIL_FROM','noreply@getajaib.com');
