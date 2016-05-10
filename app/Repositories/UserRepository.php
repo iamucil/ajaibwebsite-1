@@ -126,11 +126,29 @@ class UserRepository
         $user->verification_code    = $verificationCode;
         $user->status               = true;
         if($user->save()) {
-            Twilio::message('+'.$user->phone_number, 'Your Ajaib Verification code is '.$user->verification_code);
-            Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
-                $mail->from('noreply@getajaib.com', 'Ajaib');
-                $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
-            });
+            try {
+                Twilio::message('+'.$user->phone_number, 'Your Ajaib Verification code is '.$user->verification_code);
+            } catch (Services_Twilio_RestException $e) {
+                ///////////////////////////////////////////////////////////////////////////
+                // Return and render the exception object, or handle the error as needed //
+                ///////////////////////////////////////////////////////////////////////////
+
+                $status_code    = $e->getStatus();
+                $code           = $e->getCode();
+                $message        = $e->getMessage();
+                $info           = $e->getInfo();
+                Log::error('Twilio service error code : '.$code .'|'.$status_code.' -> '.$message.' | More info : '.$info);
+            }
+
+            try {
+                Mail::send('emails.authentication', ['user' => $user], function ($mail) use ($user) {
+                    $mail->from('noreply@getajaib.com', 'Ajaib');
+                    $mail->to($user->email, $user->name)->subject('Confirm Your Registration');
+                });
+
+            } catch (Swift_TransportException $e) {
+                Log::error('Mailer error on set active users '. $user->email.'. '.$e->getMessage().'. Check Mail Configuration!');
+            }
             return true;
         }else{
             return false;
@@ -144,6 +162,7 @@ class UserRepository
             ->join('roles', function ($join) {
                 return $join->on('roles.id', '=', 'role_user.role_id')->where('roles.name', '=', 'users');
             })
+            ->where('status', '=', true)
             ->select('roles.name as role_name', 'roles.id as role_id', 'users.*')
             ->orderBy('users.status', 'ASC')
             ->orderBy('users.created_at', 'DESC')
@@ -162,11 +181,35 @@ class UserRepository
                         $message    = 'System Maintenance';
                         break;
                 }
-                Twilio::message('+'.$user->phone_number, $message);
-                Mail::send('emails.maintenance', ['user' => $user], function ($mail) use ($user) {
-                    $mail->from('noreply@getajaib.com', 'Ajaib');
-                    $mail->to($user->email, $user->name)->subject('Maintenance Mode');
-                });
+                try {
+                    ///////////////////////////////////////
+                    // Try sending message trough twilio //
+                    ///////////////////////////////////////
+                    Twilio::message('+'.$user->phone_number, $message);
+                } catch (Services_Twilio_RestException $e) {
+                    ///////////////////////////////////////////////////////////////////////////
+                    // Return and render the exception object, or handle the error as needed //
+                    ///////////////////////////////////////////////////////////////////////////
+
+                    $status_code    = $e->getStatus();
+                    $code           = $e->getCode();
+                    $message        = $e->getMessage();
+                    $info           = $e->getInfo();
+                    Log::error('Twilio service error code : '.$code .'|'.$status_code.' -> '.$message.' | More info : '.$info.'. Phone Number : '.$user->phone_number);
+                }
+
+                try {
+                    ////////////////////////////////////
+                    // try sending email to all users //
+                    ////////////////////////////////////
+                    Mail::send('emails.maintenance', ['user' => $user], function ($mail) use ($user) {
+                        $mail->from('noreply@getajaib.com', 'Ajaib');
+                        $mail->to($user->email, $user->name)->subject('Maintenance Mode');
+                    });
+                } catch (Swift_TransportException $e) {
+                    Log::error('Mailer error on send maintenance mode to user '. $user->email.'. '.$e->getMessage().'. Check Mail Configuration!');
+
+                }
             }
 
             return true;
