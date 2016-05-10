@@ -714,7 +714,7 @@ function publish(senderId) {
                         "message_id"    : message_id,
                         "user_name"     : firstname,
                         "message"       : text,
-                        "ip"            : geoip.ip_address,
+                        "ip"            : ip,
                         "sender_id"     : authUser.id,
                         "sender_channel": channel,
                         "receiver_id"   : obj.sender_id,
