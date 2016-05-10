@@ -11,6 +11,8 @@
 |
 */
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+
 Route::get('/', function () {
     return view('home');
 });
@@ -144,28 +146,43 @@ Route::get('/api/random-user', function () {
 });
 
 Route::get('/geo-ip', function (App\Country $country) {
-    $url    = 'http://ipinfo.io';
-    $client         = new Client([
-        'base_uri' => $url,
-    ]);
-    $response       = $client->request('GET', '/', [
-        'header' => [
-            'Content-Type' => 'application/json'
-        ], 'Accept' => 'application/json'
-    ]);
-    $result         = json_decode($response->getBody()->getContents());
+    $request            = Request::instance();
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // only trust proxy headers coming from the IP addresses on the array (change this to suit your needs) //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    $request->setTrustedProxies(array('127.0.0.1'));
+    $ip_address         = $request->getClientIp();
+    $url                = '//ipinfo.io';
+    try {
+        $client         = new Client([
+            'base_uri' => $url,
+        ]);
+        $response       = $client->request('GET', '/', [
+            'header' => [
+                'Content-Type' => 'application/json'
+            ], 'Accept' => 'application/json'
+        ]);
+        $result         = json_decode($response->getBody()->getContents());
+        $iso_code       = $result->country;
+        $ip_address     = $result->ip;
+        // $latitude       = $result->latitude;
+        // $longitude      = $result->longitude;
+    } catch (ClientException $e) {
+        $result         = GeoIP::getLocation($ip_address);
+        $iso_code       = $result['isoCode'];
+    }
 
-    $countries      = $country->where('iso_3166_2', '=', $result->country)->first();
+    $countries      = $country->where('iso_3166_2', '=', $iso_code)->first();
     $country_code   = $countries->iso_3166_2;
     $country_name   = $countries->name;
-    $ip_address     = $result->ip;
-    // $latitude       = $result->latitude;
-    // $longitude      = $result->longitude;
     $call_code      = $countries->calling_code;
     $capital        = $countries->capital;
     $country_id     = $countries->id;
-    // return response()->json(compact('countries'));
-    return response()->json(compact('country_code', 'country_name', 'ip_address', 'call_code', 'capital', 'country_id'));
+
+    ////////////////////////////////////////////////////
+    // return response()->json(compact('countries')); //
+    ////////////////////////////////////////////////////
+    return response()->json(compact('country_code', 'country_name', 'ip_address', 'call_code', 'capital', 'country_id'), 200, [], JSON_PRETTY_PRINT)->header('Content-Type', 'application/json');
 
 });
 
