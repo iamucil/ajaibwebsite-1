@@ -473,6 +473,7 @@
                 data : $data,
                 context : Form,
                 beforeSend: function (jqXHR, settings) {
+                    $('input[type="submit"]').val('Processing...');
                     return true;
                 }
             }).done(function(data,  status, jqXHR) {
@@ -493,6 +494,7 @@
                         parentIndex.addClass('has-error has-feedback');
                         parentIndex.append(elSpanError, elSpanStatus);
                     });
+                    $('input[type="submit"]').val('Sign Up');
                     evt.preventDefault();
                     return false;
                 }else{
