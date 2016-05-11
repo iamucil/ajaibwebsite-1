@@ -67,12 +67,13 @@ return [
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', 'localhost'),
-            'database' => env('DB_DATABASE', 'jet_dev_ajaib'),
-            'username' => env('DB_USERNAME', 'postgres'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', 'secret'),
             'charset'  => 'utf8',
             'prefix'   => '',
             'schema'   => 'public',
+            'port'     => env('DB_PORT', 5432),
         ],
 
         'sqlsrv' => [
