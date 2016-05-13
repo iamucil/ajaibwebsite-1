@@ -35,7 +35,7 @@ class UsersTableSeeder extends Seeder
             $administrator->update([
                 'phone_number' => '62000000000',
                 'status' => TRUE,
-                'channel' => hash('crc32b', bcrypt(uniqid('62000000000'))),
+                // 'channel' => hash('crc32b', bcrypt(uniqid('62000000000'))),
                 'verification_code' => '******',
                 'country_id' => $country->id,
                 'gender' => 'male',
@@ -65,7 +65,7 @@ class UsersTableSeeder extends Seeder
             $operator->update([
                 'phone_number' => '6211111111111',
                 'status' => TRUE,
-                'channel' => hash('crc32b', bcrypt(uniqid('6211111111111'))),
+                // 'channel' => hash('crc32b', bcrypt(uniqid('6211111111111'))),
                 'verification_code' => '******',
                 'country_id' => $country->id,
                 'gender' => 'male',
@@ -95,7 +95,7 @@ class UsersTableSeeder extends Seeder
             $root->update([
                 'phone_number' => '6233333333333',
                 'status' => TRUE,
-                'channel' => hash('crc32b', bcrypt(uniqid('6233333333333'))),
+                // 'channel' => hash('crc32b', bcrypt(uniqid('6233333333333'))),
                 'verification_code' => '******',
                 'country_id' => $country->id,
                 'gender' => 'male',
